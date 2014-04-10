@@ -12,7 +12,7 @@ Where this is the case, we have implemented plugins to help
 
 What?
 ================================
-This plugin helps with: Store Integration, (Others TBC!)
+This plugin helps with: Store Integration, Helper to Get App Version, (More TBC!)
 
 How?
 ================================
