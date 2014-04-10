@@ -18,6 +18,9 @@ How?
 ================================
 This library is published on the Marker Metro NuGet Feed (https://github.com/MarkerMetro/MarkerMetro.ProcessAutomation/wiki)
 
+Always use App.xaml.cs (in both Windows 8.1 and Windows Phone to initialize the plugin's Dispatcher for marshalling threads:
+https://github.com/MarkerMetro/SportsJeopardy/blob/windows/WindowsSolution/WindowsStoreApps/Sports%20Jeopardy!/App.xaml.cs
+
 To update and use a NuGet plugin on a project see an example here:
 https://github.com/MarkerMetro/SportsJeopardy#marker-metro-nuget-access
 
