@@ -18,7 +18,7 @@ How?
 ================================
 This library is published on the Marker Metro NuGet Feed (https://github.com/MarkerMetro/MarkerMetro.ProcessAutomation/wiki)
 
-To use updatea and use a NuGet plugin on a project see an example here:
+To update and use a NuGet plugin on a project see an example here:
 https://github.com/MarkerMetro/SportsJeopardy#marker-metro-nuget-access
 
 Generally speaking once set up, you can push changes, run a new build via the build server
