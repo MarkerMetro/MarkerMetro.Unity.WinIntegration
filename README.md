@@ -14,15 +14,19 @@ What?
 ================================
 This plugin helps with: Store Integration, Helper to Get App Version, (More TBC!)
 
-# Store Integration
+## Store Integration
 
 Add a using statement to include the Store APIs.
 
+```csharp
 using MarkerMetro.Unity.WinIntegration.Store;
+```
 
 Firstly, ensure you initialise the store manager in App.xaml.cs, specifying whether you want the simulated IAP or not. You can do this alongside the call to initialize the plugin's Dispatcher (see "How?" below).
 
+```csharp
 StoreManager.Initialise(bool useSimulator)
+```
 
 There is a single Store API for both Windows 8.1 and Windows Phone 8, with methods like the following:
 
@@ -36,15 +40,19 @@ void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.RetrieveProduc
 void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
 
-# Get App Version
+## Get App Version
 
 Add a using statement to include the  APIs.
 
+```csharp
 using MarkerMetro.Unity.WinIntegration;
+```
 
 The following method will return the manifest version of the app:
 
+```csharp
 Helper.Instance.GetAppVersion()
+```
 
 
 How?
