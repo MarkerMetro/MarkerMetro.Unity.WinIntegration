@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Store;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Core;
-using WSAStore = Windows.ApplicationModel.Store;
 
 namespace MarkerMetro.Unity.WinIntegration.Store
 {
     internal class WindowsStorePlatform : IStorePlatform
     {
+        private bool _useSimulator;
+        private StoreManager _store;
+
         public bool TrialMode
         {
             get
@@ -33,14 +36,10 @@ namespace MarkerMetro.Unity.WinIntegration.Store
             }
         }
 
-        private bool _useSimulator;
-        private StoreManager _store;
-
         public void Load(bool simulator, StoreManager storeInst)
         {
             _useSimulator = simulator;
             _store = storeInst;
-
             if (_useSimulator)
                 LoadSimulator();
         }
@@ -51,56 +50,152 @@ namespace MarkerMetro.Unity.WinIntegration.Store
             await CurrentAppSimulator.ReloadSimulatorAsync(file);
         }
 
+        public void PurchaseApplication(PurchaseDelegate callback)
+        {
+            try
+            {
+                Dispatcher.InvokeOnUIThread(async () =>
+                {
+                    var result = await PurchaseApplicationAsync();
+                    if (callback != null)
+                    {
+                        var receipt = new Receipt(StatusCode.Success, result);
+                        Dispatcher.InvokeOnAppThread(() => callback(receipt));
+                    };            
+                });
+            }
+            catch
+            {
+                if (callback != null)
+                {
+                    var receipt = new Receipt(StatusCode.ExceptionThrown, null);
+                    Dispatcher.InvokeOnAppThread(() => callback(receipt));
+                };
+            }
+        }
+
+        private async Task<string> PurchaseApplicationAsync()
+        {
+            if (_useSimulator)
+            {
+                return await CurrentAppSimulator.RequestAppPurchaseAsync(false);
+            }
+            else
+            {
+                return await CurrentApp.RequestAppPurchaseAsync(false);
+            }
+        }
+
         public void RetrieveProducts(ProductListDelegate callback)
         {
             if (_store == null ) return;
-            Dispatcher.InvokeOnUIThread(async () =>
+            try
             {
+                var networkAvailable = NetworkInterface.GetIsNetworkAvailable();
+                if (!networkAvailable)
+                {
+                    throw new Exception();
+                }
+                Dispatcher.InvokeOnUIThread(async () =>
+                {
                     var products = await RetrieveProductsAsync();
                     if (callback != null)
                     {
                         Dispatcher.InvokeOnAppThread(() => callback(products));
                     };
-            });
+                });
+            }
+            catch
+            {
+                if (callback != null)
+                {
+                    Dispatcher.InvokeOnAppThread(() => callback(null));
+                };
+            }
+        }
+
+        private async Task<List<Product>> RetrieveProductsAsync()
+        {
+            ListingInformation listing;
+            LicenseInformation license;
+            if (_useSimulator)
+            {
+                listing = await CurrentAppSimulator.LoadListingInformationAsync();
+                license = CurrentAppSimulator.LicenseInformation;
+            }
+            else
+            {
+                listing = await CurrentApp.LoadListingInformationAsync();
+                license = CurrentApp.LicenseInformation;
+            }
+
+            if (listing != null)
+            {
+                var products = listing.ProductListings;
+                var results = new List<Product>();
+                foreach (var p in products.Values)
+                {
+                    var product = new Product();
+                    product.ProductID = p.ProductId;
+                    product.Name = p.Name;
+                    product.FormattedPrice = p.FormattedPrice;
+                    product.PriceValue = Helpers.GetValueFromFormattedPrice(product.FormattedPrice);
+
+                    // Determine license status
+                    product.Purchased = license.ProductLicenses[product.ProductID].IsActive;
+                    if (product.Purchased)
+                        product.Expires = license.ProductLicenses[product.ProductID].ExpirationDate.DateTime;
+
+                    switch (p.ProductType)
+                    {
+                        case Windows.ApplicationModel.Store.ProductType.Consumable:
+                            product.Type = MarkerMetro.Unity.WinIntegration.Store.ProductType.Consumable;
+                            break;
+                        case Windows.ApplicationModel.Store.ProductType.Durable:
+                            product.Type = MarkerMetro.Unity.WinIntegration.Store.ProductType.Durable;
+                            break;
+                    }
+                    results.Add(product);
+                }
+                return results;
+            }
+            return null;
         }
 
         public void PurchaseProduct(Product product, PurchaseDelegate callback)
         {
             if (_store == null) return;
-
-            Dispatcher.InvokeOnUIThread(async () =>
+            try
             {
-                Receipt result = null;
-                try
+                Dispatcher.InvokeOnUIThread(async () =>
                 {
-                    result = await PurchaseProductAsync(product);
-                }
-                catch (Exception)
-                {
-                    result = new Receipt(product, StatusCode.ExceptionThrown, null);
-                }
+                    var networkAvailable = NetworkInterface.GetIsNetworkAvailable();
+                    if (!networkAvailable)
+                    {
+                        throw new Exception();
+                    }
+                    if (TrialMode)
+                    {
+                        await PurchaseApplicationAsync();
+                    }
+                    var result = await PurchaseProductAsync(product);
+                    if (callback != null)
+                    {
+                        Dispatcher.InvokeOnAppThread(() => callback(result));
+                    };
+                });
+            }
+            catch (Exception)
+            {
                 if (callback != null)
                 {
-                    Dispatcher.InvokeOnAppThread(() => callback(result));
+                    Dispatcher.InvokeOnAppThread(() => callback(new Receipt(product, StatusCode.ExceptionThrown, null)));
                 };
-            });
-        }
-
-        public void PurchaseApplication(PurchaseDelegate callback)
-        {
-            throw new NotImplementedException();
+            }
         }
 
         private async Task<Receipt> PurchaseProductAsync(Product product)
         {
-            // Products can only be bought if the app is owned
-            if (TrialMode)
-            {
-                var appReceipt = await PurchaseApplicationAsync();
-                if (!appReceipt.Success)
-                    return new Receipt(product, appReceipt.Status, null);
-            }
-
             // Ensure that if this is a consumable, any previous purchases have been fulfilled
             if (product.Type == ProductType.Consumable)
             {
@@ -150,59 +245,6 @@ namespace MarkerMetro.Unity.WinIntegration.Store
                     break;
             }
             return new Receipt(product, status, null);
-        }
-
-        private async Task<Receipt> PurchaseApplicationAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        private async Task<List<Product>> RetrieveProductsAsync()
-        {
-            ListingInformation listing;
-            LicenseInformation license;
-            if (_useSimulator)
-            {
-                listing = await CurrentAppSimulator.LoadListingInformationAsync();
-                license = CurrentAppSimulator.LicenseInformation;
-            }
-            else
-            {
-                listing = await CurrentApp.LoadListingInformationAsync();
-                license = CurrentApp.LicenseInformation;
-            }
-
-            if (listing != null)
-            {
-                var products = listing.ProductListings;
-                var results = new List<Product>();
-                foreach (var p in products.Values)
-                {
-                    var product = new Product();
-                    product.ProductID = p.ProductId;
-                    product.Name = p.Name;
-                    product.FormattedPrice = p.FormattedPrice;
-                    product.PriceValue = Helpers.GetValueFromFormattedPrice(product.FormattedPrice);
-
-                    // Determine license status
-                    product.Purchased = license.ProductLicenses[product.ProductID].IsActive;
-                    if (product.Purchased)
-                        product.Expires = license.ProductLicenses[product.ProductID].ExpirationDate.DateTime;
-
-                    switch (p.ProductType)
-                    {
-                        case WSAStore.ProductType.Consumable:
-                            product.Type = ProductType.Consumable;
-                            break;
-                        case WSAStore.ProductType.Durable:
-                            product.Type = ProductType.Durable;
-                            break;
-                    }
-                    results.Add(product);
-                }
-                return results;
-            }
-            return null;
         }
 
         private IAsyncOperation<PurchaseResults> RequestProductPurchaseAsync(string productId)

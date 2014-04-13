@@ -65,6 +65,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Store\WP8Platform.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MockIAPLib">
+      <HintPath>..\MarkerMetro.Unity.WinIntegrationWP8.References\MockIAPLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <ProjectExtensions />
