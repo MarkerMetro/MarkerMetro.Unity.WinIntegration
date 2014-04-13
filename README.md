@@ -28,16 +28,32 @@ Firstly, ensure you initialise the store manager in App.xaml.cs, specifying whet
 StoreManager.Initialise(bool useSimulator)
 ```
 
-There is a single Store API for both Windows 8.1 and Windows Phone 8, with methods like the following:
+There is a single Store API for both Windows 8.1 and Windows Phone 8:
+
+Determine whether the app has a currently active trial:
 
 ```csharp
 bool Store.StoreManager.Instance.IsActiveTrial
+```
 
-void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.PurchaseApplication(PurchaseDelegate callback)
+Attempt to purchase the application. The Receipt object returned in the delegate will have a StatusCode of Success or ExceptionThrown if anything went wrong.
 
-void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.RetrieveProducts(ProductListDelegate callback)
+```csharp
+void StoreManager.Instance.PurchaseApplication(PurchaseDelegate callback)
+```
 
-void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
+Attempt to list all IAP products available. This will be a list of products or null if anything went wrong.
+
+```csharp
+void StoreManager.Instance.RetrieveProducts(ProductListDelegate callback)
+```
+
+Attempt to purchase an IAP product. The receipt object returned in the delegate will have a StatusCode of Success or ExceptionThrow if something went badly wrong. 
+
+Specifically for WP8, the only other StatusCode used is NotReady when after a successful purchase the license information does not appear to be valid. Windows 8.1 uses all the other status codes as more information is available.
+
+```csharp
+void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
 
 ## Get App Version
