@@ -33,7 +33,7 @@ There is a single Store API for both Windows 8.1 and Windows Phone 8:
 Determine whether the app has a currently active trial:
 
 ```csharp
-bool Store.StoreManager.Instance.IsActiveTrial
+bool StoreManager.Instance.IsActiveTrial
 ```
 
 Attempt to purchase the application. The Receipt object returned in the delegate will have a StatusCode of Success or ExceptionThrown if anything went wrong.
