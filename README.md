@@ -26,6 +26,7 @@ StoreManager.Initialise(bool useSimulator)
 
 There is a single Store API for both Windows 8.1 and Windows Phone 8, with methods like the following:
 
+```csharp
 bool Store.StoreManager.Instance.IsActiveTrial
 
 void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.PurchaseApplication(PurchaseDelegate callback)
@@ -33,6 +34,7 @@ void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.PurchaseApplic
 void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.RetrieveProducts(ProductListDelegate callback)
 
 void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
+```
 
 # Get App Version
 
