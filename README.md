@@ -24,11 +24,13 @@ using MarkerMetro.Unity.WinIntegration.Store;
 
 Firstly, ensure you initialise the store manager in App.xaml.cs, specifying whether you want the simulated IAP or not. You can do this alongside the call to initialize the plugin's Dispatcher (see "How?" below).
 
+The simulator will expect IAP to be provided in an xml file on the project root called "iap_simulator.xml". Use the correct formatting for this file and note that it differs between Win 8.1 and WP8. Copying a previous project will be the quickest route here.
+
 ```csharp
 void StoreManager.Initialise(bool useSimulator)
 ```
 
-There is a single Store API for both Windows 8.1 and Windows Phone 8:
+There is a single Store API for both Win 8.1 and WP8:
 
 Determine whether the app has a currently active trial:
 
