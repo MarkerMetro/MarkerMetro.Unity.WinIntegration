@@ -14,6 +14,34 @@ What?
 ================================
 This plugin helps with: Store Integration, Helper to Get App Version, (More TBC!)
 
+# Store Integration
+
+Add a using statement to include the Store APIs.
+
+using MarkerMetro.Unity.WinIntegration.Store;
+
+Firstly, ensure you initialise the store manager in App.xaml.cs, specifying whether you want the simulated IAP or not. You can do this alongside the call to initialize the plugin's Dispatcher (see "How?" below).
+
+StoreManager.Initialise(bool useSimulator)
+
+There is a single Store API for both Windows 8.1 and Windows Phone 8, with methods like the following:
+
+bool Store.StoreManager.Instance.IsActiveTrial
+void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.PurchaseApplication(PurchaseDelegate callback)
+void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.RetrieveProducts(ProductListDelegate callback)
+void MarkerMetro.Unity.WinIntegration.Store.StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
+
+# Get App Version
+
+Add a using statement to include the  APIs.
+
+using MarkerMetro.Unity.WinIntegration;
+
+The following method will return the manifest version of the app:
+
+Helper.Instance.GetAppVersion()
+
+
 How?
 ================================
 This library is published on the Marker Metro NuGet Feed (https://github.com/MarkerMetro/MarkerMetro.ProcessAutomation/wiki)
