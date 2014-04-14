@@ -13,7 +13,6 @@ namespace MarkerMetro.Unity.WinIntegration.Store
         public ProductType Type { get; set; }
         public string ProductID { get; set; }
         public string Name { get; set; }
-        public float PriceValue { get; set; }
         public string FormattedPrice { get; set; }
         public bool Purchased { get; set; }
         public DateTime Expires { get; set; }

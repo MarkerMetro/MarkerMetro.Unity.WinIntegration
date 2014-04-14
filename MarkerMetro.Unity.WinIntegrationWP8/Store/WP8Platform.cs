@@ -137,7 +137,6 @@ namespace MarkerMetro.Unity.WinIntegration.Store
                         product.ProductID = p.ProductId;
                         product.Name = p.Name;
                         product.FormattedPrice = p.FormattedPrice;
-                        product.PriceValue = Helpers.GetValueFromFormattedPrice(product.FormattedPrice);
 
                         // Determine license status
                         product.Purchased = mockLicense.ProductLicenses[product.ProductID].IsActive;
@@ -172,7 +171,6 @@ namespace MarkerMetro.Unity.WinIntegration.Store
                         product.ProductID = p.ProductId;
                         product.Name = p.Name;
                         product.FormattedPrice = p.FormattedPrice;
-                        product.PriceValue = Helpers.GetValueFromFormattedPrice(product.FormattedPrice);
 
                         // Determine license status
                         product.Purchased = license.ProductLicenses[product.ProductID].IsActive;
