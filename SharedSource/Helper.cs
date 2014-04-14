@@ -56,6 +56,36 @@ namespace MarkerMetro.Unity.WinIntegration
 
         }
 
+//        /// <summary>
+//        /// Returns something approximating a device id
+//        /// </summary>
+//        /// <returns></returns>
+//        public string GetDeviceID()
+//        {
+//#if NETFX_CORE
+//            // we leverage a guid value stored in roaming settings to identify the user's device
+//            var roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
+//            var deviceID = roamingSettings.Values["MarkerMetro.Unity.WinIntegration.Guid"];
+//            Guid deviceIDGuid = Guid.Empty;
+//            if (deviceID != null && Guid.TryParse(deviceID.ToString(), out deviceIDGuid))
+//            {
+//                return deviceIDGuid.ToString();
+//            }
+//            else
+//            {
+//                deviceIDGuid = Guid.NewGuid();
+//                roamingSettings.Values["MarkerMetro.Unity.WinIntegration.Guid"] = deviceIDGuid;
+//                return deviceIDGuid.ToString();
+//            }
+//#elif WINDOWS_PHONE
+//            byte[] myDeviceID = (byte[])Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("DeviceUniqueId");
+//            return Convert.ToBase64String(myDeviceID);
+//#else
+//            return String.Empty;
+//#endif
+
+//        }
+
 
     }
 }
