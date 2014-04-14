@@ -59,9 +59,9 @@ namespace MarkerMetro.Unity.WinIntegration.Store
 
         public void PurchaseApplication(PurchaseDelegate callback)
         {
-            try
+            Dispatcher.InvokeOnUIThread(async () =>
             {
-                Dispatcher.InvokeOnUIThread(async () =>
+                try
                 {
                     var result = await PurchaseApplicationAsync();
                     if (callback != null)
@@ -69,16 +69,16 @@ namespace MarkerMetro.Unity.WinIntegration.Store
                         var receipt = new Receipt(StatusCode.Success, result);
                         Dispatcher.InvokeOnAppThread(() => callback(receipt));
                     };
-                });
-            }
-            catch
-            {
-                if (callback != null)
+                }
+                catch
                 {
-                    var receipt = new Receipt(StatusCode.ExceptionThrown, null);
-                    Dispatcher.InvokeOnAppThread(() => callback(receipt));
-                };
-            }
+                    if (callback != null)
+                    {
+                        var receipt = new Receipt(StatusCode.ExceptionThrown, null);
+                        Dispatcher.InvokeOnAppThread(() => callback(receipt));
+                    };
+                }
+            });
         }
 
         private async Task<string> PurchaseApplicationAsync()
@@ -96,9 +96,9 @@ namespace MarkerMetro.Unity.WinIntegration.Store
         public void RetrieveProducts(ProductListDelegate callback)
         {
             if (_store == null) return;
-            try
+            Dispatcher.InvokeOnUIThread(async () =>
             {
-                Dispatcher.InvokeOnUIThread(async () =>
+                try
                 {
                     var networkAvailable = NetworkInterface.GetIsNetworkAvailable();
                     if (!networkAvailable)
@@ -110,16 +110,15 @@ namespace MarkerMetro.Unity.WinIntegration.Store
                     {
                         Dispatcher.InvokeOnAppThread(() => callback(products));
                     };
-
-                });
-            }
-            catch
-            {
-                if (callback != null)
+                }
+                catch
                 {
-                    Dispatcher.InvokeOnAppThread(() => callback(null));
-                };
-            }
+                    if (callback != null)
+                    {
+                        Dispatcher.InvokeOnAppThread(() => callback(null));
+                    };
+                }
+            });
         }
 
         private async Task<List<Product>> RetrieveProductsAsync()
@@ -200,9 +199,10 @@ namespace MarkerMetro.Unity.WinIntegration.Store
         public void PurchaseProduct(Product product, PurchaseDelegate callback)
         {
             if (_store == null) return;
-            try
+
+            Dispatcher.InvokeOnUIThread(async () =>
             {
-                Dispatcher.InvokeOnUIThread(async () =>
+                try
                 {
                     var networkAvailable = NetworkInterface.GetIsNetworkAvailable();
                     if (!networkAvailable)
@@ -218,15 +218,15 @@ namespace MarkerMetro.Unity.WinIntegration.Store
                     {
                         Dispatcher.InvokeOnAppThread(() => callback(result));
                     };
-                });
-            }
-            catch (Exception)
-            {
-                if (callback != null)
+                }
+                catch (Exception)
                 {
-                    Dispatcher.InvokeOnAppThread(() => callback(new Receipt(product, StatusCode.ExceptionThrown, null)));
-                };
-            }
+                    if (callback != null)
+                    {
+                        Dispatcher.InvokeOnAppThread(() => callback(new Receipt(product, StatusCode.ExceptionThrown, null)));
+                    };
+                }
+            });
         }
 
         private async Task<Receipt> PurchaseProductAsync(Product product)
