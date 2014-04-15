@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MockIAPLib">
-      <HintPath>..\MarkerMetro.Unity.WinIntegrationWP8.References\MockIAPLib.dll</HintPath>
+      <HintPath>.\MockIAPLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
