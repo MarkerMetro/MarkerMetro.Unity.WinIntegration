@@ -180,12 +180,24 @@ namespace MarkerMetro.Unity.WinIntegration
             var systemInfo = new SYSTEM_INFO();
             GetNativeSystemInfo(ref systemInfo);
 
-            return systemInfo.wProcessorArchitecture == (uint) ProcessorArchitecture.ARM;
+            return systemInfo.wProcessorArchitecture == (uint)ProcessorArchitecture.ARM;
 #else
             return false;
 #endif
         }
 
-
+        public string GetLocale()
+        {
+#if WINDOWS_PHONE
+            return System.Globalization.CultureInfo.CurrentUICulture.Name;
+#elif NETFX_CORE
+            if (Windows.System.UserProfile.GlobalizationPreferences.Languages.Count > 0)
+                return Windows.System.UserProfile.GlobalizationPreferences.Languages[0];
+            else
+                return "";
+#else
+            return "";
+#endif
+        }
     }
 }
