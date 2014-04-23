@@ -17,6 +17,7 @@ using Microsoft.Phone.Info;
 using Windows.ApplicationModel.Store;
 using System.Resources;
 using System.Globalization;
+using System.Reflection;
 #endif
 
 
@@ -35,18 +36,17 @@ namespace MarkerMetro.Unity.WinIntegration.Resources
 #elif NETFX_CORE
         private static ResourceLoader _resourceLoader;
 #endif
+        private static string _resourceBaseName;
 
-        public static ResourceHelper Instance
+        public static ResourceHelper GetInstance(string resourceBaseName = "")
         {
-            get
+            lock (_sync)
             {
-                lock (_sync)
-                {
-                    if (_instance == null)
-                        _instance = new ResourceHelper();
-                }
-                return _instance;
+                if (_instance == null)
+                    _instance = new ResourceHelper();
             }
+            _resourceBaseName = resourceBaseName;
+            return _instance;
         }
 
 #if WINDOWS_PHONE
@@ -60,7 +60,7 @@ namespace MarkerMetro.Unity.WinIntegration.Resources
             {
                 if (object.ReferenceEquals(_resourceMan, null))
                 {
-                    ResourceManager temp = new ResourceManager("MarkerMetro.Unity.WinIntegration", Dispatcher.InvokeOnUIThread.GetType().Assembly);
+                    ResourceManager temp = new ResourceManager(_resourceBaseName, Assembly.GetExecutingAssembly());
                     _resourceMan = temp;
                 }
                 return _resourceMan;
