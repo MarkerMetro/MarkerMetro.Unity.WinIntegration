@@ -92,7 +92,7 @@ namespace MarkerMetro.Unity.WinIntegration.Resources
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string GetLocalizedValue(string resourceKey)
+        public string GetString(string resourceKey)
         {
             string val = String.Empty;
 #if NETFX_CORE
