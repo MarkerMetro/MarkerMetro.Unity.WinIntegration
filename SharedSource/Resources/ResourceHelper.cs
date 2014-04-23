@@ -110,7 +110,7 @@ namespace MarkerMetro.Unity.WinIntegration.Resources
                 val = String.Empty;
             }
 #elif WINDOWS_PHONE
-            ResourceManager.GetString(resourceKey);
+            val = ResourceManager.GetString(resourceKey);
 #endif
             return val;
         }
