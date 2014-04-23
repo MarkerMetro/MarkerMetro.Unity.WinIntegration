@@ -60,7 +60,11 @@ namespace MarkerMetro.Unity.WinIntegration.Resources
             {
                 if (object.ReferenceEquals(_resourceMan, null))
                 {
-                    ResourceManager temp = new ResourceManager(_resourceBaseName, Assembly.GetExecutingAssembly());
+                    if (Dispatcher.AppAssembly == null)
+                    { 
+                        throw new NullReferenceException("Dispatcher's AppAssembly has not been set, unable to get resources for Windows Phone");
+                    };
+                    ResourceManager temp = new ResourceManager(_resourceBaseName, Dispatcher.AppAssembly);
                     _resourceMan = temp;
                 }
                 return _resourceMan;
