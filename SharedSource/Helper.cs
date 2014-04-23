@@ -8,6 +8,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using System.Diagnostics;
+using Windows.ApplicationModel.Resources;
 #elif WINDOWS_PHONE
 using Microsoft.Phone.Tasks;
 using System.Xml.Linq;
@@ -15,7 +16,6 @@ using System.Windows;
 using Microsoft.Phone.Info;
 using Windows.ApplicationModel.Store;
 #endif
-
 
 namespace MarkerMetro.Unity.WinIntegration
 {

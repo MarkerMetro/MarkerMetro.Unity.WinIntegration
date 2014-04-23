@@ -47,6 +47,9 @@
     <Compile Include="..\SharedSource\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
+      <Link>Resources\ResourceHelper.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
     </Compile>
@@ -67,6 +70,7 @@
       <HintPath>.\MockIAPLib.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <ProjectExtensions />
