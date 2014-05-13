@@ -40,6 +40,9 @@
     <Compile Include="..\SharedSource\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
+      <Link>Resources\ResourceHelper.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
     </Compile>
@@ -54,6 +57,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

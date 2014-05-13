@@ -44,6 +44,9 @@
     <Compile Include="..\SharedSource\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
+      <Link>Resources\ResourceHelper.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
     </Compile>

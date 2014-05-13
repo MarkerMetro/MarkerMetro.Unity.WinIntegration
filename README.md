@@ -58,7 +58,7 @@ Specifically for WP8, the only other StatusCode used is NotReady when after a su
 void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
 
-## Get App Version
+## Helper
 
 Add a using statement to include the  APIs.
 
@@ -72,6 +72,29 @@ The following method will return the manifest version of the app:
 Helper.Instance.GetAppVersion()
 ```
 
+The following method will show the Share charm (Win 8.1) or invoke the Share task (WP8)
+
+```csharp
+Helper.Instance.ShowShareUI()
+```
+
+Get User Device ID equivalent. This uses a roaming Guid on Win 8.1 or the actual device id for WP8
+
+```csharp
+Helper.Instance.GetUserDeviceId()
+```
+
+Get the Store Uri. Note this only returns a valid value once the app has been published
+
+```csharp
+Helper.Instance.GetAppStoreUri()
+```
+
+This method returns true if runnign on Arm Windows 8.1 or a low memory device on Windows Phone 8
+
+```csharp
+Helper.Instance.IsLowEndDevice()
+```
 
 How?
 ================================
