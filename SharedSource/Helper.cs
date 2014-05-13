@@ -62,6 +62,23 @@ namespace MarkerMetro.Unity.WinIntegration
         }
 
         /// <summary>
+        /// Returns the application language
+        /// </summary>
+        /// <remarks>
+        /// it's important to use this call rather than Unity APIs, which just return the top system langauge
+        /// </remarks>
+        public string GetAppLanguage()
+        {
+#if NETFX_CORE
+            return Windows.Globalization.ApplicationLanguages.Languages[0];
+#elif WINDOWS_PHONE
+            return System.Globalization.CultureInfo.CurrentUICulture.Name;
+#else
+            return System.Globalization.CultureInfo.CurrentUICulture.Name;
+#endif
+        }
+
+        /// <summary>
         /// Show the Share UI
         /// </summary>
         public void ShowShareUI()
