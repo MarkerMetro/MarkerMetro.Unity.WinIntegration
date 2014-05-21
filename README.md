@@ -90,11 +90,30 @@ Get the Store Uri. Note this only returns a valid value once the app has been pu
 Helper.Instance.GetAppStoreUri()
 ```
 
-This method returns true if runnign on Arm Windows 8.1 or a low memory device on Windows Phone 8
+This method returns true if running on Arm Windows 8.1 or a low memory device on Windows Phone 8
 
 ```csharp
 Helper.Instance.IsLowEndDevice()
 ```
+
+## IntegrationManager
+
+This singleton offers an easy way to hook MonoBehaviours in a Game Object. This particular Game Object is created during the singleton initialization and it's
+not destroyed between scene changes. It also provides means to run on MonoBehaviour-related events (Update, key pressed, etc.) without requiring a MonoBehaviour.
+
+Add a using statement to include the  manager:
+
+```csharp
+using MarkerMetro.Unity.WinIntegration;
+```
+
+and call this method to initialize the manager:
+
+```csharp
+IntegrationManager.Instance.Init()
+```
+
+Please refer to the code documentation for more information.
 
 How?
 ================================

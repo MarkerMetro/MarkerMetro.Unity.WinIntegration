@@ -42,6 +42,14 @@ namespace MarkerMetro.Unity.WinIntegration
         }
 
         /// <summary>
+        /// Fired when the App visibility has changed
+        /// </summary>
+        /// <remarks>
+        /// This should be activated in CommonMainPage.cs, when a Window.Current.VisibilityChanged happens.
+        /// </remarks>
+        public Action<bool> OnVisibilityChanged;
+
+        /// <summary>
         /// Returns the application package version 
         /// </summary>
         /// <returns></returns>
@@ -65,7 +73,7 @@ namespace MarkerMetro.Unity.WinIntegration
         /// Returns the application language
         /// </summary>
         /// <remarks>
-        /// it's important to use this call rather than Unity APIs, which just return the top system langauge
+        /// it's important to use this call rather than Unity APIs, which just return the top system language
         /// </remarks>
         public string GetAppLanguage()
         {

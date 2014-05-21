@@ -32,6 +32,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\SharedSource\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedSource\Dispatcher.cs">
@@ -39,6 +42,9 @@
     </Compile>
     <Compile Include="..\SharedSource\Helper.cs">
       <Link>Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\IntegrationManager.cs">
+      <Link>IntegrationManager.cs</Link>
     </Compile>
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
