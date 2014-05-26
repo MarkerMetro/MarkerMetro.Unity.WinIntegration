@@ -4,12 +4,6 @@ using UnityEngine;
 namespace MarkerMetro.Unity.WinIntegration
 {
 
-//// Problem happening on WP8.
-// Because of a bug on Unity this class won't work on WP8.
-// More details here: http://fogbugz.unity3d.com/default.asp?609123_4r6pfprov9jibi2g
-// For this reason, this class was stubbed on WP8, please remove the stub code after the bug gets fixed.
-
-#if NETFX_CORE 
     /**
      * This singleton is an entry point for Marker Metro MonoBehaviours.
      * It creates a Game Object that is not destroyed between scene loads.
@@ -28,16 +22,25 @@ namespace MarkerMetro.Unity.WinIntegration
             }
         }
 
+        // Delete this and change to Action when this bug is solved:
+        // http://fogbugz.unity3d.com/default.asp?609123_4r6pfprov9jibi2g
+        public delegate void action();
+
         /**
-         * Fire every time the Windows key is down.
+         * Fired every time the Windows key is down.
          */
-        public event Action OnWindowsKeyDown;
-        
+        public event action OnWindowsKeyDown;
+
+        /**
+         * Fired every time the Windows key is down.
+         */
+        public event action OnBackspaceKeyDown;
+
         /**
          * Fired every MonoBehaviour Update.
          */
         public event Action OnUpdate;
-        
+
         /**
          * Creates a Game Object and adds the IntegrationManager in it.
          */
@@ -72,7 +75,7 @@ namespace MarkerMetro.Unity.WinIntegration
 
         private static bool IsWinRT()
         {
-            return 
+            return
                 Application.platform == RuntimePlatform.MetroPlayerARM ||
                 Application.platform == RuntimePlatform.MetroPlayerX64 ||
                 Application.platform == RuntimePlatform.MetroPlayerX86 ||
@@ -91,33 +94,9 @@ namespace MarkerMetro.Unity.WinIntegration
                 Input.GetKeyDown(KeyCode.RightApple))
                 && OnWindowsKeyDown != null)
                 OnWindowsKeyDown();
+
+            if (Input.GetKeyDown(KeyCode.Backspace) && OnBackspaceKeyDown != null)
+                OnBackspaceKeyDown();
         }
     }
-#else
-    public sealed class IntegrationManager
-    {
-        private static IntegrationManager instance = null;
-        public static IntegrationManager Instance
-        {
-            get
-            {
-                if (instance == null) Init();
-                return instance;
-            }
-        }
-        public event Action OnWindowsKeyDown;
-        public event Action OnUpdate;
-        public static void Init()
-        {
-            if (instance != null) return;
-        }
-        public void AddComponent<T>()
-        {
-        }
-        public void Destroy()
-        {
-            instance = null;
-        }
-    }
-#endif
 }
