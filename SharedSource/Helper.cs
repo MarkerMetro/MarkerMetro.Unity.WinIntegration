@@ -117,10 +117,9 @@ namespace MarkerMetro.Unity.WinIntegration
 
             var values = Windows.Storage.ApplicationData.Current.RoamingSettings.Values;
 
-            if (values.ContainsKey(key))
+            if (!values.ContainsKey(key))
             {
                 var value = Guid.NewGuid().ToString().Replace("-", "");
-
                 values[key] = value;
             }
 
