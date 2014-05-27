@@ -39,7 +39,7 @@ namespace MarkerMetro.Unity.WinIntegration
         /**
          * Fired every MonoBehaviour Update.
          */
-        public event Action OnUpdate;
+        public event action OnUpdate;
 
         /**
          * Creates a Game Object and adds the IntegrationManager in it.
