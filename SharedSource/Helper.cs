@@ -102,6 +102,24 @@ namespace MarkerMetro.Unity.WinIntegration
         }
 
         /// <summary>
+        /// Show the Share UI with a link - WP8 only
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="linkURL"></param>
+        public void ShowShareUI(string text, string linkURL)
+        {
+#if NETFX_CORE
+            throw new NotImplementedException("Not implemented for Windows Store Apps, use ShowShareUI() instead.");
+#elif WINDOWS_PHONE
+            var task = new ShareLinkTask();
+            task.Title = text;
+            task.Message = text;
+            task.LinkUri = new Uri(linkURL);
+            task.Show();
+#endif
+        }
+
+        /// <summary>
         /// Uses a roaming Guid for Windows 8 and the device id for WP8
         /// </summary>
         /// <returns></returns>
