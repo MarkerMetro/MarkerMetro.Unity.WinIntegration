@@ -98,6 +98,8 @@ Helper.Instance.IsLowEndDevice()
 
 ## IntegrationManager
 
+Note: Has a dependency on UnityEngine.dll, any breaking APIs between Unity versions may require this to be updated in future
+
 This singleton offers an easy way to hook MonoBehaviours in a Game Object. This particular Game Object is created during the singleton initialization and it's
 not destroyed between scene changes. It also provides means to run on MonoBehaviour-related events (Update, key pressed, etc.) without requiring a MonoBehaviour.
 
