@@ -2,19 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 #if NETFX_CORE
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using System.Diagnostics;
 using Windows.ApplicationModel.Resources;
+using Windows.Networking.Connectivity;
 #elif WINDOWS_PHONE
 using Microsoft.Phone.Tasks;
 using System.Xml.Linq;
 using System.Windows;
 using Microsoft.Phone.Info;
 using Windows.ApplicationModel.Store;
+using Windows.Networking.Connectivity;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration
@@ -240,6 +241,33 @@ namespace MarkerMetro.Unity.WinIntegration
 #else
             return "";
 #endif
+        }
+
+        public bool HasInternetConnection
+        {
+            get
+            {
+#if WINDOWS_PHONE || NETFX_CORE
+                var profile = NetworkInformation.GetInternetConnectionProfile();
+                return profile != null &&
+                       profile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
+#else
+                return true;
+#endif
+            }
+        }
+
+        public bool IsMeteredConnection
+        {
+            get
+            {
+#if WINDOWS_PHONE || NETFX_CORE
+                var profile = NetworkInformation.GetInternetConnectionProfile();
+                return profile.GetConnectionCost().NetworkCostType != NetworkCostType.Unrestricted;
+#else
+                return false;
+#endif
+            }
         }
     }
 }
