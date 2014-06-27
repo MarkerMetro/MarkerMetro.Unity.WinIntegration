@@ -252,7 +252,7 @@ namespace MarkerMetro.Unity.WinIntegration
                 return profile != null &&
                        profile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
 #else
-                return true;
+                throw new PlatformNotSupportedException("HasInternetConnection");
 #endif
             }
         }
@@ -265,7 +265,7 @@ namespace MarkerMetro.Unity.WinIntegration
                 var profile = NetworkInformation.GetInternetConnectionProfile();
                 return profile.GetConnectionCost().NetworkCostType != NetworkCostType.Unrestricted;
 #else
-                return false;
+                throw new PlatformNotSupportedException("IsMeteredConnection");
 #endif
             }
         }
