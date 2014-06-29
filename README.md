@@ -127,24 +127,17 @@ This method returns true if running on Arm Windows 8.1 or a low memory device on
 Helper.Instance.IsLowEndDevice()
 ```
 
-
 How?
 ================================
 This library is published on the Marker Metro NuGet Feed (https://github.com/MarkerMetro/MarkerMetro.ProcessAutomation/wiki)
 
-Always remember to initialize the plugin's Dispatcher for marshalling threads:
+This plugin should be used by the MarkerMetro.Unity.WinShared Unity Project and Windows Apps Template:
+https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared
 
-You can use the App.xaml.cs for Windows 8.1 when AppCallbacks has been initialized:
-https://github.com/MarkerMetro/SportsJeopardy/blob/windows/WindowsSolution/WindowsStoreApps/Sports%20Jeopardy!/App.xaml.cs
+The MarkerMetro.Unity.WinShared framework will take care of proper initialization of the plugin.
 
-And in Windows Phone 8, you can use Mainpage.xaml.cs in the Unity_Loaded handler:
-https://github.wdig.com/MarkerMetro/BlockSumProduction/blob/windows/WindowsSolution/WindowsStoreApps/LostLight/MainPage.xaml.cs
+Updating and using this plugin on a project based on MarkerMetro.Unity.WinShared is easy. 
 
-To update and use a NuGet plugin on a project see an example here:
-https://github.com/MarkerMetro/SportsJeopardy#marker-metro-nuget-access
-
-Generally speaking once set up, you can push changes, run a new build via the build server
-
-1. Push Changes
+1. Push Changes to this repo
 2. Run a new build via the http://mmbuild1.cloudapp.net/ build server
-3. Run the bat file in your project which will copy new versions into Unity plugins folders
+3. Run the bat file in /Nuget folder of your project based on MarkerMetro.Unity.WinShared which will copy new versions into Unity plugins folders
