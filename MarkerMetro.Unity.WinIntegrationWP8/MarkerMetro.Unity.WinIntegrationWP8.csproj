@@ -44,6 +44,15 @@
     <Compile Include="..\SharedSource\Dispatcher.cs">
       <Link>Dispatcher.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Facebook\FB.cs">
+      <Link>Facebook\FB.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Facebook\FBStorage.cs">
+      <Link>Facebook\FBStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Facebook\IWebInterface.cs">
+      <Link>Facebook\IWebInterface.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
@@ -66,6 +75,12 @@
     <Compile Include="Store\WP8Platform.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Facebook">
+      <HintPath>.\Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="MarkerMetro.Unity.WinLegacy">
+      <HintPath>.\MarkerMetro.Unity.WinLegacy.dll</HintPath>
+    </Reference>
     <Reference Include="MockIAPLib">
       <HintPath>.\MockIAPLib.dll</HintPath>
     </Reference>

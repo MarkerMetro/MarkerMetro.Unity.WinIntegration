@@ -38,6 +38,15 @@
     <Compile Include="..\SharedSource\Dispatcher.cs">
       <Link>Dispatcher.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Facebook\FB.cs">
+      <Link>Facebook\FB.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Facebook\FBStorage.cs">
+      <Link>Facebook\FBStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Facebook\IWebInterface.cs">
+      <Link>Facebook\IWebInterface.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
@@ -58,6 +67,15 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Store\WindowsStorePlatform.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Facebook">
+      <HintPath>.\Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="MarkerMetro.Unity.WinLegacy">
+      <HintPath>.\MarkerMetro.Unity.WinLegacy.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
