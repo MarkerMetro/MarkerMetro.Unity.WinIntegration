@@ -47,9 +47,6 @@
     <Compile Include="..\SharedSource\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
-    <Compile Include="..\SharedSource\IntegrationManager.cs">
-      <Link>IntegrationManager.cs</Link>
-    </Compile>
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
     </Compile>
@@ -71,9 +68,6 @@
   <ItemGroup>
     <Reference Include="MockIAPLib">
       <HintPath>.\MockIAPLib.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>.\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />
