@@ -3,6 +3,9 @@ MarkerMetro.Unity.WinIntegration
 
 Plugin Libraries to support implementations of Windows 8 or Windows Phone platform specific functionality
 
+This plugin should be used by the MarkerMetro.Unity.WinShared Unity Project and Windows Apps Template:
+https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared
+
 Why?
 ================================
 Not all platform specific features are implemented, or implemented well by either Unity or other commercial plugins. 
@@ -12,7 +15,37 @@ Where this is the case, we have implemented plugins to help
 
 What?
 ================================
-This plugin helps with: Store Integration, Helper to Get App Version, (More TBC!)
+This plugin helps with: Facebook integration, Store Integration, Helper to Get App Version, (More TBC!)
+
+## Facebook Integration
+
+Add a using statement to include the Facebook APIs.
+```csharp
+using MarkerMetro.Unity.WinIntegration.Facebook;
+```
+
+Facebook implementations are quite game specific, however you will always need to initialize the FB client, for which you can use the Marker Metro test Faceboook account, before logging in. Here's an example of the basic calls:
+
+```csharp
+FB.Init(fbInitComplete, "567159633306681", fbOnHideUnity); 
+FB.Login("publish_actions", fbResult =>
+{
+    // Successful login, or deal with errors
+});
+
+private void fbInitComplete()
+{
+    // handler for Unity to deal with FB initializati complete
+}
+
+private void fbOnHideUnity(bool isShow)
+{
+    // handler for UNity to deal with FB web browser visibility changes
+}
+
+```
+
+It is assumed you will be using MarkerMetro.Unity.WinShared  which includes the necessary web view/browser controls for displaying all necessary facebook dialogs as well as initializing the links between the app and Unity sides. 
 
 ## Store Integration
 
@@ -22,9 +55,7 @@ Add a using statement to include the Store APIs.
 using MarkerMetro.Unity.WinIntegration.Store;
 ```
 
-Firstly, ensure you initialise the store manager in App.xaml.cs, specifying whether you want the simulated IAP or not. You can do this alongside the call to initialize the plugin's Dispatcher (see "How?" below).
-
-The simulator will expect IAP to be provided in an xml file on the project root called "iap_simulator.xml". Use the correct formatting for this file and note that it differs between Win 8.1 and WP8. Copying a previous project will be the quickest route here.
+It is assumed you will be using MarkerMetro.Unity.WinShared which will include an iap_simulator.xml file in the root of both Windows projects. You will just need to update the IAP codes for your particular game in the respective xml files for each project.
 
 ```csharp
 void StoreManager.Initialise(bool useSimulator)
@@ -96,26 +127,6 @@ This method returns true if running on Arm Windows 8.1 or a low memory device on
 Helper.Instance.IsLowEndDevice()
 ```
 
-## IntegrationManager
-
-Note: Has a dependency on UnityEngine.dll, any breaking APIs between Unity versions may require this to be updated in future
-
-This singleton offers an easy way to hook MonoBehaviours in a Game Object. This particular Game Object is created during the singleton initialization and it's
-not destroyed between scene changes. It also provides means to run on MonoBehaviour-related events (Update, key pressed, etc.) without requiring a MonoBehaviour.
-
-Add a using statement to include the  manager:
-
-```csharp
-using MarkerMetro.Unity.WinIntegration;
-```
-
-and call this method to initialize the manager:
-
-```csharp
-IntegrationManager.Instance.Init()
-```
-
-Please refer to the code documentation for more information.
 
 How?
 ================================
