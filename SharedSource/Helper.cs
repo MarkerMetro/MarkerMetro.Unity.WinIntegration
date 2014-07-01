@@ -71,6 +71,58 @@ namespace MarkerMetro.Unity.WinIntegration
         }
 
         /// <summary>
+        /// Clears all local state
+        /// </summary>
+        /// <remarks>
+        /// used to clear all local state from the app
+        /// </remarks>
+        public void ClearLocalState(Action<bool> callback)
+        {
+#if NETFX_CORE
+            Dispatcher.InvokeOnUIThread(async () =>
+            {
+                try
+                {
+                    await Windows.Storage.ApplicationData.Current.ClearAsync(Windows.Storage.ApplicationDataLocality.Local);   
+                    if (callback != null)
+                    {
+                        Dispatcher.InvokeOnAppThread(() => callback(true));
+                    };            
+                }
+                catch
+                {
+                    if (callback != null)
+                    {
+                        Dispatcher.InvokeOnAppThread(() => callback(false));
+                    };
+                }
+            });
+          
+#elif WINDOWS_PHONE
+            try
+            {
+                using (var store = System.IO.IsolatedStorage.IsolatedStorageFile.GetUserStoreForApplication())
+                {
+                    store.Remove();
+                }
+                if (callback != null)
+                {
+                    Dispatcher.InvokeOnAppThread(() => callback(true));
+                };  
+            }
+            catch
+            {
+                if (callback != null)
+                {
+                    Dispatcher.InvokeOnAppThread(() => callback(false));
+                };
+            }
+#else
+             throw new PlatformNotSupportedException("ClearLocalState");
+#endif
+        }
+
+        /// <summary>
         /// Returns the application language
         /// </summary>
         /// <remarks>
@@ -144,7 +196,7 @@ namespace MarkerMetro.Unity.WinIntegration
 
             return (string)values[key];
 #else
-            throw new PlatformNotSupportedException("WindowsPlugin.GetUserDeviceId()");
+            throw new PlatformNotSupportedException("GetUserDeviceId()");
 #endif
         }
 
@@ -226,20 +278,6 @@ namespace MarkerMetro.Unity.WinIntegration
             return systemInfo.wProcessorArchitecture == (uint)ProcessorArchitecture.ARM;
 #else
             return false;
-#endif
-        }
-
-        public string GetLocale()
-        {
-#if WINDOWS_PHONE
-            return System.Globalization.CultureInfo.CurrentUICulture.Name;
-#elif NETFX_CORE
-            if (Windows.System.UserProfile.GlobalizationPreferences.Languages.Count > 0)
-                return Windows.System.UserProfile.GlobalizationPreferences.Languages[0];
-            else
-                return "";
-#else
-            return "";
 #endif
         }
 
