@@ -247,7 +247,9 @@ namespace MarkerMetro.Unity.WinIntegration
         {
             get
             {
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_PHONE
+                return Microsoft.Phone.Net.NetworkInformation.DeviceNetworkInformation.IsNetworkAvailable;
+#elif NETFX_CORE
                 var profile = NetworkInformation.GetInternetConnectionProfile();
                 return profile != null &&
                        profile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
