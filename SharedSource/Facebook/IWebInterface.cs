@@ -1,6 +1,6 @@
 using System;
 
-namespace MarkerMetro.WinIntegration.Facebook
+namespace MarkerMetro.Unity.WinIntegration.Facebook
 {
     public delegate void NavigationEventCallback(Uri url, object state);
 

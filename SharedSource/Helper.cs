@@ -96,8 +96,7 @@ namespace MarkerMetro.Unity.WinIntegration
                         Dispatcher.InvokeOnAppThread(() => callback(false));
                     };
                 }
-            });
-          
+            });  
 #elif WINDOWS_PHONE
             try
             {

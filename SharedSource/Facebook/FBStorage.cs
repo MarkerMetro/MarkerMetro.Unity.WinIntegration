@@ -9,7 +9,7 @@ using System.IO.IsolatedStorage;
 using Windows.Storage;
 #endif
 
-namespace MarkerMetro.WinIntegration.Facebook
+namespace MarkerMetro.Unity.WinIntegration.Facebook
 {
 
         internal static class FBStorage
