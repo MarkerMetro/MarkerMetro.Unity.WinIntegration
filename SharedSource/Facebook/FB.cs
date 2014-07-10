@@ -107,13 +107,14 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 display = "popup",
                 response_type = "token"
             });
-            _web.Navigate(uri, LoginNavigationFinish, LoginNavigationError, callback);
+            _web.Navigate(uri, onError: LoginNavigationError, state: callback, startedCallback: LoginNavigationStarted);
             if (_onHideUnity != null)
                 _onHideUnity(true);
 #else
             throw new PlatformNotSupportedException("");
 #endif
         }
+
 
 #if WINDOWS_PHONE || NETFX_CORE
 
@@ -127,9 +128,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 _onHideUnity(false);
         }
 
-        private static void LoginNavigationFinish(Uri url, object state)
+        private static void LoginNavigationStarted(Uri url, object state)
         {
-            //Debug.LogError("Finish: " + url);
             FacebookOAuthResult result;
             // Check if we're waiting for user input or if login is complete
             if (_client.TryParseOAuthCallbackUrl(url, out result))
@@ -160,7 +160,6 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 });
             }
         }
-
 #endif
 
         public static void Init(
