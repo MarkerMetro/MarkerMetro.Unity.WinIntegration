@@ -37,6 +37,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 {
 #if WINDOWS_PHONE
                     IsolatedStorageSettings.ApplicationSettings.Remove(key);
+                    IsolatedStorageSettings.ApplicationSettings.Save();
 #elif NETFX_CORE
                     roamingSettings.Values.Remove(key);
 #endif
@@ -54,6 +55,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 {
                     IsolatedStorageSettings.ApplicationSettings.Add(key, value);
                 }
+                IsolatedStorageSettings.ApplicationSettings.Save();
 #elif NETFX_CORE
                 roamingSettings.Values[key] = value;
 #endif

@@ -76,6 +76,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             {
                 AccessToken = null;
                 UserId = null;
+                UserName = null;
                 _client.AccessToken = null;
                 FBStorage.DeleteKey(TOKEN_KEY);
                 FBStorage.DeleteKey(FBID_KEY);
