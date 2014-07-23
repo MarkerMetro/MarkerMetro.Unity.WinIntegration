@@ -312,26 +312,39 @@ namespace MarkerMetro.Unity.WinIntegration
             }
         }
 
-        public void ShowDialog(Action callback, string titleKey, string descriptionKey)
+        public void ShowDialog(string contentKey, string titleKey, Action callback)
         {
-#if WINDOWS_PHONE
+#if WINDOWS_PHONE || NETFX_CORE
+            if (string.IsNullOrWhiteSpace(contentKey))
+                throw new ArgumentNullException("You must specify content resource key");
+
             var resourceHelper = ResourceHelper.GetInstance();
-            MessageBox.Show(resourceHelper.GetString(descriptionKey), resourceHelper.GetString(titleKey), MessageBoxButton.OK);    
+            var content = resourceHelper.GetString(contentKey);
+            var title = string.Empty;
+            if(titleKey!=null)
+                title = resourceHelper.GetString(titleKey);
+
+# if WINDOWS_PHONE
+            MessageBox.Show(content, title, MessageBoxButton.OK);
+
             if (callback != null)
                 callback();
-#elif NETFX_CORE
-            ShowDialogAsync(callback, titleKey, descriptionKey).ContinueWith(t => { });
+# elif NETFX_CORE
+            ShowDialogAsync(contentKey, titleKey, callback).ContinueWith(t => { });
+# endif
+
 #else
             throw new PlatformNotSupportedException("ShowDialog");
 #endif
         }
 
 #if NETFX_CORE
-        async Task ShowDialogAsync(Action callback, string titleKey, string descriptionKey)
+        async Task ShowDialogAsync(string content, string title, Action callback)
         {
-            var resourceHelper = ResourceHelper.GetInstance();
-            var dialog = new MessageDialog(resourceHelper.GetString(descriptionKey), resourceHelper.GetString(titleKey));
+            var dialog = string.IsNullOrWhiteSpace(title) ? new MessageDialog(content) : new MessageDialog(content, title);
+
             await dialog.ShowAsync();
+
             if (callback != null)
                 callback();
         }
