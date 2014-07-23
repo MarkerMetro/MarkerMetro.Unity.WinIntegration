@@ -1,3 +1,4 @@
+using MarkerMetro.Unity.WinIntegration.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,10 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.Networking.Connectivity;
+using Windows.UI.Popups;
 #elif WINDOWS_PHONE
 using Microsoft.Phone.Tasks;
 using System.Xml.Linq;
@@ -308,5 +311,30 @@ namespace MarkerMetro.Unity.WinIntegration
 #endif
             }
         }
+
+        public void ShowDialog(Action callback, string titleKey, string descriptionKey)
+        {
+#if WINDOWS_PHONE
+            var resourceHelper = ResourceHelper.GetInstance();
+            MessageBox.Show(resourceHelper.GetString(descriptionKey), resourceHelper.GetString(titleKey), MessageBoxButton.OK);    
+            if (callback != null)
+                callback();
+#elif NETFX_CORE
+            ShowDialogAsync(callback, titleKey, descriptionKey).ContinueWith(t => { });
+#else
+            throw new PlatformNotSupportedException("ShowDialog");
+#endif
+        }
+
+#if NETFX_CORE
+        async Task ShowDialogAsync(Action callback, string titleKey, string descriptionKey)
+        {
+            var resourceHelper = ResourceHelper.GetInstance();
+            var dialog = new MessageDialog(resourceHelper.GetString(descriptionKey), resourceHelper.GetString(titleKey));
+            await dialog.ShowAsync();
+            if (callback != null)
+                callback();
+        }
+#endif
     }
 }
