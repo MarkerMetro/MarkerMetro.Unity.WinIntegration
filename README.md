@@ -24,10 +24,12 @@ Add a using statement to include the Facebook APIs.
 using MarkerMetro.Unity.WinIntegration.Facebook;
 ```
 
-Facebook implementations are quite game specific, however you will always need to initialize the FB client, for which you can use the Marker Metro test Faceboook account, before logging in. Here's an example of the basic calls:
+Facebook implementations are quite game specific, however you will always need to initialize the FB client, for which you can use the Marker Metro test Faceboook app created by markermetro@live.com facebook account (see \MM Team - Administration\Logins\Facebook accounts.txt" for the password on dropbox).
+
+Here's an example of the basic calls:
 
 ```csharp
-FB.Init(fbInitComplete, "567159633306681", fbOnHideUnity); 
+FB.Init(fbInitComplete, "682783485145217", fbOnHideUnity); 
 FB.Login("publish_actions", fbResult =>
 {
     // Successful login, or deal with errors
