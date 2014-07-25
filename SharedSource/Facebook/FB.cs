@@ -3,6 +3,9 @@ using MarkerMetro.Unity.WinLegacy.Cryptography;
 #endif
 using Facebook;
 using System;
+
+using MarkerMetro.Unity.WinIntegration;
+
 #if WINDOWS_PHONE
 using System.IO.IsolatedStorage;
 #elif NETFX_CORE
@@ -97,7 +100,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             {
                 // Already in use
                 if (callback != null)
-                    callback(new FBResult() { Error = "Already in use" });
+                    Dispatcher.InvokeOnAppThread( () => { callback(new FBResult() { Error = "Already in use" }); });
                 return;
             }
 
@@ -110,7 +113,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             });
             _web.Navigate(uri, onError: LoginNavigationError, state: callback, startedCallback: LoginNavigationStarted);
             if (_onHideUnity != null)
-                _onHideUnity(true);
+                Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
 #else
             throw new PlatformNotSupportedException("");
 #endif
@@ -123,10 +126,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
             //Debug.LogError("Nav error: " + error);
             if (state is FacebookDelegate)
-                ((FacebookDelegate)state)(new FBResult() { Error = error.ToString() });
+                Dispatcher.InvokeOnAppThread(() => { ((FacebookDelegate)state)(new FBResult() { Error = error.ToString() }); });
             _web.Finish();
             if (_onHideUnity != null)
-                _onHideUnity(false);
+                Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
         }
 
         private static void LoginNavigationStarted(Uri url, object state)
@@ -144,7 +147,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 }
                 _web.Finish();
                 if (_onHideUnity != null)
-                    _onHideUnity(false);
+                    Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
 
                 API("/me?fields=id,name", HttpMethod.GET, fbResult =>
                 {
@@ -157,7 +160,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     }
 
                     if (state is FacebookDelegate)
-                        ((FacebookDelegate)state)(new FBResult());
+                        Dispatcher.InvokeOnAppThread(() => { ((FacebookDelegate)state)(new FBResult()); });
                 });
             }
         }
@@ -184,7 +187,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             UserName = FBStorage.GetString(FBNAME_KEY);
 
             if (onInitComplete != null)
-                onInitComplete();
+                Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
 #else
             throw new PlatformNotSupportedException("");
 #endif
@@ -208,7 +211,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     result.Text = obj.ToString();
                     result.Json = obj as JsonObject;
                 }
-                callback(result);
+                Dispatcher.InvokeOnAppThread(() => { callback(result); });
             }
         }
 
@@ -225,7 +228,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             {
                 // Already in use
                 if (callback != null)
-                    callback(new FBResult() { Error = "Not logged in" });
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Error = "Not logged in" }); });
                 return;
             }
 
