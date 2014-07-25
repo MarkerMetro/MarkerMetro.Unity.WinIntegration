@@ -163,12 +163,23 @@ namespace MarkerMetro.Unity.WinIntegration
         /// <param name="linkURL"></param>
         public void ShowShareUI(string text, string linkURL)
         {
+            ShowShareUI(text, text, linkURL);
+        }
+
+        /// <summary>
+        /// Show the Share UI with a link - WP8 only
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="message"></param>
+        /// <param name="linkURL"></param>
+        public void ShowShareUI(string text, string message, string linkURL)
+        {
 #if NETFX_CORE
             throw new NotImplementedException("Not implemented for Windows Store Apps, use ShowShareUI() instead.");
 #elif WINDOWS_PHONE
             var task = new ShareLinkTask();
             task.Title = text;
-            task.Message = text;
+            task.Message = message;
             task.LinkUri = new Uri(linkURL);
             task.Show();
 #endif
