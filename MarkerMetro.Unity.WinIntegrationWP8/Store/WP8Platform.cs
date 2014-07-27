@@ -231,7 +231,7 @@ namespace MarkerMetro.Unity.WinIntegration.Store
         {
             if (_useSimulator)
             {
-                var purchaseResult = await MockIAPLib.CurrentApp.RequestProductPurchaseAsync(product.ProductID, false);
+                var purchaseResult = await MockIAPLib.CurrentApp.RequestProductPurchaseAsync(product.ProductID, true);
                 var productLicenses = MockIAPLib.CurrentApp.LicenseInformation.ProductLicenses;
                 var license = productLicenses[product.ProductID];
                 if (!license.IsActive)
@@ -246,7 +246,7 @@ namespace MarkerMetro.Unity.WinIntegration.Store
             }
             else
             {
-                var purchaseResult = await CurrentApp.RequestProductPurchaseAsync(product.ProductID, false);
+                var purchaseResult = await CurrentApp.RequestProductPurchaseAsync(product.ProductID, true);
                 var productLicenses = CurrentApp.LicenseInformation.ProductLicenses;
                 var license = productLicenses[product.ProductID];
                 if (!license.IsActive)
