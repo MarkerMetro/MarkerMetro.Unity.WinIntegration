@@ -186,6 +186,19 @@ namespace MarkerMetro.Unity.WinIntegration
         }
 
         /// <summary>
+        /// Show the Rate UI 
+        /// </summary>
+        public void ShowShareUI()
+        {
+#if NETFX_CORE
+            Application.OpenURL("ms-windows-store:REVIEW?PFN=" + Package.Current.Id.FamilyName);
+#elif WINDOWS_PHONE
+            MarketplaceReviewTask marketplaceReviewTask = new MarketplaceReviewTask();
+            marketplaceReviewTask.Show();
+#endif
+        }
+
+        /// <summary>
         /// Uses a roaming Guid for Windows 8 and the device id for WP8
         /// </summary>
         /// <returns></returns>
