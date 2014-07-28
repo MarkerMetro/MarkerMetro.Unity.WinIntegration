@@ -188,7 +188,7 @@ namespace MarkerMetro.Unity.WinIntegration
         /// <summary>
         /// Show the Rate UI 
         /// </summary>
-        public void ShowShareUI()
+        public void ShowRateUI()
         {
 #if NETFX_CORE
             Application.OpenURL("ms-windows-store:REVIEW?PFN=" + Package.Current.Id.FamilyName);
