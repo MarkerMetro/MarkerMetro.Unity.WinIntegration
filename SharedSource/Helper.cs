@@ -191,7 +191,8 @@ namespace MarkerMetro.Unity.WinIntegration
         public void ShowRateUI()
         {
 #if NETFX_CORE
-            Application.OpenURL("ms-windows-store:REVIEW?PFN=" + Package.Current.Id.FamilyName);
+            throw new NotImplementedException("Not implemented for Windows Store Apps, use ShowShareUI() instead.");
+            //Application.OpenURL("ms-windows-store:REVIEW?PFN=" + Package.Current.Id.FamilyName);
 #elif WINDOWS_PHONE
             MarketplaceReviewTask marketplaceReviewTask = new MarketplaceReviewTask();
             marketplaceReviewTask.Show();
