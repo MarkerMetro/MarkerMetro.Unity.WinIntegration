@@ -186,29 +186,34 @@ namespace MarkerMetro.Unity.WinIntegration
         }
 
         /// <summary>
-        /// Show the Rate UI - WP8 
+        /// Show the Rate UI
         /// </summary>
         public void ShowRateUI()
         {
 #if NETFX_CORE
-            throw new NotImplementedException("Not implemented for Windows Store Apps, use GetRateURL() instead.");
-#elif WINDOWS_PHONE
-            MarketplaceReviewTask marketplaceReviewTask = new MarketplaceReviewTask();
-            marketplaceReviewTask.Show();
+            Dispatcher.InvokeOnUIThread(
+                async () =>
+                {
+                    try
+                    {
+                        var data = Package.Current.Id.FamilyName;
+                        Debug.WriteLine(data);
+                        await Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=" + data));
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Unable to show MarketplaceReviewTask because of: " + ex.Message);
+                    }
+                });
+#elif WINDOWS_PHONE 
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                var marketplaceReviewTask = new MarketplaceReviewTask();
+                marketplaceReviewTask.Show();
+            });
+#else
+            throw new NotImplementedException("Not implemented for unknown platform");
 #endif
-        }
-
-        /// <summary>
-        /// Get URL to rate app - Windows Store Apps Only
-        /// </summary>
-        public string GetRateURL()
-        {
-#if NETFX_CORE
-            return "ms-windows-store:REVIEW?PFN=" + Package.Current.Id.FamilyName;
-#elif WINDOWS_PHONE
-            throw new NotImplementedException("Not implemented for Windows Phone, use ShowRateUI() instead.");
-#endif
-            return "";
         }
 
         /// <summary>
