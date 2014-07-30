@@ -197,12 +197,16 @@ namespace MarkerMetro.Unity.WinIntegration
                     try
                     {
                         var data = Package.Current.Id.FamilyName;
+# if DEBUG
                         Debug.WriteLine(data);
+# endif
                         await Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=" + data));
                     }
                     catch (Exception ex)
                     {
+# if DEBUG
                         Debug.WriteLine("Unable to show MarketplaceReviewTask because of: " + ex.Message);
+# endif
                     }
                 });
 #elif WINDOWS_PHONE 
