@@ -55,6 +55,9 @@
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\SharedLogger.cs">
+      <Link>SharedLogger.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
     </Compile>

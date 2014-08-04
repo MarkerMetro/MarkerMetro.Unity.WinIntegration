@@ -59,6 +59,9 @@
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\SharedLogger.cs">
+      <Link>SharedLogger.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
     </Compile>
@@ -81,11 +84,16 @@
     <Reference Include="MarkerMetro.Unity.WinLegacy">
       <HintPath>.\MarkerMetro.Unity.WinLegacy.dll</HintPath>
     </Reference>
+    <Reference Include="Mindscape.Raygun4Net.WindowsPhone">
+      <HintPath>..\packages\Mindscape.Raygun4Net.3.2.0\lib\wp71\Mindscape.Raygun4Net.WindowsPhone.dll</HintPath>
+    </Reference>
     <Reference Include="MockIAPLib">
       <HintPath>.\MockIAPLib.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <ProjectExtensions />
