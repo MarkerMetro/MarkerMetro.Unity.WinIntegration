@@ -26,99 +26,43 @@ using Mindscape.Raygun4Net;
 namespace MarkerMetro.Unity.WinIntegration
 {
     /// <summary>
-    /// Shared Logger for Web Error Logging, currently using Raygun.io
+    /// Shared Logger for Web Error Logging
     /// </summary>
-    public class SharedLogger
+    /// <remarks>
+    /// Derive and initialize <see cref="Instance"/> with implementation connected to, for example Raygun.io
+    /// See <see cref="RaygunSharedLogger"/> in WinShared project
+    /// </remarks>
+    public abstract class SharedLogger
     {
         static readonly object _sync = new object();
 
-#if NETFX_CORE || WINDOWS_PHONE
-        static RaygunClient _client;
-
-        static RaygunClient Client
-        {
-            get
-            {
-                lock(_sync)
-                {
-                    if(_client==null)
-                    {
-                        _client = new RaygunClient(ApiKey) 
-                        {
-                            ApplicationVersion = Helper.Instance.GetAppVersion(),
-                            User = Helper.Instance.GetUserDeviceId(),
-                            // UserInfo = 
-                        };
-                    }
-                    return _client;
-                }
-            }
-        }
-#endif
-        static string _apiKey;
-        public static string ApiKey
+        static SharedLogger _instance;
+        public static SharedLogger Instance
         {
             get 
             {
                 lock (_sync)
                 {
-                    Debug.Assert(!string.IsNullOrEmpty(_apiKey), "You must initialize SharedLogger before calling SharedLogger");
+                    Debug.Assert(_instance!=null, "You must initialize SharedLogger before calling SharedLogger");
 
-                    if (string.IsNullOrEmpty(_apiKey))
-                        _apiKey = "J5M66WHC/fIcZWudEXXGOw==";   // MarkerMetro API key
+                    if(_instance==null)
+                        throw new InvalidOperationException("You must initialize SharedLogger before calling SharedLogger");
 
-                    return _apiKey;
+                    return _instance;
                 }
             }
             set
             {
                 lock (_sync)
                 {
-                    if (_apiKey != value)
-                    {
-#if NETFX_CORE || WINDOWS_PHONE
-                        if (_client != null)
-                            _client = null;
-#endif
-                        _apiKey = value;
-                    }
+                    _instance = value;
                 }
             }
         }
 
-        public static void Send(Exception ex)
-        {
-#if NETFX_CORE || WINDOWS_PHONE
-            Client.Send(ex);
-#endif
-        }
 
-        public static void Send(Exception ex, System.Collections.IDictionary userData)
-        {
-#if NETFX_CORE || WINDOWS_PHONE
-            Client.Send(ex, userData);
-#endif
-        }
+        public abstract void Send(Exception ex);
 
-        public static void Send(Exception ex, System.Collections.Generic.IList<string> tags)
-        {
-#if NETFX_CORE || WINDOWS_PHONE
-            Client.Send(ex, tags);
-#endif
-        }
-
-        public static void Send(Exception ex, string tag)
-        {
-#if NETFX_CORE || WINDOWS_PHONE
-            Client.Send(ex, new System.Collections.Generic.List<string>() { tag });
-#endif
-        }
-
-        public static void Send(Exception ex, System.Collections.Generic.IList<string> tags, System.Collections.IDictionary userData)
-        {
-#if NETFX_CORE || WINDOWS_PHONE
-            Client.Send(ex, tags, userData);
-#endif
-        }
+        public static abstract void Send(string message, string stackTrace);
     }
 }
