@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.Networking.Connectivity;
 using Windows.UI.Popups;
-using Mindscape.Raygun4Net;
 using System.Collections;
 #elif WINDOWS_PHONE
 using Microsoft.Phone.Tasks;
@@ -20,7 +19,6 @@ using System.Windows;
 using Microsoft.Phone.Info;
 using Windows.ApplicationModel.Store;
 using Windows.Networking.Connectivity;
-using Mindscape.Raygun4Net;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration
@@ -63,6 +61,6 @@ namespace MarkerMetro.Unity.WinIntegration
 
         public abstract void Send(Exception ex);
 
-        public static abstract void Send(string message, string stackTrace);
+        public abstract void Send(string message, string stackTrace);
     }
 }

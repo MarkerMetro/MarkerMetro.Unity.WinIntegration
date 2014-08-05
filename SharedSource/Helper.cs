@@ -207,7 +207,7 @@ namespace MarkerMetro.Unity.WinIntegration
 # if DEBUG
                         Debug.WriteLine("Unable to show MarketplaceReviewTask because of: " + ex.Message);
 # else
-                        SharedLogger.Send(ex);
+                        SharedLogger.Instance.Send(ex);
 # endif
                     }
                 });
