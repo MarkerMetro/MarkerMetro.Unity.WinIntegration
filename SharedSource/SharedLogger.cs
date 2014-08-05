@@ -41,11 +41,6 @@ namespace MarkerMetro.Unity.WinIntegration
             {
                 lock (_sync)
                 {
-                    Debug.Assert(_instance!=null, "You must initialize SharedLogger before calling SharedLogger");
-
-                    if(_instance==null)
-                        throw new InvalidOperationException("You must initialize SharedLogger before calling SharedLogger");
-
                     return _instance;
                 }
             }
@@ -58,6 +53,16 @@ namespace MarkerMetro.Unity.WinIntegration
             }
         }
 
+        /// <summary>
+        /// Call to assert that SharedLogger has been initialized
+        /// </summary>
+        public static void AssertInitialized()
+        {
+            Debug.Assert(_instance!=null, "You must initialize SharedLogger before calling SharedLogger");
+            
+            if(_instance==null)
+                throw new InvalidOperationException("You must initialize SharedLogger before calling SharedLogger");
+        }
 
         public abstract void Send(Exception ex);
 
