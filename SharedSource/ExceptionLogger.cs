@@ -71,8 +71,11 @@ namespace MarkerMetro.Unity.WinIntegration
         public void Send(Exception ex)
         {
 #if NETFX_CORE || WINDOWS_PHONE
-            AssertInitialized();
-            _logger.Value.Send(ex);
+            Dispatcher.InvokeOnUIThread(() => 
+            {
+                AssertInitialized();
+                _logger.Value.Send(ex);
+            });
 #else
             throw new PlatformNotSupportedException("ExceptionLogger not supported");
 #endif
@@ -81,8 +84,11 @@ namespace MarkerMetro.Unity.WinIntegration
         public void Send(string message, string stackTrace)
         {
 #if NETFX_CORE || WINDOWS_PHONE
-            AssertInitialized();
-            _logger.Value.Send(new WrappedException(message, stackTrace));
+            Dispatcher.InvokeOnUIThread(() => 
+            {
+                AssertInitialized();
+                _logger.Value.Send(new WrappedException(message, stackTrace));
+            });
 #else
             throw new PlatformNotSupportedException("ExceptionLogger not supported");
 #endif
