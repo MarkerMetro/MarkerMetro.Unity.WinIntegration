@@ -43,6 +43,9 @@
     <Compile Include="..\SharedSource\Dispatcher.cs">
       <Link>Dispatcher.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\ExceptionLogger.cs">
+      <Link>ExceptionLogger.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Facebook\FB.cs">
       <Link>Facebook\FB.cs</Link>
     </Compile>
@@ -54,9 +57,6 @@
     </Compile>
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\SharedSource\SharedLogger.cs">
-      <Link>SharedLogger.cs</Link>
     </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
