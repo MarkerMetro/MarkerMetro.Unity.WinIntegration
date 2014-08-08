@@ -68,23 +68,32 @@ namespace MarkerMetro.Unity.WinIntegration
 #if NETFX_CORE || WINDOWS_PHONE
         static RaygunClient BuildRaygunClient(string apiKey)
         {
-            string version = null, user = null;
-            
-            version = Helper.Instance.GetAppVersion();
             try
             {
-                user = Helper.Instance.GetUserDeviceId();
+                string version = null, user = null;
+
+                version = Helper.Instance.GetAppVersion();
+                try
+                {
+                    user = Helper.Instance.GetUserDeviceId();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Failed to get UserDeviceId: {0}", ex);
+                }
+
+                return new RaygunClient(apiKey)
+                {
+                    ApplicationVersion = version,
+                    User = user,
+                };
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed to get UserDeviceId: {0}", ex);
-            }
+                Debug.WriteLine("Failed to BuildRaygunClient", ex);
 
-            return new RaygunClient(apiKey)
-            {
-                ApplicationVersion = version,
-                User = user,
-            };
+                throw;
+            }
         }
 #endif
 
