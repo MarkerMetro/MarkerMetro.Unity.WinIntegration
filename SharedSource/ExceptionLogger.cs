@@ -50,19 +50,25 @@ namespace MarkerMetro.Unity.WinIntegration
             }
         }
 
-        public void Initialize(string apiKey)
-        {    
-#if NETFX_CORE || WINDOWS_PHONE
-            _logger = new Lazy<RaygunClient>(
-            () => new RaygunClient(apiKey) 
+        public static void Initialize(string apiKey)
+        {
+            lock (_sync)
             {
-                ApplicationVersion = Helper.Instance.GetAppVersion(),
-                User = Helper.Instance.GetUserDeviceId(),
-                // UserInfo = 
-            });
+                if (_instance == null)
+                    _instance = new ExceptionLogger();
+
+#if NETFX_CORE || WINDOWS_PHONE
+                _instance._logger = new Lazy<RaygunClient>(
+                () => new RaygunClient(apiKey)
+                {
+                    ApplicationVersion = Helper.Instance.GetAppVersion(),
+                    User = Helper.Instance.GetUserDeviceId(),
+                    // UserInfo = 
+                });
 #else
-            Debug.WriteLine("ExceptionLogger not supported");
+                Debug.WriteLine("ExceptionLogger not supported");
 #endif
+            }
         }
 
         public void Send(Exception ex)
