@@ -25,14 +25,11 @@ using Windows.Networking.Connectivity;
 
 namespace MarkerMetro.Unity.WinIntegration
 {
-
-
     /// <summary>
     /// Exception Logger 
     /// </summary>
     public class ExceptionLogger
     {
-
         static ExceptionLogger _instance;
         static readonly object _sync = new object();
 
@@ -64,7 +61,7 @@ namespace MarkerMetro.Unity.WinIntegration
                 // UserInfo = 
             });
 #else
-            throw new PlatformNotSupportedException("ExceptionLogger not supported");
+            Debug.WriteLine("ExceptionLogger not supported");
 #endif
         }
 
@@ -73,11 +70,11 @@ namespace MarkerMetro.Unity.WinIntegration
 #if NETFX_CORE || WINDOWS_PHONE
             Dispatcher.InvokeOnUIThread(() => 
             {
-                AssertInitialized();
-                _logger.Value.Send(ex);
+                if(_logger!=null)
+                    _logger.Value.Send(ex);
             });
 #else
-            throw new PlatformNotSupportedException("ExceptionLogger not supported");
+            // Debug.WriteLine("ExceptionLogger not supported: {0}", ex);
 #endif
         }
 
@@ -86,24 +83,12 @@ namespace MarkerMetro.Unity.WinIntegration
 #if NETFX_CORE || WINDOWS_PHONE
             Dispatcher.InvokeOnUIThread(() => 
             {
-                AssertInitialized();
-                _logger.Value.Send(new WrappedException(message, stackTrace));
+                if(_logger!=null)
+                    _logger.Value.Send(new WrappedException(message, stackTrace));
             });
 #else
-            throw new PlatformNotSupportedException("ExceptionLogger not supported");
+            // Debug.WriteLine("ExceptionLogger not supported: {0}", ex);
 #endif
         }
-
-        /// <summary>
-        /// Call to assert that SharedLogger has been initialized
-        /// </summary>
-        public void AssertInitialized()
-        {
-            Debug.Assert(_instance != null, "You must initialize ExceptionLogger before calling it");
-
-            if (_instance == null)
-                throw new InvalidOperationException("You must initialize ExceptionLogger before calling it");
-        }
-
     }
 }
