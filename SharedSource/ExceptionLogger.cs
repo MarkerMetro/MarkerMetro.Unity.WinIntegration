@@ -58,18 +58,35 @@ namespace MarkerMetro.Unity.WinIntegration
                     _instance = new ExceptionLogger();
 
 #if NETFX_CORE || WINDOWS_PHONE
-                _instance._logger = new Lazy<RaygunClient>(
-                () => new RaygunClient(apiKey)
-                {
-                    ApplicationVersion = Helper.Instance.GetAppVersion(),
-                    User = Helper.Instance.GetUserDeviceId(),
-                    // UserInfo = 
-                });
+                _instance._logger = new Lazy<RaygunClient>(() => BuildRaygunClient(apiKey));
 #else
                 Debug.WriteLine("ExceptionLogger not supported");
 #endif
             }
         }
+
+#if NETFX_CORE || WINDOWS_PHONE
+        static RaygunClient BuildRaygunClient(string apiKey)
+        {
+            string version = null, user = null;
+            
+            version = Helper.Instance.GetAppVersion();
+            try
+            {
+                user = Helper.Instance.GetUserDeviceId();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to get UserDeviceId: {0}", ex);
+            }
+
+            return new RaygunClient(apiKey)
+            {
+                ApplicationVersion = version,
+                User = user,
+            };
+        }
+#endif
 
         public void Send(Exception ex)
         {
