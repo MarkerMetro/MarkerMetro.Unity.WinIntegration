@@ -249,5 +249,53 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #endif
         }
 
+        public static void AppRequest(
+                string message,
+                string[] to = null,
+                string filters = "",
+                string[] excludeIds = null,
+                int? maxRecipients = null,
+                string data = "",
+                string title = "",
+                FacebookDelegate callback = null
+            )
+        {
+#if WINDOWS_PHONE || NETFX_CORE
+            ///
+            /// @note: [vaughan.sanders 15.8.14] We are overriding the Unity FB.AppRequest here to send a more
+            /// general web style request as WP8 does not support the actual request functionality.
+            /// Currently we ignore all but the message and callback params
+            ///
+
+            if (_web == null) throw new MissingPlatformException();
+            if (_web.IsActive || !IsLoggedIn)
+            {
+                // Already in use
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Error = "Already in use / Not Logged In" }); });
+                return;
+            }
+
+            if (_onHideUnity != null)
+                Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
+
+            Uri uri = new Uri("https://www.facebook.com/dialog/apprequests?app_id=" + AppId + 
+                "&message=" + message + "&redirect_uri=" + RedirectUrl, UriKind.RelativeOrAbsolute);
+            _web.Navigate(uri, finishedCallback: (url, state) => 
+            {
+                if ( url.ToString().StartsWith( RedirectUrl ) )
+                {
+                    _web.Finish();
+                    if (_onHideUnity != null)
+                        Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
+                    if (callback != null)
+                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = "Finished AppRequest" }); });
+                }
+            }, onError: LoginNavigationError, state: callback);
+#else
+            throw new PlatformNotSupportedException("");
+#endif
+        }
+
     }
 }
