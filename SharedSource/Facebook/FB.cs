@@ -1,5 +1,6 @@
 #if WINDOWS_PHONE || NETFX_CORE
 using MarkerMetro.Unity.WinLegacy.Cryptography;
+using System.Threading.Tasks;
 #endif
 using Facebook;
 using System;
@@ -181,7 +182,14 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             _onHideUnity = onHideUnity;
 
             if (FBStorage.HasKey(TOKEN_KEY))
+            {
                 AccessToken = EncryptionProvider.Decrypt(FBStorage.GetString(TOKEN_KEY), AppId);
+                _client.AccessToken = AccessToken;
+
+                var task = TestAccessToken();     
+                task.Wait();
+            }
+
             _client.AccessToken = AccessToken;
             UserId = FBStorage.GetString(FBID_KEY);
             UserName = FBStorage.GetString(FBNAME_KEY);
@@ -194,6 +202,30 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         }
 
 #if WINDOWS_PHONE || NETFX_CORE
+
+        /// <summary>
+        /// Test if the access token is still valid by making a simple API call
+        /// </summary>
+        /// <returns>The async task</returns>
+        private static async Task TestAccessToken()
+        {
+            try 
+            {
+                await _client.GetTaskAsync("/me?fields=id,name"); 
+            }
+            catch ( FacebookApiException )
+            {
+                // If any exception then auto login has been an issue.  Set everything to null so the game 
+                // thinks the user is logged out and they can restart the login procedure
+                AccessToken = null;
+                UserId = null;
+                UserName = null;
+                _client.AccessToken = null;
+                FBStorage.DeleteKey(TOKEN_KEY);
+                FBStorage.DeleteKey(FBID_KEY);
+                FBStorage.DeleteKey(FBNAME_KEY);
+            }
+        }
 
         private static void HandleGetCompleted(object sender, FacebookApiEventArgs e)
         {
