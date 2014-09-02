@@ -6,12 +6,14 @@ using System.Text;
 #if NETFX_CORE
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.Contacts;
 using Windows.System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.Networking.Connectivity;
 using Windows.UI.Popups;
+using Windows.Foundation;
 #elif WINDOWS_PHONE
 using Microsoft.Phone.Tasks;
 using System.Xml.Linq;
@@ -397,5 +399,62 @@ namespace MarkerMetro.Unity.WinIntegration
                 callback();
         }
 #endif
+
+        public void ChooseEmailContacts(Action<IList<EmailContact>> callback, string buttonText = "Select")
+        {
+#if NETFX_CORE
+            ContactPicker picker = new ContactPicker();
+            picker.CommitButtonText = buttonText;
+            picker.SelectionMode = ContactSelectionMode.Fields;
+            picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Email);
+            
+            Action<IAsyncOperation<IList<Contact>>, AsyncStatus> onCompleted = (asyncOp, status) =>
+            {
+                Dispatcher.InvokeOnUIThread(() =>
+                {
+                    if (asyncOp.ErrorCode != null)
+                        throw asyncOp.ErrorCode;
+
+                    List<EmailContact> contactList = new List<EmailContact>();
+                    foreach (var contact in asyncOp.GetResults())
+                        contactList.Add(new EmailContact(contact.DisplayName, contact.Emails[0].Address));
+
+                    Dispatcher.InvokeOnAppThread(() =>
+                    {
+                        callback(contactList);
+                    });
+                });
+            };
+
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                var operation = picker.PickContactsAsync();
+                operation.Completed = new AsyncOperationCompletedHandler<IList<Contact>>(onCompleted);
+            });
+
+#elif WINDOWS_PHONE
+            throw new NotImplementedException();
+#else
+            throw new PlatformNotSupportedException();
+#endif
+        }
+
+        public void SendEmail(string from, string to, string subject, string body) 
+        {
+            throw new NotImplementedException();
+        }
+
+        public class EmailContact
+        {
+            public string name { get; private set; }
+            public string email {get ; private set; }
+            public EmailContact(string name, string email)
+            {
+                this.name = name;
+                this.email = email;
+            }
+        }
+
+           
     }
 }
