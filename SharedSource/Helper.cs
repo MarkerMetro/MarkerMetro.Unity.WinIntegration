@@ -21,6 +21,7 @@ using System.Windows;
 using Microsoft.Phone.Info;
 using Windows.ApplicationModel.Store;
 using Windows.Networking.Connectivity;
+using Microsoft.Phone.UserData;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration
@@ -421,7 +422,8 @@ namespace MarkerMetro.Unity.WinIntegration
 
                     Dispatcher.InvokeOnAppThread(() =>
                     {
-                        callback(contactList);
+                        if(callback != null)
+                            callback(contactList);
                     });
                 });
             };
@@ -433,7 +435,29 @@ namespace MarkerMetro.Unity.WinIntegration
             });
 
 #elif WINDOWS_PHONE
-            throw new NotImplementedException();
+            Contacts contacts = new Contacts();
+
+            Action<object, ContactsSearchEventArgs> onCompleted = (sender, e) =>
+                {
+                    Dispatcher.InvokeOnUIThread(() =>
+                    {
+                        List<EmailContact> contactList = new List<EmailContact>();
+                        foreach (var contact in e.Results)
+                            foreach (var em in contact.EmailAddresses)
+                                contactList.Add(new EmailContact(contact.DisplayName, em.EmailAddress));
+
+                        Dispatcher.InvokeOnAppThread(() =>
+                        {
+                            if(callback != null)
+                                callback(contactList);
+                        });
+                    });
+                };
+            contacts.SearchCompleted += new EventHandler<ContactsSearchEventArgs>(onCompleted);
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                contacts.SearchAsync(String.Empty, FilterKind.None, "");
+            });
 #else
             throw new PlatformNotSupportedException();
 #endif
