@@ -471,14 +471,14 @@ namespace MarkerMetro.Unity.WinIntegration
         /// <param name="subject">The subject of the message</param>
         /// <param name="body">The body of the message</param>
         /// <param name="callback">The callback method with a bool param, true = success, false = failed</param>
-        public void SendEmail(string to, string subject, string body, Action<bool> callback)
+        public void SendEmail(string to, string subject, string body, Action<bool, string> callback)
         {
 #if NETFX_CORE
             Dispatcher.InvokeOnUIThread(async () =>
             {
                 var mailto = new Uri("mailto:" + to + "?subject=" + subject + "&body=" + body);
                 var success = await Launcher.LaunchUriAsync(mailto);
-                callback(success);
+                callback(success, to);
             });
 #elif WINDOWS_PHONE
             Dispatcher.InvokeOnUIThread(() =>
