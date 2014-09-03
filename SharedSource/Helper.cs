@@ -481,13 +481,13 @@ namespace MarkerMetro.Unity.WinIntegration
                 callback(success);
             });
 #elif WINDOWS_PHONE
-            //Dispatcher.InvokeOnUIThread(() =>
-            //{
-            //    var task = new EmailComposeTask {
-            //        To = to, Subject = subject, Body = body
-            //    };
-            //    task.Show();
-            //});
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                var task = new EmailComposeTask {
+                    To = to, Subject = subject, Body = body
+                };
+                task.Show();
+            });
 #endif
         }
 
