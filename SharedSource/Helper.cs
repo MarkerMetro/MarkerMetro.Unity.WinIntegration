@@ -474,28 +474,22 @@ namespace MarkerMetro.Unity.WinIntegration
         public void SendEmail(string to, string subject, string body, Action<bool> callback)
         {
 #if NETFX_CORE
-            SendEmailAsync(to, subject, body, callback);
-#elif WINDOWS_PHONE
-            Dispatcher.InvokeOnUIThread(() =>
+            Dispatcher.InvokeOnUIThread(async () =>
             {
-                var task = new EmailComposeTask {
-                    To = to, Subject = subject, Body = body
-                };
-                task.Show();
-            });
-#endif
-        }
-
-#if NETFX_CORE
-        async Task SendEmailAsync(string to, string subject, string body, Action<bool> callback)
-        {
-            var mailto = new Uri("mailto:?to=" + to + "&subject=" + subject + "&body=" + body);
-            var success = await Launcher.LaunchUriAsync(mailto);
-
-            if(callback != null)
+                var mailto = new Uri("mailto:" + to + "?subject=" + subject + "&body=" + body);
+                var success = await Launcher.LaunchUriAsync(mailto);
                 callback(success);
-        }
+            });
+#elif WINDOWS_PHONE
+            //Dispatcher.InvokeOnUIThread(() =>
+            //{
+            //    var task = new EmailComposeTask {
+            //        To = to, Subject = subject, Body = body
+            //    };
+            //    task.Show();
+            //});
 #endif
+        }
 
         public class EmailContact
         {
