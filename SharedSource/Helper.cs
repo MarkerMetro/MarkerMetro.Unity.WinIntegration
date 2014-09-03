@@ -463,10 +463,32 @@ namespace MarkerMetro.Unity.WinIntegration
 #endif
         }
 
-        public void SendEmail(string from, string to, string subject, string body) 
+        /// <summary>
+        /// Win8 - Launches a mailto: URI 
+        /// WP8 - Calls email compose task
+        /// </summary>
+        /// <param name="to">A ; delimited list of email addresses to send the message to</param>
+        /// <param name="subject">The subject of the message</param>
+        /// <param name="body">The body of the message</param>
+        /// <param name="callback">The callback method with a bool param, true = success, false = failed</param>
+        public void SendEmail(string to, string subject, string body, Action<bool> callback)
         {
-            throw new NotImplementedException();
+#if NETFX_CORE
+            SendEmailAsync(to, subject, body, callback);
+#elif WINDOWS_PHONE
+            throw new PlatformNotSupportedException("SendEmail");
+#endif
         }
+
+#if NETFX_CORE
+        async Task SendEmailAsync(string to, string subject, string body, Action<bool> callback) 
+        {
+            var mailto = new Uri("mailto:?to=" + to + "&subject=" + subject + "&body=" + body);
+            var success = await Launcher.LaunchUriAsync(mailto);
+
+            callback(success);
+        }
+#endif
 
         public class EmailContact
         {
