@@ -465,7 +465,17 @@ namespace MarkerMetro.Unity.WinIntegration
 
         public void SendEmail(string from, string to, string subject, string body) 
         {
-            throw new NotImplementedException();
+#if WINDOWS_PHONE
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                var task = new EmailComposeTask {
+                    To = to, Subject = subject, Body = body
+                };
+                task.Show();
+            });
+#else
+            throw new PlatformNotSupportedException();
+#endif
         }
 
         public class EmailContact
