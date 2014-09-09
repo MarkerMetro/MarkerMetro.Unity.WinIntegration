@@ -41,6 +41,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\MarkerMetro.Unity.WinIntegrationUnity\StackTraceUtility.cs">
+      <Link>StackTraceUtility.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Dispatcher.cs">
       <Link>Dispatcher.cs</Link>
     </Compile>
