@@ -14,6 +14,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.Networking.Connectivity;
 using Windows.UI.Popups;
 using Windows.Foundation;
+using Windows.Security.ExchangeActiveSyncProvisioning;
 #elif WINDOWS_PHONE
 using Microsoft.Phone.Tasks;
 using System.Xml.Linq;
@@ -251,6 +252,39 @@ namespace MarkerMetro.Unity.WinIntegration
 #else
             throw new PlatformNotSupportedException("GetUserDeviceId()");
 #endif
+        }
+
+        /// <summary>
+        /// Returns the device manufacturer name.
+        /// </summary>
+        public string GetManufacturer()
+        {
+#if WINDOWS_PHONE
+            return DeviceStatus.DeviceManufacturer;
+#elif NETFX_CORE
+            return new EasClientDeviceInformation().SystemManufacturer;
+#else
+            throw new PlatformNotSupportedException("GetManufacturer()");
+#endif
+        }
+
+        /// <summary>
+        /// Returns the device model (e.g. "NOKIA Lumia 720").
+        /// </summary>
+        /// <remarks>
+        /// If we need a more friendly name on WP8, read this:
+        /// http://stackoverflow.com/questions/17425016/information-about-windows-phone-model-number
+        /// </remarks>
+        public string GetModel()
+        {
+#if WINDOWS_PHONE
+            return DeviceStatus.DeviceName;
+#elif NETFX_CORE
+            return new EasClientDeviceInformation().SystemProductName;
+#else
+            throw new PlatformNotSupportedException("GetManufacturer()");
+#endif
+
         }
 
         /// <summary>
