@@ -536,6 +536,16 @@ namespace MarkerMetro.Unity.WinIntegration
             }
         }
 
-           
+#if !NETFX_CORE
+        public System.Net.EndPoint GetDnsEndPoint(string host, int port)
+        {
+            // DnsEndPoint only exists on Windows Phone
+#if WINDOWS_PHONE
+            return new System.Net.DnsEndPoint(host, port);
+#else
+            throw new PlatformNotSupportedException();
+#endif
+        }
+#endif
     }
 }
