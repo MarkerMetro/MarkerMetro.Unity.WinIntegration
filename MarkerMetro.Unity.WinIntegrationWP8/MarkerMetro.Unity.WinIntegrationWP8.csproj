@@ -87,11 +87,13 @@
     <Reference Include="BugSense-WP8">
       <HintPath>..\packages\BugSense.WP8.3.6.8.0\lib\wp8\BugSense-WP8.dll</HintPath>
     </Reference>
-    <Reference Include="Facebook">
-      <HintPath>.\Facebook.dll</HintPath>
+    <Reference Include="Facebook, Version=6.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Facebook.6.8.0\lib\wp8\Facebook.dll</HintPath>
     </Reference>
-    <Reference Include="MarkerMetro.Unity.WinLegacy">
-      <HintPath>.\MarkerMetro.Unity.WinLegacy.dll</HintPath>
+    <Reference Include="MarkerMetro.Unity.WinLegacy, Version=1.6.0.328, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MarkerMetro.Unity.WinLegacy.1.6.0.328\lib\windowsphone8\MarkerMetro.Unity.WinLegacy.dll</HintPath>
     </Reference>
     <Reference Include="Mindscape.Raygun4Net.WindowsPhone">
       <HintPath>..\packages\Mindscape.Raygun4Net.3.2.0\lib\wp71\Mindscape.Raygun4Net.WindowsPhone.dll</HintPath>
