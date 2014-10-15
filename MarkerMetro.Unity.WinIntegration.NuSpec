@@ -30,10 +30,10 @@
     <file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\MarkerMetro.Unity.WinIntegration.dll" target="lib\netcore45\"/>
 	<file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\Facebook.dll" target="lib\netcore45\"/>
 	<file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\Mindscape.Raygun4Net.WindowsStore.dll" target="lib\netcore45\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationWP8\Bin\Release\BugSense-W8.dll" target="lib\netcore45\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationWP8\Bin\Release\Newtonsoft.Json.dll" target="lib\netcore45\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationWP8\Bin\Release\System.Net.Http.Primitives.dll" target="lib\netcore45\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationWP8\Bin\Release\System.Net.Http.Extensions.dll" target="lib\netcore45\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\BugSense-W8.dll" target="lib\netcore45\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\Newtonsoft.Json.dll" target="lib\netcore45\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\System.Net.Http.Primitives.dll" target="lib\netcore45\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\System.Net.Http.Extensions.dll" target="lib\netcore45\"/>
 	 
   </files>
 </package>
