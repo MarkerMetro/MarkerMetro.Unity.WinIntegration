@@ -201,6 +201,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 string expDate = EncryptionProvider.Decrypt(FBStorage.GetString(EXPIRY_DATE), AppId);
                 Expires = DateTime.Parse(expDate, CultureInfo.InvariantCulture);
                 _client.AccessToken = AccessToken;
+                UserId = FBStorage.GetString(FBID_KEY);
+                UserName = FBStorage.GetString(FBNAME_KEY);
 
                 // verifies if the token has expired:
                 if (DateTime.Compare(DateTime.Now, Expires) > 0)  // < timezone?
@@ -208,10 +210,6 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 //var task = TestAccessToken();     
                 //task.Wait();
             }
-
-            _client.AccessToken = AccessToken;
-            UserId = FBStorage.GetString(FBID_KEY);
-            UserName = FBStorage.GetString(FBNAME_KEY);
 
             if (onInitComplete != null)
                 Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
