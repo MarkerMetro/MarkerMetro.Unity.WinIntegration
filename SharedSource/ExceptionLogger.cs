@@ -1,44 +1,43 @@
-using MarkerMetro.Unity.WinIntegration.Resources;
 using System;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
 #if NETFX_CORE
 using Mindscape.Raygun4Net;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Resources;
-using Windows.Networking.Connectivity;
-using Windows.UI.Popups;
-using System.Collections;
 using BugSense;
+using Windows.UI.Xaml;
 #elif WINDOWS_PHONE
 using Mindscape.Raygun4Net;
-using Microsoft.Phone.Tasks;
-using System.Xml.Linq;
 using System.Windows;
-using Microsoft.Phone.Info;
-using Windows.ApplicationModel.Store;
-using Windows.Networking.Connectivity;
 using BugSense;
+using Microsoft.Phone.Controls;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration
 {
+
     /// <summary>
     /// Exception Logger 
     /// </summary>
     public class ExceptionLogger
     {
+
+        public enum LoggerType
+        {
+            RaygunIO,
+            BugSense
+        }
+
         static ExceptionLogger _instance;
         static readonly object _sync = new object();
+        
 
 #if NETFX_CORE || WINDOWS_PHONE
         Lazy<RaygunClient> _raygun;
         bool _bugsenseCreated = false;
+        LoggerType _loggerType = LoggerType.RaygunIO;
 #endif
+
+        private ExceptionLogger()
+        { }
 
         public static ExceptionLogger Instance
         {
@@ -53,7 +52,7 @@ namespace MarkerMetro.Unity.WinIntegration
             }
         }
 
-        public static void Initialize(string apiKey)
+        public static void Initialize(string apiKey, LoggerType loggerType = LoggerType.RaygunIO)
         {
             lock (_sync)
             {
@@ -61,40 +60,42 @@ namespace MarkerMetro.Unity.WinIntegration
                     _instance = new ExceptionLogger();
 
 #if NETFX_CORE || WINDOWS_PHONE
-                _instance._raygun = new Lazy<RaygunClient>(() => BuildRaygunClient(apiKey));
+
+                _instance._loggerType = loggerType;
+
+                if (loggerType == LoggerType.RaygunIO)
+                { 
+                    _instance._raygun = new Lazy<RaygunClient>(() => BuildRaygunClient(apiKey));
+                }
+                else if (loggerType == LoggerType.BugSense)
+                {
+#if NETFX_CORE
+                    BugSenseHandler.Instance.InitAndStartSession(new BugSense.Model.ExceptionManager(Application.Current), apiKey);
+#elif WINDOWS_PHONE
+                    BugSenseHandler.Instance.InitAndStartSession(new BugSense.Core.Model.ExceptionManager(Application.Current), ((PhoneApplicationFrame)Application.Current.RootVisual), apiKey);
+#endif
+                    _instance._bugsenseCreated = true;
+                }
 #else
                 Debug.WriteLine("ExceptionLogger not supported");
 #endif
             }
         }
 
-#if NETFX_CORE || WINDOWS_PHONE
-#if NETFX_CORE
-        public static void InitializeBugsense(string apikey, Windows.UI.Xaml.Application app)
-#elif WINDOWS_PHONE
-        public static void InitializeBugsense(string apikey, System.Windows.Application app, Microsoft.Phone.Controls.PhoneApplicationFrame frame)
-#endif
-        {
-            lock (_sync)
-            {
-                if (_instance == null)
-                    _instance = new ExceptionLogger();
-
-#if NETFX_CORE
-                BugSenseHandler.Instance.InitAndStartSession(new BugSense.Model.ExceptionManager(app), apikey);
-#elif WINDOWS_PHONE
-                BugSenseHandler.Instance.InitAndStartSession(new BugSense.Core.Model.ExceptionManager(app), frame, apikey);
-#endif
-                _instance._bugsenseCreated = true;
-            }
-        }
-#endif
-
         public void Close()
         {
 #if NETFX_CORE || WINDOWS_PHONE
-            BugSenseHandler.Instance.CloseSession();
-            _bugsenseCreated = false;
+            if (_loggerType == LoggerType.BugSense)
+            {
+                BugSenseHandler.Instance.CloseSession();
+                _bugsenseCreated = false;
+            }
+            else
+            {
+                throw new NotSupportedException("ExceptionLogger.Close()");
+            }
+#else
+             throw new PlatformNotSupportedException("ExceptionLogger.Close()");
 #endif
         }
 
@@ -133,40 +134,91 @@ namespace MarkerMetro.Unity.WinIntegration
         public void Send(Exception ex)
         {
 #if NETFX_CORE || WINDOWS_PHONE
-            if (_raygun != null)
-                _raygun.Value.Send(ex);
-            else if (_bugsenseCreated)
-                BugSenseHandler.Instance.LogException(ex);
+            if (_loggerType == LoggerType.BugSense)
+            {
+                if (_bugsenseCreated)
+                {
+                    BugSenseHandler.Instance.LogException(ex);
+                }
+            }
+            else if (_loggerType == LoggerType.RaygunIO)
+            {
+                if (_raygun != null)
+                {
+                    _raygun.Value.Send(ex);
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("ExceptionLogger.Send()");
+            }
 #else
-            // Debug.WriteLine("ExceptionLogger not supported: {0}", ex);
+            throw new PlatformNotSupportedException("ExceptionLogger.Send()");
 #endif
         }
 
         public void Send(string message, string stackTrace)
         {
 #if NETFX_CORE || WINDOWS_PHONE
-            if (_raygun != null)
-                _raygun.Value.Send(new WrappedException(message, stackTrace));
-            else if (_bugsenseCreated)
-                BugSenseHandler.Instance.LogException(new WrappedException(message, stackTrace));
+            if (_loggerType == LoggerType.BugSense)
+            {
+                if (_bugsenseCreated)
+                { 
+                    BugSenseHandler.Instance.LogException(new WrappedException(message, stackTrace));
+                }
+            }
+            else if (_loggerType == LoggerType.RaygunIO)
+            {
+                if (_raygun != null)
+                {
+                 _raygun.Value.Send(new WrappedException(message, stackTrace));
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("ExceptionLogger.Send()");
+            }
+
 #else
-            // Debug.WriteLine("ExceptionLogger not supported: {0}", ex);
+           throw new PlatformNotSupportedException("ExceptionLogger.Send()");
 #endif
         }
 
         public void AddMetadata(string key, string data)
         {
 #if NETFX_CORE || WINDOWS_PHONE
-            if (_bugsenseCreated)
-                BugSenseHandler.Instance.AddCrashExtraData(new BugSense.Core.Model.CrashExtraData(key, data));
+            if (_loggerType == LoggerType.BugSense)
+            {
+                if (_bugsenseCreated)
+                {
+                    BugSenseHandler.Instance.AddCrashExtraData(new BugSense.Core.Model.CrashExtraData(key, data));
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("ExceptionLogger.AddMetadata()");
+            }
+#else
+            throw new PlatformNotSupportedException("ExceptionLogger.AddMetadata()");
 #endif
         }
 
         public void SetUsername(string username)
         {
 #if NETFX_CORE || WINDOWS_PHONE
-            if (_bugsenseCreated)
-                BugSenseHandler.Instance.UserIdentifier = username;
+            if (_loggerType == LoggerType.BugSense)
+            {
+                if (_bugsenseCreated)
+                {
+                    BugSenseHandler.Instance.UserIdentifier = username;
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("ExceptionLogger.SetUsername()");
+            }
+#else
+            throw new PlatformNotSupportedException("ExceptionLogger.AddMetadata()");
 #endif
         }
     }
