@@ -28,11 +28,12 @@ namespace MarkerMetro.Unity.WinIntegration
 
         static ExceptionLogger _instance;
         static readonly object _sync = new object();
-        static LoggerType _loggerType = LoggerType.RaygunIO;
+        
 
 #if NETFX_CORE || WINDOWS_PHONE
         Lazy<RaygunClient> _raygun;
         bool _bugsenseCreated = false;
+        LoggerType _loggerType = LoggerType.RaygunIO;
 #endif
 
         private ExceptionLogger()
@@ -59,6 +60,9 @@ namespace MarkerMetro.Unity.WinIntegration
                     _instance = new ExceptionLogger();
 
 #if NETFX_CORE || WINDOWS_PHONE
+
+                _instance._loggerType = loggerType;
+
                 if (loggerType == LoggerType.RaygunIO)
                 { 
                     _instance._raygun = new Lazy<RaygunClient>(() => BuildRaygunClient(apiKey));
