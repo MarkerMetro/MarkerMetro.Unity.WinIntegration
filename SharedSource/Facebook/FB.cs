@@ -146,7 +146,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     _client.AccessToken = AccessToken;
                     FBStorage.SetString(TOKEN_KEY, EncryptionProvider.Encrypt(AccessToken, AppId));
                     FBStorage.SetString(EXPIRY_DATE, EncryptionProvider.Encrypt(
-                        Expires.ToString("d", CultureInfo.InvariantCulture), AppId));
+                        Expires.ToString("G", CultureInfo.InvariantCulture), AppId));
                 }
                 _web.Finish();
                 if (_onHideUnity != null)
