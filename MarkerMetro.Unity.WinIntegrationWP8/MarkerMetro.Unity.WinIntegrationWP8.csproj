@@ -91,9 +91,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Facebook.6.8.0\lib\wp8\Facebook.dll</HintPath>
     </Reference>
-    <Reference Include="MarkerMetro.Unity.WinLegacy, Version=1.6.0.330, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MarkerMetro.Unity.WinLegacy, Version=1.6.0.332, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MarkerMetro.Unity.WinLegacy.1.6.0.330\lib\windowsphone8\MarkerMetro.Unity.WinLegacy.dll</HintPath>
+      <HintPath>..\packages\MarkerMetro.Unity.WinLegacy.1.6.0.332\lib\windowsphone8\MarkerMetro.Unity.WinLegacy.dll</HintPath>
     </Reference>
     <Reference Include="Mindscape.Raygun4Net.WindowsPhone">
       <HintPath>..\packages\Mindscape.Raygun4Net.3.2.0\lib\wp71\Mindscape.Raygun4Net.WindowsPhone.dll</HintPath>
