@@ -56,6 +56,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         private const string TOKEN_KEY = "ATK";
         private const string EXPIRY_DATE = "EXP";
+        private const string EXPIRY_DATE_BIN = "EXPB";
         private const string FBID_KEY = "FBID";
         private const string FBNAME_KEY = "FBNAME";
 
@@ -144,9 +145,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     AccessToken = result.AccessToken;
                     Expires = result.Expires;
                     _client.AccessToken = AccessToken;
-                    FBStorage.SetString(TOKEN_KEY, EncryptionProvider.Encrypt(AccessToken, AppId));
-                    FBStorage.SetString(EXPIRY_DATE, EncryptionProvider.Encrypt(
-                        Expires.ToString("G", CultureInfo.InvariantCulture), AppId));
+                    FBStorage.Set(TOKEN_KEY, EncryptionProvider.Encrypt(AccessToken, AppId));
+                    FBStorage.Set(EXPIRY_DATE_BIN, Expires.ToBinary());
                 }
                 _web.Finish();
                 if (_onHideUnity != null)
@@ -158,8 +158,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     {
                         UserId = fbResult.Json["id"] as string;
                         UserName = fbResult.Json["name"] as string;
-                        FBStorage.SetString(FBID_KEY, UserId);
-                        FBStorage.SetString(FBNAME_KEY, UserName);
+                        FBStorage.Set(FBID_KEY, UserId);
+                        FBStorage.Set(FBNAME_KEY, UserName);
                     }
 
                     if (state is FacebookDelegate)
@@ -208,8 +208,16 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             if (FBStorage.HasKey(TOKEN_KEY))
             {
                 AccessToken = EncryptionProvider.Decrypt(FBStorage.GetString(TOKEN_KEY), AppId);
-                string expDate = EncryptionProvider.Decrypt(FBStorage.GetString(EXPIRY_DATE), AppId);
-                Expires = DateTime.Parse(expDate, CultureInfo.InvariantCulture);
+                if (FBStorage.HasKey(EXPIRY_DATE))
+                {
+                    string expDate = EncryptionProvider.Decrypt(FBStorage.GetString(EXPIRY_DATE), AppId);
+                    Expires = DateTime.Parse(expDate, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    long expDate = FBStorage.GetLong(EXPIRY_DATE_BIN);
+                    Expires = DateTime.FromBinary(expDate);
+                }
                 _client.AccessToken = AccessToken;
                 UserId = FBStorage.GetString(FBID_KEY);
                 UserName = FBStorage.GetString(FBNAME_KEY);

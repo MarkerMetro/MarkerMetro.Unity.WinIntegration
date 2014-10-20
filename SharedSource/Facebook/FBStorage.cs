@@ -44,7 +44,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 }
             }
 
-            public static void SetString(string key, string value)
+            public static void Set(string key, object value)
             {             
 #if WINDOWS_PHONE
                 if (HasKey(key))
@@ -74,6 +74,18 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 return null;
             }
 
+            public static long GetLong(string key)
+            {
+                if (HasKey(key))
+                {
+#if WINDOWS_PHONE
+                    return (long)IsolatedStorageSettings.ApplicationSettings[key];
+#elif NETFX_CORE
+                    return (long)roamingSettings.Values[key];
+#endif
+                }
+                return 0;
+            }
     }
 }
 
