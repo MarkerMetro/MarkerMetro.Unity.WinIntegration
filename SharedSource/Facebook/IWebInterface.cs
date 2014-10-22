@@ -29,5 +29,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// Stops navigation, closes the web view and disconnects the callbacks.
         /// </summary>
         void Finish();
+
+        /// <summary>
+        /// Clears the cookies in the web browser.
+        /// </summary>
+        void ClearCookies();
     }
 }
