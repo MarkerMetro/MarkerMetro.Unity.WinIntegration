@@ -152,12 +152,12 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         // additional methods added for convenience
 
-        public static string AccessToken
+        public static bool IsLoggedIn
         {
             get
             {
 #if WINDOWS_PHONE //|| NETFX_CORE
-                return FacebookSessionClient.CurrentSession.AccessToken;
+                return !String.IsNullOrEmpty(FacebookSessionClient.CurrentSession.AccessToken);
 #else
                 throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
 #endif
