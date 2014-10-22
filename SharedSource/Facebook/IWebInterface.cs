@@ -19,6 +19,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// <param name="onError">Called when a navigation error occurs</param>
         void Navigate(
             Uri uri,
+            bool showUI,
             NavigationEventCallback finishedCallback = null,
             NavigationErrorCallback onError = null,
             object state = null,
@@ -29,5 +30,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// Stops navigation, closes the web view and disconnects the callbacks.
         /// </summary>
         void Finish();
+
+        /// <summary>
+        /// Clears the cookies in the web browser.
+        /// </summary>
+        void ClearCookies();
     }
 }

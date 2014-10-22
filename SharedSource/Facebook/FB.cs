@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Collections.Generic;
 #endif
 using Facebook;
-using System; 
+using System;
 
 using MarkerMetro.Unity.WinIntegration;
 
@@ -56,6 +56,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         private const string TOKEN_KEY = "ATK";
         private const string EXPIRY_DATE = "EXP";
+        private const string EXPIRY_DATE_BIN = "EXPB";
         private const string FBID_KEY = "FBID";
         private const string FBNAME_KEY = "FBNAME";
 
@@ -78,13 +79,15 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             var uri = _client.GetLogoutUrl(new
             {
                 access_token = AccessToken,
-                next = _redirectUrl
+                next = _redirectUrl,
+                display = "popup"
             });
 
-            _web.Navigate(uri, (url, state) =>
+            _web.ClearCookies();
+            InvalidateData();
+            _web.Navigate(uri, false, (url, state) =>
             {
-                InvalidateData();
-                _web.Finish();
+                _web.Finish(); 
             },
             (url, error, state) => _web.Finish());
 #else
@@ -100,7 +103,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             {
                 // Already in use
                 if (callback != null)
-                    Dispatcher.InvokeOnAppThread( () => { callback(new FBResult() { Error = "Already in use" }); });
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Error = "Already in use" }); });
                 return;
             }
 
@@ -111,7 +114,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 display = "popup",
                 response_type = "token"
             });
-            _web.Navigate(uri, onError: LoginNavigationError, state: callback, startedCallback: LoginNavigationStarted);
+            _web.ClearCookies();
+            _web.Navigate(uri, true, onError: LoginNavigationError, state: callback, startedCallback: LoginNavigationStarted);
             if (_onHideUnity != null)
                 Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
 #else
@@ -144,9 +148,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     AccessToken = result.AccessToken;
                     Expires = result.Expires;
                     _client.AccessToken = AccessToken;
-                    FBStorage.SetString(TOKEN_KEY, EncryptionProvider.Encrypt(AccessToken, AppId));
-                    FBStorage.SetString(EXPIRY_DATE, EncryptionProvider.Encrypt(
-                        Expires.ToString("d", CultureInfo.InvariantCulture), AppId));
+                    FBStorage.Set(TOKEN_KEY, EncryptionProvider.Encrypt(AccessToken, AppId));
+                    FBStorage.Set(EXPIRY_DATE_BIN, Expires.ToBinary());
                 }
                 _web.Finish();
                 if (_onHideUnity != null)
@@ -158,8 +161,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     {
                         UserId = fbResult.Json["id"] as string;
                         UserName = fbResult.Json["name"] as string;
-                        FBStorage.SetString(FBID_KEY, UserId);
-                        FBStorage.SetString(FBNAME_KEY, UserName);
+                        FBStorage.Set(FBID_KEY, UserId);
+                        FBStorage.Set(FBNAME_KEY, UserName);
                     }
 
                     if (state is FacebookDelegate)
@@ -167,11 +170,15 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                         JsonObject jResult = new JsonObject();
                         jResult.Add(new KeyValuePair<string, object>("authToken", AccessToken));
                         jResult.Add(new KeyValuePair<string, object>("authTokenExpiry", Expires.ToString()));
-                        
-                        Dispatcher.InvokeOnAppThread(() => { ((FacebookDelegate)state)(new FBResult() {
-                            Json = jResult,
-                            Text = jResult.ToString()
-                        }); });
+
+                        Dispatcher.InvokeOnAppThread(() =>
+                        {
+                            ((FacebookDelegate)state)(new FBResult()
+                            {
+                                Json = jResult,
+                                Text = jResult.ToString()
+                            });
+                        });
                     }
                 });
             }
@@ -184,6 +191,12 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             HideUnityDelegate onHideUnity, string redirectUrl = null)
         {
 #if WINDOWS_PHONE || NETFX_CORE
+            if (_client != null)
+            {
+                if (onInitComplete != null)
+                    Dispatcher.InvokeOnAppThread(() => onInitComplete());
+                return;
+            }
             if (_web == null) throw new MissingPlatformException();
             if (string.IsNullOrEmpty(appId)) throw new ArgumentException("Invalid Facebook App ID");
 
@@ -198,9 +211,19 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             if (FBStorage.HasKey(TOKEN_KEY))
             {
                 AccessToken = EncryptionProvider.Decrypt(FBStorage.GetString(TOKEN_KEY), AppId);
-                string expDate = EncryptionProvider.Decrypt(FBStorage.GetString(EXPIRY_DATE), AppId);
-                Expires = DateTime.Parse(expDate, CultureInfo.InvariantCulture);
+                if (FBStorage.HasKey(EXPIRY_DATE))
+                {
+                    string expDate = EncryptionProvider.Decrypt(FBStorage.GetString(EXPIRY_DATE), AppId);
+                    Expires = DateTime.Parse(expDate, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    long expDate = FBStorage.GetLong(EXPIRY_DATE_BIN);
+                    Expires = DateTime.FromBinary(expDate);
+                }
                 _client.AccessToken = AccessToken;
+                UserId = FBStorage.GetString(FBID_KEY);
+                UserName = FBStorage.GetString(FBNAME_KEY);
 
                 // verifies if the token has expired:
                 if (DateTime.Compare(DateTime.Now, Expires) > 0)  // < timezone?
@@ -209,14 +232,18 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 //task.Wait();
             }
 
-            _client.AccessToken = AccessToken;
-            UserId = FBStorage.GetString(FBID_KEY);
-            UserName = FBStorage.GetString(FBNAME_KEY);
-
             if (onInitComplete != null)
-                Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
+                Dispatcher.InvokeOnAppThread(() => onInitComplete());
 #else
             throw new PlatformNotSupportedException("");
+#endif
+        }
+
+        public static void ChangeRedirect(string redirectUrl)
+        {
+#if WINDOWS_PHONE || NETFX_CORE
+            if (!string.IsNullOrEmpty(redirectUrl) && !_web.IsActive)
+                _redirectUrl = redirectUrl;
 #endif
         }
 
@@ -228,11 +255,11 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// <returns>The async task</returns>
         private static async Task TestAccessToken()
         {
-            try 
+            try
             {
-                await _client.GetTaskAsync("/me?fields=id,name"); 
+                await _client.GetTaskAsync("/me?fields=id,name");
             }
-            catch ( FacebookApiException )
+            catch (FacebookApiException)
             {
                 // If any exception then auto login has been an issue.  Set everything to null so the game 
                 // thinks the user is logged out and they can restart the login procedure
@@ -251,6 +278,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             FBStorage.DeleteKey(FBID_KEY);
             FBStorage.DeleteKey(FBNAME_KEY);
             FBStorage.DeleteKey(EXPIRY_DATE);
+            FBStorage.DeleteKey(EXPIRY_DATE_BIN);
         }
 
         private static void HandleGetCompleted(object sender, FacebookApiEventArgs e)
@@ -337,11 +365,11 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             if (_onHideUnity != null)
                 Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
 
-            Uri uri = new Uri("https://www.facebook.com/dialog/apprequests?app_id=" + AppId + 
-                "&message=" + message + "&redirect_uri=" + _redirectUrl, UriKind.RelativeOrAbsolute);
-            _web.Navigate(uri, finishedCallback: (url, state) => 
+            Uri uri = new Uri("https://www.facebook.com/dialog/apprequests?app_id=" + AppId +
+                "&message=" + message + "&display=popup&redirect_uri=" + _redirectUrl, UriKind.RelativeOrAbsolute);
+            _web.Navigate(uri, true, finishedCallback: (url, state) =>
             {
-                if ( url.ToString().StartsWith( _redirectUrl ) )
+                if (url.ToString().StartsWith(_redirectUrl))
                 {
                     _web.Finish();
                     if (_onHideUnity != null)
