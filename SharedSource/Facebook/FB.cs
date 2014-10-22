@@ -79,14 +79,15 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             var uri = _client.GetLogoutUrl(new
             {
                 access_token = AccessToken,
-                next = _redirectUrl
+                next = _redirectUrl,
+                display = "popup"
             });
 
-            _web.Navigate(uri, (url, state) =>
+            _web.ClearCookies();
+            InvalidateData();
+            _web.Navigate(uri, false, (url, state) =>
             {
-                InvalidateData();
-                _web.Finish();
-                _web.ClearCookies();  
+                _web.Finish(); 
             },
             (url, error, state) => _web.Finish());
 #else
@@ -114,7 +115,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 response_type = "token"
             });
             _web.ClearCookies();
-            _web.Navigate(uri, onError: LoginNavigationError, state: callback, startedCallback: LoginNavigationStarted);
+            _web.Navigate(uri, true, onError: LoginNavigationError, state: callback, startedCallback: LoginNavigationStarted);
             if (_onHideUnity != null)
                 Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
 #else
@@ -277,6 +278,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             FBStorage.DeleteKey(FBID_KEY);
             FBStorage.DeleteKey(FBNAME_KEY);
             FBStorage.DeleteKey(EXPIRY_DATE);
+            FBStorage.DeleteKey(EXPIRY_DATE_BIN);
         }
 
         private static void HandleGetCompleted(object sender, FacebookApiEventArgs e)
@@ -365,7 +367,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
             Uri uri = new Uri("https://www.facebook.com/dialog/apprequests?app_id=" + AppId +
                 "&message=" + message + "&display=popup&redirect_uri=" + _redirectUrl, UriKind.RelativeOrAbsolute);
-            _web.Navigate(uri, finishedCallback: (url, state) =>
+            _web.Navigate(uri, true, finishedCallback: (url, state) =>
             {
                 if (url.ToString().StartsWith(_redirectUrl))
                 {

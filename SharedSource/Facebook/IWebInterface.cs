@@ -19,6 +19,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// <param name="onError">Called when a navigation error occurs</param>
         void Navigate(
             Uri uri,
+            bool showUI,
             NavigationEventCallback finishedCallback = null,
             NavigationErrorCallback onError = null,
             object state = null,
