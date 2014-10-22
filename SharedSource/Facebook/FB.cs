@@ -86,6 +86,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             {
                 InvalidateData();
                 _web.Finish();
+                _web.ClearCookies();  
             },
             (url, error, state) => _web.Finish());
 #else
@@ -112,6 +113,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 display = "popup",
                 response_type = "token"
             });
+            _web.ClearCookies();
             _web.Navigate(uri, onError: LoginNavigationError, state: callback, startedCallback: LoginNavigationStarted);
             if (_onHideUnity != null)
                 Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
