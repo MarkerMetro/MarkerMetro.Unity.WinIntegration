@@ -23,8 +23,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             {
                 
 #if WINDOWS_PHONE
-                var value = String.Empty;
-                return IsolatedStorageSettings.ApplicationSettings.TryGetValue(key, out value);
+                return IsolatedStorageSettings.ApplicationSettings.Contains(key);
 #elif NETFX_CORE
                 Object value = null;
                 return roamingSettings.Values.TryGetValue(key, out value);
