@@ -362,7 +362,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
 
             Uri uri = new Uri("https://www.facebook.com/dialog/apprequests?app_id=" + AppId +
-                "&message=" + message + "&redirect_uri=" + _redirectUrl, UriKind.RelativeOrAbsolute);
+                "&message=" + message + "&display=popup&redirect_uri=" + _redirectUrl, UriKind.RelativeOrAbsolute);
             _web.Navigate(uri, finishedCallback: (url, state) =>
             {
                 if (url.ToString().StartsWith(_redirectUrl))
