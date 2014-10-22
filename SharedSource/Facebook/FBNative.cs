@@ -13,6 +13,10 @@ using MarkerMetro.Unity.WinIntegration;
 #if WINDOWS_PHONE
 using Facebook.Client;
 using System.IO.IsolatedStorage;
+using Windows.Storage;
+using System.Xml.Linq;
+using System.IO;
+using System.Linq;
 #elif NETFX_CORE
 using Windows.Storage;
 #endif
@@ -31,16 +35,26 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         private static HideUnityDelegate _onHideUnity;
 
 #endif
+
         /// <summary>
         /// FB.Init as per Unity SDK
         /// </summary>
         /// <remarks>
         /// https://developers.facebook.com/docs/unity/reference/current/FB.Init
         /// </remarks>
-        public static void Init(InitDelegate onInitComplete, string appId, HideUnityDelegate onHideUnity)
+        public static void Init(InitDelegate onInitComplete, HideUnityDelegate onHideUnity)
         {
 #if WINDOWS_PHONE //|| NETFX_CORE
-            if (string.IsNullOrEmpty(appId)) throw new ArgumentException("Invalid Facebook App ID");
+            var task = Task.Run(async () => await GetFacebookConfigValue("Facebook", "AppId"));
+            try
+            {
+                task.Wait();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidDataException("Invalid Facebook App ID", ex);
+            }
+            var appId = task.Result;
             _fbSessionClient = new FacebookSessionClient(appId);
             _onHideUnity = onHideUnity;
             if (onInitComplete != null)
@@ -141,6 +155,30 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
 #endif
         }
+
+#if WINDOWS_PHONE //|| NETFX_CORE
+
+        private async static Task<string> GetFacebookConfigValue(string node, string attribute)
+        {
+            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///FacebookConfig.xml"));
+            using (Stream strm = await file.OpenStreamForReadAsync())
+            {
+                var xml = XElement.Load(strm);
+                var filteredAttributeValue = (from app in xml.Descendants(node)
+                                              let xAttribute = app.Attribute(attribute)
+                                              where xAttribute != null
+                                              select xAttribute.Value).FirstOrDefault();
+
+                if (string.IsNullOrWhiteSpace(filteredAttributeValue))
+                {
+                    return string.Empty;
+                }
+
+                return filteredAttributeValue;
+            }
+        }
+
+#endif
 
     }
 }
