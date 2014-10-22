@@ -45,7 +45,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         public static void Init(InitDelegate onInitComplete, HideUnityDelegate onHideUnity)
         {
 #if WINDOWS_PHONE //|| NETFX_CORE
-            var task = Task.Run(async () => await GetFacebookConfigValue("Facebook", "AppId"));
+            _onHideUnity = onHideUnity;
+
+            // get the app id stored at app level
+            var task = GetFacebookConfigValue("Facebook", "AppId");
             try
             {
                 task.Wait();
@@ -56,7 +59,11 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             }
             var appId = task.Result;
             _fbSessionClient = new FacebookSessionClient(appId);
-            _onHideUnity = onHideUnity;
+
+            // check and extend token if required
+            var tokenCheckTask = FacebookSessionClient.CheckAndExtendTokenIfNeeded();
+            tokenCheckTask.Wait();
+
             if (onInitComplete != null)
                 Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
 #else
@@ -145,15 +152,16 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         // additional methods added for convenience
 
-        public static void CheckAndExtendTokenIfNeeded(Action callback)
+        public static string AccessToken
         {
+            get
+            {
 #if WINDOWS_PHONE //|| NETFX_CORE
-            var task = FacebookSessionClient.CheckAndExtendTokenIfNeeded();
-            task.Wait();
-            if (callback != null) callback();
+                return FacebookSessionClient.CurrentSession.AccessToken;
 #else
-            throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
+                throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
 #endif
+            }
         }
 
 #if WINDOWS_PHONE //|| NETFX_CORE
