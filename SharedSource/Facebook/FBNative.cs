@@ -46,15 +46,24 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
 #if WINDOWS_PHONE //|| NETFX_CORE
             _onHideUnity = onHideUnity;
+            try
+            { 
+                _fbSessionClient = new FacebookSessionClient(appId);
+            } catch (Exception ex)
+            {
+                throw new Exception("Unable to create FacebookSessionClient");
+            }
 
-            _fbSessionClient = new FacebookSessionClient(appId);
+            if (FacebookSessionClient.CurrentSession == null)
+                throw new Exception("FacebookSessionClient.CurrentSession Is NUll");
 
-            // check and extend token if required
-            var tokenCheckTask = FacebookSessionClient.CheckAndExtendTokenIfNeeded();
-            tokenCheckTask.Wait();
-
-            if (onInitComplete != null)
-                Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
+            Task.Run(async () =>
+            {
+                // check and extend token if required
+                await FacebookSessionClient.CheckAndExtendTokenIfNeeded();
+                if (onInitComplete != null)
+                    Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
+            });
 #else
             throw new PlatformNotSupportedException("");
 #endif
