@@ -157,7 +157,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             get
             {
 #if WINDOWS_PHONE //|| NETFX_CORE
-                return !String.IsNullOrEmpty(FacebookSessionClient.CurrentSession.AccessToken);
+                return FacebookSessionClient.CurrentSession!= null && !String.IsNullOrEmpty(FacebookSessionClient.CurrentSession.AccessToken);
 #else
                 throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
 #endif
