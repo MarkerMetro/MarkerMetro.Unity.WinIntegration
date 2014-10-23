@@ -423,6 +423,24 @@ namespace MarkerMetro.Unity.WinIntegration
 #endif
         }
 
+        public void ShowDialog(string content, string title, Action<bool> callback, string okText = "", string cancelText = "")
+        {
+# if WINDOWS_PHONE
+            MessageBoxResult res;
+            if (string.IsNullOrWhiteSpace(okText) || (string.IsNullOrWhiteSpace(cancelText)))
+                res = MessageBox.Show(content, title, MessageBoxButton.OK);
+            else
+                res = MessageBox.Show(content, title, MessageBoxButton.OKCancel);
+
+            if (callback != null)
+                callback(res == MessageBoxResult.OK);
+# elif NETFX_CORE
+            ShowDialogAsync(content, title, callback, okText, cancelText).ContinueWith(t => { });
+#else
+            throw new PlatformNotSupportedException("ShowDialog");
+#endif
+        }
+
 #if NETFX_CORE
         async Task ShowDialogAsync(string content, string title, Action callback)
         {
@@ -432,6 +450,30 @@ namespace MarkerMetro.Unity.WinIntegration
 
             if (callback != null)
                 callback();
+        }
+
+        async Task ShowDialogAsync(string content, string title, Action<bool> callback, string okText, string cancelText)
+        {
+            var dialog = string.IsNullOrWhiteSpace(title) ? new MessageDialog(content) : new MessageDialog(content, title);
+
+            if (!string.IsNullOrWhiteSpace(okText))
+            {
+                dialog.Commands.Add(new UICommand(okText, new UICommandInvokedHandler((command) => { if (callback != null) callback(true); })));
+            }
+            if (!string.IsNullOrWhiteSpace(cancelText))
+            {
+                dialog.Commands.Add(new UICommand(cancelText, new UICommandInvokedHandler((command) => { if (callback != null) callback(false); })));
+            }
+
+            if (!string.IsNullOrWhiteSpace(okText) && !string.IsNullOrWhiteSpace(cancelText))
+            {
+                // Set the command that will be invoked by default
+                dialog.DefaultCommandIndex = 0;
+                // Set the command to be invoked when escape is pressed
+                dialog.CancelCommandIndex = 1;
+            }
+
+            await dialog.ShowAsync();
         }
 #endif
 
