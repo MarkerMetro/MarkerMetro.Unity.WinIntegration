@@ -46,16 +46,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
 #if WINDOWS_PHONE //|| NETFX_CORE
             _onHideUnity = onHideUnity;
-            try
-            { 
-                _fbSessionClient = new FacebookSessionClient(appId);
-            } catch (Exception ex)
-            {
-                throw new Exception("Unable to create FacebookSessionClient");
-            }
-
-            if (FacebookSessionClient.CurrentSession == null)
-                throw new Exception("FacebookSessionClient.CurrentSession Is NUll");
+            _fbSessionClient = new FacebookSessionClient(appId);
 
             Task.Run(async () =>
             {
