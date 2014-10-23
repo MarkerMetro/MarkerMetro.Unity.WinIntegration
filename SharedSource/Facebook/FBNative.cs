@@ -35,8 +35,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         private static HideUnityDelegate _onHideUnity;
 #endif
 
-        public static FBLoginSuccessDelegate OnFBLoginSuccess;
-        public delegate void FBLoginSuccessDelegate();
+        //public static FBLoginSuccessDelegate OnFBLoginSuccess;
+        //public delegate void FBLoginSuccessDelegate();
 
         /// <summary>
         /// FB.Init as per Unity SDK
@@ -50,14 +50,14 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             _onHideUnity = onHideUnity;
             _fbSessionClient = new FacebookSessionClient(appId);
 
-            FacebookSessionClient.OnFacebookAuthenticationFinished = s =>
-            {
-                if (OnFBLoginSuccess != null)
-                {
-                    OnFBLoginSuccess();
-                }
-            };
-
+            // TODO raise event
+            //FacebookSessionClient.OnFacebookAuthenticationFinished = s =>
+            //{
+            //    if (OnFBLoginSuccess != null)
+            //    {
+            //        OnFBLoginSuccess();
+            //    }
+            //};
 
             Task.Run(async () =>
             {
