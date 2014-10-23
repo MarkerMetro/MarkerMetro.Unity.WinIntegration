@@ -96,13 +96,37 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             FacebookDelegate callback)
         {
 #if WINDOWS_PHONE //|| NETFX_CORE
-            FacebookClient fb = new FacebookClient(FacebookSessionClient.CurrentSession.AccessToken);
-            if (method != HttpMethod.GET) throw new NotImplementedException();
-            fb.GetAsync(endpoint, null, callback);
+            
+            if (method != HttpMethod.GET) throw new NotImplementedException();        
+            Task.Run(async () =>
+            {
+                FacebookClient fb = new FacebookClient(FacebookSessionClient.CurrentSession.AccessToken);
+                FBResult fbResult = null;
+                try
+                { 
+                    var apiCall = await fb.GetTaskAsync(endpoint, null);
+                    if (apiCall != null)
+                    {
+                        fbResult = new FBResult();
+                        fbResult.Text = apiCall.ToString();
+                        fbResult.Json = apiCall as JsonObject;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    fbResult = new FBResult();
+                    fbResult.Error = ex.Message;
+                }
+                if (callback != null)
+                {
+                    Dispatcher.InvokeOnAppThread(() => { callback(fbResult); });
+                }
+            });
 #else
             throw new PlatformNotSupportedException("");
 #endif
         }
+
 
         public static void AppRequest(
                 string message,
