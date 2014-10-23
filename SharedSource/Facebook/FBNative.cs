@@ -116,7 +116,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             )
         {
 #if WINDOWS_PHONE //|| NETFX_CORE
-            FacebookSessionClient.ShowAppRequestsDialog();
+            Dispatcher.InvokeOnUIThread(() =>
+                {
+                    FacebookSessionClient.ShowAppRequestsDialog();        
+                });
             if (_onHideUnity != null)
                 Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
 
@@ -157,7 +160,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             get
             {
 #if WINDOWS_PHONE //|| NETFX_CORE
-                return FacebookSessionClient.CurrentSession!= null && !String.IsNullOrEmpty(FacebookSessionClient.CurrentSession.AccessToken);
+                return FacebookSessionClient.CurrentSession != null && !String.IsNullOrEmpty(FacebookSessionClient.CurrentSession.AccessToken);
 #else
                 throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
 #endif
