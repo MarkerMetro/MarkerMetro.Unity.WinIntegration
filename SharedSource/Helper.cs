@@ -15,14 +15,17 @@ using Windows.Networking.Connectivity;
 using Windows.UI.Popups;
 using Windows.Foundation;
 using Windows.Security.ExchangeActiveSyncProvisioning;
+using Windows.Networking.PushNotifications;
 #elif WINDOWS_PHONE
 using Microsoft.Phone.Tasks;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Windows;
 using Microsoft.Phone.Info;
 using Windows.ApplicationModel.Store;
 using Windows.Networking.Connectivity;
 using Microsoft.Phone.UserData;
+using Microsoft.Phone.Notification;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration
@@ -301,6 +304,75 @@ namespace MarkerMetro.Unity.WinIntegration
             return "";
 #endif
         }
+
+        public string GetPushChannel(string channelName)
+        {
+#if NETFX_CORE || WINDOWS_PHONE
+            var task = GetChannelAsync(channelName);
+
+            task.Wait();
+
+            if (task.IsCompleted)
+                return task.Result;
+
+            throw task.Exception;
+#else
+            throw new PlatformNotSupportedException("GetPushChannel(string channelName)");
+#endif
+        }
+
+#if NETFX_CORE
+        private static Task<string> GetChannelAsync(string channelName)
+        {
+            return Task.Run(async () =>
+            {
+                var channelUri = String.Empty;
+                try
+                {
+                    var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                    channelUri = channel.Uri;
+                }
+                catch (Exception ex)
+                {
+                    channelUri = String.Empty;
+                }
+                return channelUri;
+            });
+        }
+#elif WINDOWS_PHONE
+
+        /// Holds the push channel that is created or found.
+        static HttpNotificationChannel pushChannel;
+
+        private static Task<string> GetChannelAsync(string channelName)
+        {
+            return Task.Run(async () =>
+            {
+                var channelUri = String.Empty;
+
+                pushChannel = HttpNotificationChannel.Find(channelName);
+                if (pushChannel == null)
+                {
+                    pushChannel = new HttpNotificationChannel(channelName);
+
+                    pushChannel.ChannelUriUpdated += (s, e) =>
+                    {
+                        channelUri = e.ChannelUri.ToString();
+                    };
+
+                    pushChannel.Open();
+                    pushChannel.BindToShellToast();
+                    pushChannel.BindToShellTile();
+                }
+                else
+                {
+                    channelUri = pushChannel.ChannelUri.ToString();
+                }
+
+                return channelUri;
+            });
+        }
+#endif
 
 #if NETFX_CORE
         public enum ProcessorArchitecture : ushort
