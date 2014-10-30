@@ -203,6 +203,22 @@ namespace MarkerMetro.Unity.WinIntegration
 #endif
         }
 
+        public void LeaveBreadCrumb(string crumb)
+        {
+#if NETFX_CORE || WINDOWS_PHONE
+            if(_loggerType == LoggerType.BugSense)
+            {
+                BugSenseHandler.Instance.LeaveBreadCrumb(crumb);
+            }
+            else
+            {
+                throw new NotSupportedException("ExceptionLogger.LeaveBreadCrumb()");
+            }
+#else
+            throw new PlatformNotSupportedException("ExceptionLogger.AddMetadata()");
+#endif
+        }
+
         public void SetUsername(string username)
         {
 #if NETFX_CORE || WINDOWS_PHONE
