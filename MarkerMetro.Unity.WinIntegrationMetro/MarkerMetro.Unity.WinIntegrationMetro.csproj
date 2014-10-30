@@ -60,6 +60,9 @@
     <Compile Include="..\SharedSource\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\LocalNotifications\ReminderManager.cs">
+      <Link>LocalNotifications\ReminderManager.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
     </Compile>
