@@ -146,6 +146,26 @@ namespace MarkerMetro.Unity.WinIntegration.LocalNotifications
 #endif
         }
 
+        /// <summary>
+        /// Remove a scheduled reminder
+        /// </summary>
+        public static void RemoveReminder(string id)
+        {
+            // if reminders not enabled, its not scheduled
+            if (!AreRemindersEnabled()) return;
 
+#if NETFX_CORE
+            var notifier = ToastNotificationManager.CreateToastNotifier();
+            var reminders = notifier.GetScheduledToastNotifications();
+            var existingReminder = reminders.FirstOrDefault(n => n.Id == id);
+            if (existingReminder != null)
+            {
+                notifier.RemoveFromSchedule(existingReminder);
+            }
+#elif WINDOWS_PHONE
+            if (Microsoft.Phone.Scheduler.ScheduledActionService.GetActions<Microsoft.Phone.Scheduler.Reminder>().Where(r => r.Name == id).Count() > 0)
+                Microsoft.Phone.Scheduler.ScheduledActionService.Remove(id);
+#endif
+        }
     }
 }

@@ -15,14 +15,17 @@ using Windows.Networking.Connectivity;
 using Windows.UI.Popups;
 using Windows.Foundation;
 using Windows.Security.ExchangeActiveSyncProvisioning;
+using Windows.Networking.PushNotifications;
 #elif WINDOWS_PHONE
 using Microsoft.Phone.Tasks;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Windows;
 using Microsoft.Phone.Info;
 using Windows.ApplicationModel.Store;
 using Windows.Networking.Connectivity;
 using Microsoft.Phone.UserData;
+using Microsoft.Phone.Notification;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration
@@ -127,6 +130,59 @@ namespace MarkerMetro.Unity.WinIntegration
              throw new PlatformNotSupportedException("ClearLocalState");
 #endif
         }
+
+		public void GetPushChannel(string channelName, Action<string> callback)
+		{
+#if NETFX_CORE 
+			Dispatcher.InvokeOnUIThread(async () =>
+			{
+				try
+				{
+					var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+					if (callback != null)
+					{
+						Dispatcher.InvokeOnAppThread(() => callback(channel.Uri));
+					}
+				}
+				catch
+				{
+					if (callback != null)
+					{
+						Dispatcher.InvokeOnAppThread(() => callback(String.Empty));
+					}
+				}
+			});
+#elif WINDOWS_PHONE
+			try
+			{
+				var channelUri = String.Empty;
+				var pushChannel = HttpNotificationChannel.Find(channelName);
+
+				if (pushChannel == null)
+				{
+					pushChannel = new HttpNotificationChannel(channelName);
+
+					pushChannel.ChannelUriUpdated += (s, e) => { channelUri = e.ChannelUri.ToString(); };
+
+					pushChannel.Open();
+					pushChannel.BindToShellToast();
+					pushChannel.BindToShellTile();
+				}
+				else
+					channelUri = pushChannel.ChannelUri.ToString();
+
+				if (callback != null)
+					Dispatcher.InvokeOnAppThread(() => callback(channelUri));
+			}
+			catch
+			{
+				if (callback != null)
+					Dispatcher.InvokeOnAppThread(() => callback(String.Empty));
+			}
+#else
+            throw new PlatformNotSupportedException("GetPushChannel(string channelName, Action<string> callback)");
+#endif
+		}
 
         /// <summary>
         /// Returns the application language
@@ -301,6 +357,8 @@ namespace MarkerMetro.Unity.WinIntegration
             return "";
 #endif
         }
+
+        
 
 #if NETFX_CORE
         public enum ProcessorArchitecture : ushort

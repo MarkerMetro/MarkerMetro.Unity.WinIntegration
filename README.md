@@ -91,6 +91,18 @@ Specifically for WP8, the only other StatusCode used is NotReady when after a su
 void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
 
+## Local Notifications
+
+Reminders can be managedf using LocalNotifications.ReminderManager.
+
+ReminderManage will use system reminders on WP8, and scheduled notification toasts on Win8.1 allowing you to set deterministic timer based prompts to the user.
+
+Usage Guidelines:
+
+- Win 8.1 Ensure that you have enabled "Is Toast Capable" in your manifest
+- Add an option in settings screen to disable reminders
+- Win 8.1 Add toggle in settings charm to disable reminders
+
 ## Helper
 
 Add a using statement to include the  APIs.
