@@ -142,15 +142,15 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             )
         {
 #if WINDOWS_PHONE //|| NETFX_CORE
-            Dispatcher.InvokeOnUIThread(() =>
-                {
-                    FacebookSessionClient.ShowAppRequestsDialog();        
-                });
+            //Dispatcher.InvokeOnUIThread(() =>
+            //    {
+            //        FacebookSessionClient.ShowAppRequestsDialog();        
+            //    });
             if (_onHideUnity != null)
                 Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
 
 
-            // _fbSessionClient.WebDialog.Navigate.... < FReddy use this for now, we'll put the navigation itsef back into the FB Client later so it's more abstracted
+            //_fbSessionClient.WebDialog.Navigate(new Uri(String.Format("https://m.facebook.com/v2.1/dialog/apprequests?access_token={0}&redirect_uri=fbconnect%3A%2F%2Fsuccess&app_id={1}&message=YOUR_MESSAGE_HERE&display=touch", FacebookSessionClient.CurrentSession.AccessToken, FacebookSessionClient.CurrentSession.AppId)));
 
             //public void ShowAppRequestsDialog()
             //{
