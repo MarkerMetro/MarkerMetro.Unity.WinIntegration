@@ -158,52 +158,19 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 if (_onHideUnity != null)
                     Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
 
-                FacebookSession currentSession = FacebookSessionClient.CurrentSession;
-
-                Uri uri = new Uri(String.Format("https://m.facebook.com/v2.1/dialog/apprequests?access_token={0}&redirect_uri={1}&app_id={2}&message={3}&display=touch",
-                    currentSession.AccessToken, _redirectUrl, currentSession.AppId, message));
-
-                _fbSessionClient.WebDialog.Navigate(uri, true, finishedCallback: (url, state) =>
+                _fbSessionClient.AppRequest(message, to, filters, excludeIds, maxRecipients, data, title, (result) =>
                 {
-                    if (url.ToString().StartsWith(_redirectUrl))
-                    {
-                        _fbSessionClient.WebDialog.Finish();
-                        if (_onHideUnity != null)
-                            Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
-                        if (callback != null)
-                            Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = "Finished AppRequest" }); });
-                    }
-                }, onError: NavigationError, state: callback);
+                    if (_onHideUnity != null)
+                        Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
+
+                    if (callback != null)
+                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = result.Text, Error = result.Error, Json = result.Json }); });
+                });
             });
-            
-
-            //public void ShowAppRequestsDialog()
-            //{
-            //    dialogWebBrowser.Navigate(new Uri(String.Format("https://m.facebook.com/v2.1/dialog/apprequests?access_token={0}&redirect_uri=fbconnect%3A%2F%2Fsuccess&app_id={1}&message=YOUR_MESSAGE_HERE&display=touch", FacebookSessionClient.CurrentSession.AccessToken, FacebookSessionClient.CurrentSession.AppId)));
-            //}
-
-            //public void ShowFeedDialog()
-            //{
-            //    dialogWebBrowser.Navigate(new Uri(String.Format("https://m.facebook.com/v2.1/dialog/feed?access_token={0}&redirect_uri=fbconnect%3A%2F%2Fsuccess&app_id={1}&display=touch", FacebookSessionClient.CurrentSession.AccessToken, FacebookSessionClient.CurrentSession.AppId)));
-            //}
-            
 #else
             throw new PlatformNotSupportedException("");
 #endif
         }
-
-#if WINDOWS_PHONE //|| NETFX_CORE
-        private static void NavigationError(Uri url, int error, object state)
-        {
-            //Debug.LogError("Nav error: " + error);
-            if (state is FacebookDelegate)
-                Dispatcher.InvokeOnAppThread(() => { ((FacebookDelegate)state)(new FBResult() { Error = error.ToString(), Text = "AppRequest cancelled or ended with error." }); });
-            _fbSessionClient.WebDialog.Finish();
-            if (_onHideUnity != null)
-                Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
-        }
-#endif
-
 
         // additional methods added for convenience
 
