@@ -147,7 +147,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #if WINDOWS_PHONE //|| NETFX_CORE
             Dispatcher.InvokeOnUIThread(() =>
             {
-                if (_fbSessionClient.WebDialog.IsActive || !IsLoggedIn)
+                if (_fbSessionClient.IsDialogOpen || !IsLoggedIn)
                 {
                     //Already in use
                     if (callback != null)
@@ -155,9 +155,11 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     return;
                 }
 
+                // tell unity to pause when the dialog is active
                 if (_onHideUnity != null)
                     Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
 
+                // pass in params to facebook client's app request
                 _fbSessionClient.AppRequest(message, to, filters, excludeIds, maxRecipients, data, title, (result) =>
                 {
                     if (_onHideUnity != null)
