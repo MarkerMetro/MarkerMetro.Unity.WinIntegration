@@ -33,9 +33,6 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #if WINDOWS_PHONE //|| NETFX_CORE
         private static FacebookSessionClient _fbSessionClient;
         private static HideUnityDelegate _onHideUnity;
-        private static string _redirectUrl = "fbconnect%3A%2F%2Fsuccess";
-
-        public static FacebookSessionClient FBSessionClient { get { return _fbSessionClient; } }
 #endif
 
         public static FBLoginCompleteDelegate OnFBLoginComplete;
@@ -188,5 +185,18 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             }
         }
 
+#if WINDOWS_PHONE
+        // return whether back button pressed event is consumed by facebook for closing the dialog
+        public static bool BackButtonPressed()
+        {
+            if (_fbSessionClient != null && _fbSessionClient.IsDialogOpen)
+            {
+                _fbSessionClient.CloseWebDialog();
+                return true;
+            }
+            else
+                return false;
+        }
+#endif
     }
 }
