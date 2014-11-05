@@ -19,21 +19,35 @@ This plugin helps with: Facebook integration, Store Integration, Helper to Get A
 
 ## Facebook Integration
 
-Add a using statement to include the Facebook APIs.
+Ensure you set the app id in Assets/Plugins/MarkerMetro/Constants.cs
+
+For Windows Phone, ensure you modify the WMAppManifest.xml to change the protocal handler to fb[appid] in the Extensions element. This will ensure the native login can work.
+
+Add using statements to include the Facebook APIs as follows:
+
 ```csharp
+#if UNITY_WINRT && !UNITY_EDITOR
 using MarkerMetro.Unity.WinIntegration.Facebook;
+
+#if UNITY_WP8
+using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FBNative;
+#else
+using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FB;
+#endif
+
+#endif
 ```
+
+Windows Phone uses a native mobile internet explorer login approach which provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs and graph calls will work without issue. 
+
+Windows 8.1 uses a traditional web view approach which we will be looking to ugprade to a native login in the future.
 
 Facebook implementations are quite game specific, however you will always need to initialize the FB client, for which you can use the Marker Metro test Faceboook app created by markermetro@live.com facebook account (see \MM Team - Administration\Logins\Facebook accounts.txt" for the password on dropbox).
 
-Here's an example of the basic calls:
+Here's an example of the basic init call:
 
 ```csharp
-FB.Init(fbInitComplete, "682783485145217", fbOnHideUnity); 
-FB.Login("publish_actions", fbResult =>
-{
-    // Successful login, or deal with errors
-});
+FBWin.Init(fbInitComplete, "682783485145217", fbOnHideUnity); 
 
 private void fbInitComplete()
 {
@@ -46,8 +60,59 @@ private void fbOnHideUnity(bool isShow)
 }
 
 ```
+For login, on Windows 8.1 you will use a callback approach as the login uses an in app web view:
 
-It is assumed you will be using MarkerMetro.Unity.WinShared  which includes the necessary web view/browser controls for displaying all necessary facebook dialogs as well as initializing the links between the app and Unity sides. 
+```csharp
+FBWin.Login("publish_actions", fbResult =>
+{
+    // Successful login, or deal with errors
+});
+```
+
+However on Windows Phone 8 the app actually deactivates and resumes as it hands off to mobile IE for the login process. Be sure and wire an event handler just for WP8 after you initialize facebook. 
+
+```csharp
+
+void Start () {
+        FBWin.Init(SetFBInit, Assets.Plugins.MarkerMetro.Constants.FBAppId, OnHideUnity);
+#if (UNITY_WP8 && !UNITY_EDITOR)
+        // wire event handler that will be used after login when app resumes on wp8
+        FBWin.OnFBLoginComplete = FBLoginComplete;
+#endif
+
+    }
+
+#if (UNITY_WP8 && !UNITY_EDITOR)
+
+ // start the login (app will deactivate)
+ FBWin.Login("publish_actions");
+ 
+#endif
+
+#if (UNITY_WP8 && !UNITY_EDITOR)
+
+ // handle the login event, fired when the app resumes after a login attempt
+ private void FBLoginComplete(bool success, string error)
+    {
+        Debug.Log("WP8 LoginCallback");
+        if (error != null)
+        {
+            Debug.Log("WP8 Login error occurred");
+            Debug.Log(error);
+        }
+        if (FBNative.IsLoggedIn)
+        {
+            // refresh the fb status
+        }
+    }
+#endif
+
+```
+For Windows 8.1, it is assumed you will be using MarkerMetro.Unity.WinShared  which includes the necessary web view/browser controls for displaying all necessary facebook dialogs for Window as well as initializing the links between the app and Unity sides. 
+
+For Windows Phone 8, the app request dialog is embedded now within MarkerMetro.Unity.WinIntegration. 
+
+The FB and FBNative classes in WinIntegration are very similar and we are working on aligning more closely. It is expected that FB will be fully deprecated after we get Windows 8.1 native facebook login working. 
 
 ## Store Integration
 
