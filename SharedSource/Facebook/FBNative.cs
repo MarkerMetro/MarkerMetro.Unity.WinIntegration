@@ -157,7 +157,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
 
                 // pass in params to facebook client's app request
-                _fbSessionClient.AppRequest(message, to, filters, excludeIds, maxRecipients, data, title, (result) =>
+                _fbSessionClient.AppRequest(message, to, data, title, (result) =>
                 {
                     if (_onHideUnity != null)
                         Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
