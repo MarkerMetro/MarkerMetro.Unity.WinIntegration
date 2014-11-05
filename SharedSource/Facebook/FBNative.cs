@@ -85,7 +85,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         public static void Login(string permissions)
         {
 #if WINDOWS_PHONE //|| NETFX_CORE
-            _fbSessionClient.LoginWithBehavior("", FacebookLoginBehavior.LoginBehaviorMobileInternetExplorerOnly);
+            _fbSessionClient.LoginWithBehavior(permissions, FacebookLoginBehavior.LoginBehaviorMobileInternetExplorerOnly);
             if (_onHideUnity != null)
                 Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
 #else
