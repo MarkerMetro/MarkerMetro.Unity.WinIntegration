@@ -94,16 +94,7 @@ void Start () {
  // handle the login event, fired when the app resumes after a login attempt
  private void FBLoginComplete(bool success, string error)
     {
-        Debug.Log("WP8 LoginCallback");
-        if (error != null)
-        {
-            Debug.Log("WP8 Login error occurred");
-            Debug.Log(error);
-        }
-        if (FBNative.IsLoggedIn)
-        {
-            // refresh the fb status
-        }
+        // Successful login, or deal with errors
     }
 #endif
 
