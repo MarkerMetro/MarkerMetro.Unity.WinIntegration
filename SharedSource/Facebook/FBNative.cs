@@ -92,6 +92,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             throw new PlatformNotSupportedException("");
 #endif
         }
+
         public static void API(
             string endpoint,
             HttpMethod method,
@@ -129,7 +130,28 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #endif
         }
 
+        /// <summary>
+        /// Get current logged in user info
+        /// </summary>
+        public static void GetCurrentUser(Action<FBUser> callback)
+        {
+#if WINDOWS_PHONE //|| NETFX_CORE
+            API("me", HttpMethod.GET, (result) =>
+            {
+                var data = (IDictionary<string, object>)result.Json;
+                var me = new GraphUser(data);
 
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBUser(me)); });
+            });
+#else
+            throw new PlatformNotSupportedException("");
+#endif
+        }
+
+        /// <summary>
+        /// Show the Request Dialog
+        /// </summary>
         public static void AppRequest(
                 string message,
                 string[] to = null,

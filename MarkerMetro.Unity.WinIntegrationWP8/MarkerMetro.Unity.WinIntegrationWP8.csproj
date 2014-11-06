@@ -53,11 +53,17 @@
     <Compile Include="..\SharedSource\Facebook\FB.cs">
       <Link>Facebook\FB.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Facebook\FBLocation.cs">
+      <Link>Facebook\FBLocation.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Facebook\FBNative.cs">
       <Link>Facebook\FBNative.cs</Link>
     </Compile>
     <Compile Include="..\SharedSource\Facebook\FBStorage.cs">
       <Link>Facebook\FBStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Facebook\FBUser.cs">
+      <Link>Facebook\FBUser.cs</Link>
     </Compile>
     <Compile Include="..\SharedSource\Facebook\IWebInterface.cs">
       <Link>Facebook\IWebInterface.cs</Link>
