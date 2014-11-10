@@ -89,6 +89,9 @@
     <Compile Include="..\SharedSource\Store\StoreManager.cs">
       <Link>Store\StoreManager.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\VideoPlayer\VideoPlayer.cs">
+      <Link>VideoPlayer\VideoPlayer.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\WrappedException.cs">
       <Link>WrappedException.cs</Link>
     </Compile>
