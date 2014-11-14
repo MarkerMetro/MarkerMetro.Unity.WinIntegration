@@ -2,11 +2,11 @@
 using MarkerMetro.Unity.WinLegacy.Cryptography;
 using System.Threading.Tasks;
 using System.Globalization;
-using System.Collections.Generic;
 
 #endif
 using Facebook;
-using System; 
+using System;
+using System.Collections.Generic;
 
 using MarkerMetro.Unity.WinIntegration;
 
@@ -193,6 +193,51 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #endif
         }
 
+        // Show the Feed Dialog
+        public static void Feed(
+            string toId = "",
+            string link = "",
+            string linkName = "",
+            string linkCaption = "",
+            string linkDescription = "",
+            string picture = "",
+            string mediaSource = "",
+            string actionName = "",
+            string actionLink = "",
+            string reference = "",
+            Dictionary<string, string[]> properties = null,
+            FacebookDelegate callback = null)
+        {
+#if WINDOWS_PHONE //|| NETFX_CORE
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                if (_fbSessionClient.IsDialogOpen || !IsLoggedIn)
+                {
+                    //Already in use
+                    if (callback != null)
+                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Error = "Already in use / Not Logged In" }); });
+                    return;
+                }
+
+                // tell unity to pause when the dialog is active
+                if (_onHideUnity != null)
+                    Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
+
+                // pass in params to facebook client's app request
+                _fbSessionClient.Feed(toId, link, linkName, linkCaption, linkDescription, picture, (result) =>
+                {
+                    if (_onHideUnity != null)
+                        Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
+
+                    if (callback != null)
+                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = result.Text, Error = result.Error, Json = result.Json }); });
+                });
+            });
+#else
+            throw new PlatformNotSupportedException("");
+#endif
+        }
+
         // additional methods added for convenience
 
         public static bool IsLoggedIn
@@ -220,5 +265,18 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 return false;
         }
 #endif
+
+        // check whether facebook is initialized
+        public static bool IsInitialized
+        {
+            get
+            {
+#if WINDOWS_PHONE //|| NETFX_CORE
+                return _fbSessionClient != null;
+#else
+                throw new PlatformNotSupportedException("");
+#endif
+            }
+        }
     }
 }

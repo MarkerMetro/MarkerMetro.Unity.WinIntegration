@@ -2,10 +2,10 @@
 using MarkerMetro.Unity.WinLegacy.Cryptography;
 using System.Threading.Tasks;
 using System.Globalization;
-using System.Collections.Generic;
 #endif
 using Facebook;
 using System;
+using System.Collections.Generic;
 
 using MarkerMetro.Unity.WinIntegration;
 
@@ -69,6 +69,19 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         public static string AccessToken { get; private set; }
 
         public static DateTime Expires { get; private set; }
+
+        // check whether facebook is initialized
+        public static bool IsInitialized
+        {
+            get
+            {
+#if WINDOWS_PHONE || NETFX_CORE
+                return _client != null;
+#else
+                throw new PlatformNotSupportedException("");
+#endif
+            }
+        }
 
         public static void Logout()
         {
@@ -383,5 +396,49 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #endif
         }
 
+        public static void Feed(
+            string toId = "",
+            string link = "",
+            string linkName = "",
+            string linkCaption = "",
+            string linkDescription = "",
+            string picture = "",
+            string mediaSource = "",
+            string actionName = "",
+            string actionLink = "",
+            string reference = "",
+            Dictionary<string, string[]> properties = null,
+            FacebookDelegate callback = null)
+        {
+#if WINDOWS_PHONE || NETFX_CORE
+            if (_web == null) throw new MissingPlatformException();
+            if (_web.IsActive || !IsLoggedIn)
+            {
+                // Already in use
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Error = "Already in use / Not Logged In" }); });
+                return;
+            }
+
+            if (_onHideUnity != null)
+                Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
+
+            Uri uri = new Uri("https://www.facebook.com/dialog/feed?app_id=" + AppId + "&to=" + toId +
+                "&link=" + link + "&name=" + linkName + "&caption=" + linkCaption + "&description=" + linkDescription + "&picture=" + picture + "&display=popup&redirect_uri=" + _redirectUrl, UriKind.RelativeOrAbsolute);
+            _web.Navigate(uri, true, finishedCallback: (url, state) =>
+            {
+                if (url.ToString().StartsWith(_redirectUrl))
+                {
+                    _web.Finish();
+                    if (_onHideUnity != null)
+                        Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
+                    if (callback != null)
+                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = "Finished Feed" }); });
+                }
+            }, onError: LoginNavigationError, state: callback);
+#else
+            throw new PlatformNotSupportedException("");
+#endif
+        }
     }
 }
