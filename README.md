@@ -46,7 +46,7 @@ Facebook implementations are quite game specific, however you will always need t
 
 Here's an example of the basic init call:
 
-Note: a redirect url may need to be explicitly passed in if the default FB.Init call does not work and you get "Given URL is not allowed by the Application configuration". In this case, the client will need to provide a value redirectUrl via their facebook app page.
+Note: a redirect url may need to be explicitly passed in if the default FB.Init call does not work and you get "Given URL is not allowed by the Application configuration". In this case, the client will need to provide a value redirectUrl via their facebook app page. This is at > settings > advanced > Valid OAuth redirect URIs. Client should provide  a value from their we can use, and it should NOT be a local address (e.g .http://localhost...) as that causes problems on Windows Store. It doesn't really matter what it is, just that it's a valid url.
 
 ```csharp
 FBWin.Init(fbInitComplete, "682783485145217", fbOnHideUnity); 
