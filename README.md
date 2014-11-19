@@ -21,7 +21,7 @@ This plugin helps with: Facebook integration, Store Integration, Helper to Get A
 
 Ensure you set the app id in Assets/Plugins/MarkerMetro/Constants.cs
 
-For Windows Phone, ensure you modify the WMAppManifest.xml to change the protocal handler to fb[appid] in the Extensions element. This will ensure the native login can work.
+For Windows Phone, ensure you modify the WMAppManifest.xml to change the protocal handler to fb[appid] in the Extensions element. This will ensure the native mobile IE facebook integration can work.
 
 Add using statements to include the Facebook APIs as follows:
 
@@ -38,15 +38,14 @@ using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FB;
 #endif
 ```
 
-Windows Phone uses a native mobile internet explorer login approach which provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs and graph calls will work without issue. 
+Windows Phone uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issue. 
 
-Windows 8.1 uses a traditional web view approach which we will be looking to ugprade to a native login in the future.
+Windows 8.1 uses a traditional web view approach which we will be looking to ugprade to a  in the future.
 
 Facebook implementations are quite game specific, however you will always need to initialize the FB client, for which you can use the Marker Metro test Faceboook app created by markermetro@live.com facebook account (see \MM Team - Administration\Logins\Facebook accounts.txt" for the password on dropbox).
 
 Here's an example of the basic init call:
 
-Note: a redirect url may need to be explicitly passed in if the default FB.Init call does not work and you get "Given URL is not allowed by the Application configuration". In this case, the client will need to provide a value redirectUrl via their facebook app page. This is at > settings > advanced > Valid OAuth redirect URIs. Client should provide  a value from their we can use, and it should NOT be a local address (e.g .http://localhost...) as that causes problems on Windows Store. It doesn't really matter what it is, just that it's a valid url.
 
 ```csharp
 FBWin.Init(fbInitComplete, "682783485145217", fbOnHideUnity); 
@@ -62,7 +61,10 @@ private void fbOnHideUnity(bool isShow)
 }
 
 ```
-For login, on Windows 8.1 you will use a callback approach as the login uses an in app web view:
+
+Note: a redirect url may need to be explicitly passed in if the default FB.Init call does not work and you get "Given URL is not allowed by the Application configuration". In this case, the client will need to provide a value redirectUrl via their facebook app page. This is at > settings > advanced > Valid OAuth redirect URIs. Client should provide  a value from their we can use, and it should NOT be a local address (e.g .http://localhost...) as that causes problems on Windows Store. It doesn't really matter what it is, just that it's a valid url.
+
+A callback approach is used for login:
 
 ```csharp
 FBWin.Login("publish_actions", fbResult =>
@@ -71,41 +73,58 @@ FBWin.Login("publish_actions", fbResult =>
 });
 ```
 
-However on Windows Phone 8 the app actually deactivates and resumes as it hands off to mobile IE for the login process. Be sure and wire an event handler just for WP8 after you initialize facebook. 
+A callback approach is used for app request dialogs:
+
+On Windows 8.1 the standard AppRequest method is provided. 
 
 ```csharp
-
-void Start () {
-        FBWin.Init(SetFBInit, Assets.Plugins.MarkerMetro.Constants.FBAppId, OnHideUnity);
-#if (UNITY_WP8 && !UNITY_EDITOR)
-        // wire event handler that will be used after login when app resumes on wp8
-        FBWin.OnFBLoginComplete = FBLoginComplete;
-#endif
-
-    }
-
-#if (UNITY_WP8 && !UNITY_EDITOR)
-
- // start the login (app will deactivate)
- FBWin.Login("publish_actions");
- 
-#endif
-
-#if (UNITY_WP8 && !UNITY_EDITOR)
-
- // handle the login event, fired when the app resumes after a login attempt
- private void FBLoginComplete(bool success, string error)
-    {
-        // Successful login, or deal with errors
-    }
-#endif
-
+FBWin.AppRequest(
+                string message,
+                string[] to = null,
+                string filters = "",
+                string[] excludeIds = null,
+                int? maxRecipients = null,
+                string data = "",
+                string title = "",
+                fbResult =>
+{
+    // Successful app prequest with friends json, or deal with errors
+});
 ```
+
+For FB.cs, note that only the message and callback are supported at this time, for FBNative message, to, data and title parameters are supported. The other parameters are included to provide api parity with the Unity facebook sdk, but are not functional.
+
+A callback approach is used for feed dialog requests:
+
+```csharp
+FBWin.Feed(
+            string toId = "",
+            string link = "",
+            string linkName = "",
+            string linkCaption = "",
+            string linkDescription = "",
+            string picture = "",
+            string mediaSource = "",
+            string actionName = "",
+            string actionLink = "",
+            string reference = "",
+            Dictionary<string, string[]> properties = null,
+                fbResult =>
+{
+    // Successful app prequest with friends json, or deal with errors
+});
+```
+
+For both FB.cs and FBNative.cs, note that only the toId, link, linkName, linkDescription and picture parameters are supported at this time, for FBNative message, to, data and title parameters are supported. The other paramters are included to provide api parity with the Unity facebook sdk, but are not functional.
+
+Note that on Windows Phone 8 the app actually deactivates and resumes as it hands off to mobile IE for all facebook integration, however the callback will still fire on resume.
+
 For Windows 8.1, it is assumed you will be using MarkerMetro.Unity.WinShared  which includes the necessary web view/browser controls for displaying all necessary facebook dialogs for Window as well as initializing the links between the app and Unity sides. 
 
-For Windows Phone 8, the app request dialog is embedded now within MarkerMetro.Unity.WinIntegration. 
 
-The FB and FBNative classes in WinIntegration are very similar and we are working on aligning more closely. It is expected that FB will be fully deprecated after we get Windows 8.1 native facebook login working. 
+The FB and FBNative classes in WinIntegration are very similar and we are working on aligning more closely. It is expected that FB will be fully deprecated after we get Windows 8.1 native mobile IE facebook integration working. 
+
+
 
 ## Store Integration
 
