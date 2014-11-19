@@ -46,7 +46,6 @@ Facebook implementations are quite game specific, however you will always need t
 
 Here's an example of the basic init call:
 
-
 ```csharp
 FBWin.Init(fbInitComplete, "682783485145217", fbOnHideUnity); 
 
@@ -74,8 +73,6 @@ FBWin.Login("publish_actions", fbResult =>
 ```
 
 A callback approach is used for app request dialogs:
-
-On Windows 8.1 the standard AppRequest method is provided. 
 
 ```csharp
 FBWin.AppRequest(
