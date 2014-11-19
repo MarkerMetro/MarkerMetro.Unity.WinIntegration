@@ -85,7 +85,7 @@ FBWin.AppRequest(
                 string title = "",
                 fbResult =>
 {
-    // Successful app prequest with friends json, or deal with errors
+    // Successful app request with friends json, or deal with errors
 });
 ```
 
@@ -108,7 +108,7 @@ FBWin.Feed(
             Dictionary<string, string[]> properties = null,
                 fbResult =>
 {
-    // Successful app prequest with friends json, or deal with errors
+    // Successful feed request, or deal with errors
 });
 ```
 
@@ -118,10 +118,7 @@ Note that on Windows Phone 8 the app actually deactivates and resumes as it hand
 
 For Windows 8.1, it is assumed you will be using MarkerMetro.Unity.WinShared  which includes the necessary web view/browser controls for displaying all necessary facebook dialogs for Window as well as initializing the links between the app and Unity sides. 
 
-
 The FB and FBNative classes in WinIntegration are very similar and we are working on aligning more closely. It is expected that FB will be fully deprecated after we get Windows 8.1 native mobile IE facebook integration working. 
-
-
 
 ## Store Integration
 
