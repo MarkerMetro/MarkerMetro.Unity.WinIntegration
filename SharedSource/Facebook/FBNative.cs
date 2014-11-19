@@ -150,6 +150,82 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         }
 
         /// <summary>
+        /// Show Request Dialog in browser
+        /// </summary>
+        public static void AppRequestViaBrowser(
+                string message,
+                string[] to = null,
+                string filters = "",
+                string[] excludeIds = null,
+                int? maxRecipients = null,
+                string data = "",
+                string title = "",
+                FacebookDelegate callback = null
+            )
+        {
+#if WINDOWS_PHONE //|| NETFX_CORE
+            if (!IsLoggedIn)
+            {
+                // not logged in
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Error = "Not Logged In" }); });
+                return;
+            }
+
+            FacebookSessionClient.OnFacebookAppRequestFinished = (result) =>
+            {
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = result.Text, Error = result.Error, Json = result.Json }); });
+            };
+
+            // pass in params to facebook client's app request
+            FacebookSessionClient.AppRequestViaBrowser(message, to, data, title);
+#else
+            throw new PlatformNotSupportedException("");
+#endif
+
+        }
+
+        /// <summary>
+        /// Show the Feed Dialog in browser
+        /// </summary>
+        public static void FeedViaBrowser(
+            string toId = "",
+            string link = "",
+            string linkName = "",
+            string linkCaption = "",
+            string linkDescription = "",
+            string picture = "",
+            string mediaSource = "",
+            string actionName = "",
+            string actionLink = "",
+            string reference = "",
+            Dictionary<string, string[]> properties = null,
+            FacebookDelegate callback = null)
+        {
+#if WINDOWS_PHONE //|| NETFX_CORE
+            if (!IsLoggedIn)
+            {
+                // not logged in
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Error = "Not Logged In" }); });
+                return;
+            }
+
+            FacebookSessionClient.OnFacebookFeedFinished = (result) =>
+            {
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = result.Text, Error = result.Error, Json = result.Json }); });
+            };
+
+            // pass in params to facebook client's app request
+            FacebookSessionClient.FeedViaBrowser(toId, link, linkName, linkCaption, linkDescription, picture);
+#else
+            throw new PlatformNotSupportedException("");
+#endif
+        }
+
+        /// <summary>
         /// Show the Request Dialog
         /// </summary>
         public static void AppRequest(

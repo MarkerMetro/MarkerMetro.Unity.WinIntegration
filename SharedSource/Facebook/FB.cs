@@ -384,11 +384,49 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             {
                 if (url.ToString().StartsWith(_redirectUrl))
                 {
+                    // parsing query string to get request id and facebook ids of the people the request has been sent to
+                    // or error code and error messages
+                    FBResult fbResult = new FBResult();
+
+                    fbResult.Json = new JsonObject();
+
+                    string[] queries = url.Query.Split('&');
+                    if (queries.Length > 0)
+                    {
+                        string request = string.Empty;
+                        List<string> toList = new List<string>();
+
+                        foreach (string query in queries)
+                        {
+                            string[] keyValue = query.Split('=');
+                            if (keyValue.Length == 2)
+                            {
+                                if (keyValue[0].Contains("request"))
+                                    request = keyValue[1];
+                                else if (keyValue[0].Contains("to"))
+                                    toList.Add(keyValue[1]);
+                                else if (keyValue[0].Contains("error_code"))
+                                    fbResult.Error = keyValue[1];
+                                else if (keyValue[0].Contains("error_message"))
+                                    fbResult.Text = keyValue[1].Replace('+', ' ');
+                            }
+                        }
+                        if (!string.IsNullOrWhiteSpace(request))
+                        {
+                            fbResult.Json.Add(new KeyValuePair<string, object>("request", request));
+                            fbResult.Json.Add(new KeyValuePair<string, object>("to", toList));
+                        }
+                    }
+
+                    // If there's no error, assign the success text
+                    if (string.IsNullOrWhiteSpace(fbResult.Text))
+                        fbResult.Text = "Success";
+
                     _web.Finish();
                     if (_onHideUnity != null)
                         Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
                     if (callback != null)
-                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = "Finished AppRequest" }); });
+                        Dispatcher.InvokeOnAppThread(() => { callback(fbResult); });
                 }
             }, onError: LoginNavigationError, state: callback);
 #else
@@ -429,11 +467,46 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             {
                 if (url.ToString().StartsWith(_redirectUrl))
                 {
+                    // parsing query string to get request id and facebook ids of the people the request has been sent to
+                    // or error code and error messages
+                    FBResult fbResult = new FBResult();
+
+                    fbResult.Json = new JsonObject();
+
+                    string[] queries = url.Query.Split('&');
+                    if (queries.Length > 0)
+                    {
+                        string postId = string.Empty;
+                        List<string> toList = new List<string>();
+
+                        foreach (string query in queries)
+                        {
+                            string[] keyValue = query.Split('=');
+                            if (keyValue.Length == 2)
+                            {
+                                if (keyValue[0].Contains("post_id"))
+                                    postId = keyValue[1];
+                                else if (keyValue[0].Contains("error_code"))
+                                    fbResult.Error = keyValue[1];
+                                else if (keyValue[0].Contains("error_msg"))
+                                    fbResult.Text = keyValue[1].Replace('+', ' ');
+                            }
+                        }
+                        if (!string.IsNullOrWhiteSpace(postId))
+                        {
+                            fbResult.Json.Add(new KeyValuePair<string, object>("post_id", postId));
+                        }
+                    }
+
+                    // If there's no error, assign the success text
+                    if (string.IsNullOrWhiteSpace(fbResult.Text))
+                        fbResult.Text = "Success";
+
                     _web.Finish();
                     if (_onHideUnity != null)
                         Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
                     if (callback != null)
-                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = "Finished Feed" }); });
+                        Dispatcher.InvokeOnAppThread(() => { callback(fbResult); });
                 }
             }, onError: LoginNavigationError, state: callback);
 #else
