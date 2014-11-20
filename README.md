@@ -196,7 +196,7 @@ In _WinShared_ project there are 3 locations from which test exceptions can be t
 
 1. **Windows Store** project has extra Settings charm menu item **Crash** (only for Debug)
 2. **Windows Phone** project has AppBar to allow crash testing (only for Debug)
-3. **Unity** project has extra button in `UIStart.cs` in /Assets/WinIntegrationExample/FaceFlip.unity test scene
+3. **Unity** project has extra button in `UIStart.cs` in /Assets/WinIntegrationExample/FaceFlip.unity test scene in WinShared.
 
 ## Local Notifications
 
