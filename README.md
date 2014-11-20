@@ -161,6 +161,42 @@ Specifically for WP8, the only other StatusCode used is NotReady when after a su
 ```csharp
 void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
+## Exception Logging
+
+WinIntegration supports both [Raygun.io](https://raygun.io/) and Bugsense via the ExceptionLogger class.
+
+This is enabled via MarkerMetro.Unity.WinIntegration.ExceptionLogger. Integration is disabled by default. 
+
+### To enable exception logging
+
+Go straight to 3. if you have an api key provided by the client.
+
+1. Create a new project on the Exception Logger portal (e.g Raygun/Bugsense)
+2. Get **API Key** from the Exception Logger portal
+3. Replace the **API Key** in /WindowsSolution/Common/CommonApp.InitializeExceptionLogger() method and uncomment the lines.
+4. In _Unity_ attach /Assets/Scripts/MarkerMetro/ExceptionLogger.cs to first object that starts, this will allow reporting of _Unity_ errors using 
+
+### To disable exception logging
+
+Comment out the line to initialize the ExceptionLogger here: /WindowsSolution/Common/CommonApp.InitializeExceptionLogger()
+
+### To remove exception logging libraries
+
+By default, binaries for the exception loggers will be included when you update WinIntegration from Nuget script. You should do the following to ensure that these binaries are not included. 
+
+1. Ensure a .gitignore is added to /Assets/Plugins root that explicitly excludes the dlls you don't want in source. Make sure they are deleted from source if already added.
+2. Remove all Windows Store/Windows Phone app project references to the exception logging libraries. 
+3. Git clean and build out fresh and ensure the libraries are not in the app package that will be sent to the client
+
+Note that when you do this, it will be excepted that you receive exceptions if you try and use the ExceptionLogger class.
+ 
+### Testing exceptions/crashes
+
+In _WinShared_ project there are 3 locations from which test exceptions can be thrown. 
+
+1. **Windows Store** project has extra Settings charm menu item **Crash** (only for Debug)
+2. **Windows Phone** project has AppBar to allow crash testing (only for Debug)
+3. **Unity** project has extra button in `UIStart.cs` in /Assets/WinIntegrationExample/FaceFlip.unity test scene
 
 ## Local Notifications
 
