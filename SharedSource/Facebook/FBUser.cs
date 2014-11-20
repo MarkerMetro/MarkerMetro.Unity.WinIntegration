@@ -42,7 +42,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             this.MiddleName = user.MiddleName;
             this.LastName = user.LastName;
             this.Birthday = user.Birthday;
-            this.Location = new FBLocation(user.Location);
+            if (user.Location == null)
+                this.Location = null;
+            else
+                this.Location = new FBLocation(user.Location);
             this.Link = user.Link;
             this.ProfilePictureUrl = user.ProfilePictureUrl;
         }

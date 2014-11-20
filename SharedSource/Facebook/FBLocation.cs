@@ -29,18 +29,16 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// </summary>
         public FBLocation(GraphLocation location)
         {
-            if (location == null)
+            if (location != null)
             {
-                throw new ArgumentNullException("location");
+                this.Street = location.Street;
+                this.City = location.City;
+                this.State = location.State;
+                this.Zip = location.Zip;
+                this.Country = location.Country;
+                this.Latitude = location.Latitude;
+                this.Longitude = location.Longitude;
             }
-
-            this.Street = location.Street;
-            this.City = location.City;
-            this.State = location.State;
-            this.Zip = location.Zip;
-            this.Country = location.Country;
-            this.Latitude = location.Latitude;
-            this.Longitude = location.Longitude;
         }
 #endif
 
