@@ -35,9 +35,6 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         private static HideUnityDelegate _onHideUnity;
 #endif
 
-        public static FBLoginCompleteDelegate OnFBLoginComplete;
-        public delegate void FBLoginCompleteDelegate(bool success, string error);
-
         /// <summary>
         /// FB.Init as per Unity SDK
         /// </summary>
@@ -49,17 +46,6 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #if WINDOWS_PHONE //|| NETFX_CORE
             _onHideUnity = onHideUnity;
             _fbSessionClient = new FacebookSessionClient(appId);
-
-            FacebookSessionClient.OnFacebookAuthenticationFinished = (success, session, error) =>
-            {
-                Dispatcher.InvokeOnAppThread(() =>
-                {
-                    if (OnFBLoginComplete != null)
-                    {
-                        OnFBLoginComplete(success, error);
-                    }
-                });
-            };
 
             Task.Run(async () =>
             {
@@ -82,12 +68,16 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #endif
         }
 
-        public static void Login(string permissions)
+        public static void Login(string permissions, FacebookDelegate callback)
         {
 #if WINDOWS_PHONE //|| NETFX_CORE
+            FacebookSessionClient.OnFacebookAuthenticationFinished = (success, session, error) =>
+            {
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = success ? "Success" : "Fail", Error = error }); });
+            };
+
             _fbSessionClient.LoginWithBehavior(permissions, FacebookLoginBehavior.LoginBehaviorMobileInternetExplorerOnly);
-            if (_onHideUnity != null)
-                Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
 #else
             throw new PlatformNotSupportedException("");
 #endif
@@ -152,7 +142,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// <summary>
         /// Show Request Dialog in browser
         /// </summary>
-        public static void AppRequestViaBrowser(
+        public static void AppRequest(
                 string message,
                 string[] to = null,
                 string filters = "",
@@ -189,7 +179,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// <summary>
         /// Show the Feed Dialog in browser
         /// </summary>
-        public static void FeedViaBrowser(
+        public static void Feed(
             string toId = "",
             string link = "",
             string linkName = "",
@@ -220,95 +210,6 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
             // pass in params to facebook client's app request
             FacebookSessionClient.FeedViaBrowser(toId, link, linkName, linkCaption, linkDescription, picture);
-#else
-            throw new PlatformNotSupportedException("");
-#endif
-        }
-
-        /// <summary>
-        /// Show the Request Dialog
-        /// </summary>
-        public static void AppRequest(
-                string message,
-                string[] to = null,
-                string filters = "",
-                string[] excludeIds = null,
-                int? maxRecipients = null,
-                string data = "",
-                string title = "",
-                FacebookDelegate callback = null
-            )
-        {
-#if WINDOWS_PHONE //|| NETFX_CORE
-            Dispatcher.InvokeOnUIThread(() =>
-            {
-                if (_fbSessionClient.IsDialogOpen || !IsLoggedIn)
-                {
-                    //Already in use
-                    if (callback != null)
-                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Error = "Already in use / Not Logged In" }); });
-                    return;
-                }
-
-                // tell unity to pause when the dialog is active
-                if (_onHideUnity != null)
-                    Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
-
-                // pass in params to facebook client's app request
-                _fbSessionClient.AppRequest(message, to, data, title, (result) =>
-                {
-                    if (_onHideUnity != null)
-                        Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
-
-                    if (callback != null)
-                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = result.Text, Error = result.Error, Json = result.Json }); });
-                });
-            });
-#else
-            throw new PlatformNotSupportedException("");
-#endif
-        }
-
-        // Show the Feed Dialog
-        public static void Feed(
-            string toId = "",
-            string link = "",
-            string linkName = "",
-            string linkCaption = "",
-            string linkDescription = "",
-            string picture = "",
-            string mediaSource = "",
-            string actionName = "",
-            string actionLink = "",
-            string reference = "",
-            Dictionary<string, string[]> properties = null,
-            FacebookDelegate callback = null)
-        {
-#if WINDOWS_PHONE //|| NETFX_CORE
-            Dispatcher.InvokeOnUIThread(() =>
-            {
-                if (_fbSessionClient.IsDialogOpen || !IsLoggedIn)
-                {
-                    //Already in use
-                    if (callback != null)
-                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Error = "Already in use / Not Logged In" }); });
-                    return;
-                }
-
-                // tell unity to pause when the dialog is active
-                if (_onHideUnity != null)
-                    Dispatcher.InvokeOnAppThread(() => { _onHideUnity(true); });
-
-                // pass in params to facebook client's app request
-                _fbSessionClient.Feed(toId, link, linkName, linkCaption, linkDescription, picture, (result) =>
-                {
-                    if (_onHideUnity != null)
-                        Dispatcher.InvokeOnAppThread(() => { _onHideUnity(false); });
-
-                    if (callback != null)
-                        Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = result.Text, Error = result.Error, Json = result.Json }); });
-                });
-            });
 #else
             throw new PlatformNotSupportedException("");
 #endif
