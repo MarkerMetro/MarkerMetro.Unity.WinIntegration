@@ -429,6 +429,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                         Dispatcher.InvokeOnAppThread(() => { callback(fbResult); });
                 }
             }, onError: LoginNavigationError, state: callback);
+
+            // throw not supported exception when user passed in parameters not supported currently
+            if (!string.IsNullOrWhiteSpace(filters) || excludeIds != null || maxRecipients != null || to != null || !string.IsNullOrWhiteSpace(data) || !string.IsNullOrWhiteSpace(title))
+                throw new NotSupportedException("filters, excludeIds and maxRecipients are not currently supported at this time.");
 #else
             throw new PlatformNotSupportedException("");
 #endif
@@ -509,6 +513,11 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                         Dispatcher.InvokeOnAppThread(() => { callback(fbResult); });
                 }
             }, onError: LoginNavigationError, state: callback);
+
+            // throw not supported exception when user passed in parameters not supported currently
+            if (!string.IsNullOrWhiteSpace(mediaSource) || !string.IsNullOrWhiteSpace(actionName) || !string.IsNullOrWhiteSpace(actionLink) ||
+                !string.IsNullOrWhiteSpace(reference) || properties != null)
+                throw new NotSupportedException("mediaSource, actionName, actionLink, reference and properties are not currently supported at this time.");
 #else
             throw new PlatformNotSupportedException("");
 #endif

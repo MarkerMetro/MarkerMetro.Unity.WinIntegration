@@ -54,6 +54,9 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 if (onInitComplete != null)
                     Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
             });
+
+            if (onHideUnity != null)
+                throw new NotSupportedException("onHideUnity is not currently supported at this time.");
 #else
             throw new PlatformNotSupportedException("");
 #endif
@@ -170,6 +173,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
             // pass in params to facebook client's app request
             FacebookSessionClient.AppRequestViaBrowser(message, to, data, title);
+
+            // throw not supported exception when user passed in parameters not supported currently
+            if (!string.IsNullOrWhiteSpace(filters) || excludeIds != null || maxRecipients != null)
+                throw new NotSupportedException("filters, excludeIds and maxRecipients are not currently supported at this time.");
 #else
             throw new PlatformNotSupportedException("");
 #endif
@@ -210,6 +217,11 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
             // pass in params to facebook client's app request
             FacebookSessionClient.FeedViaBrowser(toId, link, linkName, linkCaption, linkDescription, picture);
+
+            // throw not supported exception when user passed in parameters not supported currently
+            if (!string.IsNullOrWhiteSpace(mediaSource) || !string.IsNullOrWhiteSpace(actionName) || !string.IsNullOrWhiteSpace(actionLink) ||
+                !string.IsNullOrWhiteSpace(reference) || properties != null)
+                throw new NotSupportedException("mediaSource, actionName, actionLink, reference and properties are not currently supported at this time.");
 #else
             throw new PlatformNotSupportedException("");
 #endif
