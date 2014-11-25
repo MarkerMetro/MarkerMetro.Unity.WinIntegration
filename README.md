@@ -184,9 +184,21 @@ Comment out the line to initialize the ExceptionLogger here: /WindowsSolution/Co
 
 By default, binaries for the exception loggers will be included when you update WinIntegration from Nuget script. You should do the following to ensure that these binaries are not included. 
 
-1. Ensure a .gitignore is added to /Assets/Plugins root that explicitly excludes the dlls you don't want in source. Make sure they are deleted from source if already added.
-2. Remove all Windows Store/Windows Phone app project references to the exception logging libraries. 
-3. Git clean and build out fresh and ensure the libraries are not in the app package that will be sent to the client
+For Win8 add the following Post-Build Script to the project file
+```
+if exist "$(TargetDir)\Mindscape.Raygun4Net.WindowsStore.dll" DEL "$(TargetDir)\Mindscape.Raygun4Net.WindowsStore.dll"
+if exist "$(TargetDir)\Mindscape.Raygun4Net.WindowsStore.pdb" DEL "$(TargetDir)\Mindscape.Raygun4Net.WindowsStore.pdb"
+if exist "$(TargetDir)\BugSense-W8.dll" DEL "$(TargetDir)\BugSense-W8.dll"
+if exist "$(TargetDir)\BugSense-W8.pdb" DEL "$(TargetDir)\BugSense-W8.pdb"
+```
+
+For WP8 add the folowing Post-Build Script to the project file
+```
+if exist "$(TargetDir)\Mindscape.Raygun4Net.WindowsPhone.dll" DEL "$(TargetDir)\Mindscape.Raygun4Net.WindowsPhone.dll"
+if exist "$(TargetDir)\Mindscape.Raygun4Net.WindowsPhone.pdb" DEL "$(TargetDir)\Mindscape.Raygun4Net.WindowsPhone.pdb"
+if exist "$(TargetDir)\BugSense-WP8.dll" DEL "$(TargetDir)\BugSense-WP8.dll"
+if exist "$(TargetDir)\BugSense-WP8.pdb" DEL "$(TargetDir)\BugSense-WP8.pdb"
+```
 
 Note that when you do this, it will be excepted that you receive exceptions if you try and use the ExceptionLogger class.
  
