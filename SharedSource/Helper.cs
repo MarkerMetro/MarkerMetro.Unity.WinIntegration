@@ -207,7 +207,19 @@ namespace MarkerMetro.Unity.WinIntegration
         public void ShowShareUI()
         {
 #if NETFX_CORE
-            Dispatcher.InvokeOnUIThread(() => DataTransferManager.ShowShareUI());
+            try
+            {
+                Dispatcher.InvokeOnUIThread(() => DataTransferManager.ShowShareUI());
+            }
+            catch (Exception ex)
+            {
+# if DEBUG
+                Debug.WriteLine("Unable to show the share UI because of: " + ex.Message);
+# else
+                ExceptionLogger.Instance.Send(ex);
+# endif
+            }
+
 #elif WINDOWS_PHONE
             var guidString = XDocument.Load("WMAppManifest.xml").Root.Element("App").Attribute("ProductID").Value;
             var productId = guidString.TrimStart('{').TrimEnd('}').ToLower();
