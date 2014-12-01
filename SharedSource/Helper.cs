@@ -301,10 +301,24 @@ namespace MarkerMetro.Unity.WinIntegration
         public string GetUserDeviceId()
         {
 #if WINDOWS_PHONE
-            var anid = Math.Abs(UserExtendedProperties.GetValue("ANID2").GetHashCode()).ToString();
-            var did = Math.Abs(DeviceExtendedProperties.GetValue("DeviceUniqueId").GetHashCode()).ToString();
+            const string key = "UserDeviceId";
 
-            return anid + did;
+            var store = System.IO.IsolatedStorage.IsolatedStorageSettings.ApplicationSettings;
+
+            if (!store.Contains(key))
+            {
+                var anid = Math.Abs(UserExtendedProperties.GetValue("ANID2").GetHashCode()).ToString();
+                var did = Math.Abs(DeviceExtendedProperties.GetValue("DeviceUniqueId").GetHashCode()).ToString();
+
+                store[key] = anid + did;
+                try
+                {
+                    store.Save();
+                }
+                catch { }
+            }
+
+            return (string)store[key];
 #elif NETFX_CORE
             const string key = "UserDeviceId";
 
