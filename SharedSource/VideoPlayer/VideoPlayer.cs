@@ -114,6 +114,13 @@ namespace MarkerMetro.Unity.WinIntegration.VideoPlayer
             _videoElement.Visibility = Visibility.Visible;
             _videoPopup.IsOpen = true;
 
+#if NETFX_CORE
+            _videoPopup.Height = Window.Current.Bounds.Height;
+            _videoPopup.Width = Window.Current.Bounds.Width;
+            _videoElement.Height = _videoPopup.Height;
+            _videoElement.Width = _videoPopup.Width;
+#endif
+
             _onVideoEnded = onVideoEnded;
             _videoElement.Source = new Uri(filename, UriKind.Absolute);
 #else
