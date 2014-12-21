@@ -486,22 +486,25 @@ namespace MarkerMetro.Unity.WinIntegration
 #if WINDOWS_PHONE || NETFX_CORE
             if (string.IsNullOrWhiteSpace(contentKey))
                 throw new ArgumentNullException("You must specify content resource key");
-
-            var resourceHelper = ResourceHelper.GetInstance();
-            var content = resourceHelper.GetString(contentKey);
-            var title = string.Empty;
-            if(titleKey!=null)
-                title = resourceHelper.GetString(titleKey);
+            
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                var resourceHelper = ResourceHelper.GetInstance();
+                var content = resourceHelper.GetString(contentKey);
+                var title = string.Empty;
+                if(titleKey!=null)
+                    title = resourceHelper.GetString(titleKey);
 
 # if WINDOWS_PHONE
-            MessageBox.Show(content, title, MessageBoxButton.OK);
+                MessageBox.Show(content, title, MessageBoxButton.OK);
 
-            if (callback != null)
-                callback();
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => callback());
+            });
 # elif NETFX_CORE
-            ShowDialogAsync(contentKey, titleKey, callback).ContinueWith(t => { });
+                ShowDialogAsync(contentKey, titleKey, callback).ContinueWith(t => { });
+            });
 # endif
-
 #else
             throw new PlatformNotSupportedException("ShowDialog");
 #endif
@@ -511,15 +514,22 @@ namespace MarkerMetro.Unity.WinIntegration
         {
 # if WINDOWS_PHONE
             MessageBoxResult res;
-            if (string.IsNullOrWhiteSpace(okText) || (string.IsNullOrWhiteSpace(cancelText)))
-                res = MessageBox.Show(content, title, MessageBoxButton.OK);
-            else
-                res = MessageBox.Show(content, title, MessageBoxButton.OKCancel);
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                if (string.IsNullOrWhiteSpace(okText) || (string.IsNullOrWhiteSpace(cancelText)))
+                    res = MessageBox.Show(content, title, MessageBoxButton.OK);
+                else
+                    res = MessageBox.Show(content, title, MessageBoxButton.OKCancel);
 
-            if (callback != null)
-                callback(res == MessageBoxResult.OK);
+                if (callback != null)
+                    Dispatcher.InvokeOnAppThread(() => callback(res == MessageBoxResult.OK));
+            });
 # elif NETFX_CORE
-            ShowDialogAsync(content, title, callback, okText, cancelText).ContinueWith(t => { });
+
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                ShowDialogAsync(content, title, callback, okText, cancelText).ContinueWith(t => { });
+            });
 #else
             throw new PlatformNotSupportedException("ShowDialog");
 #endif
@@ -533,20 +543,24 @@ namespace MarkerMetro.Unity.WinIntegration
             await dialog.ShowAsync();
 
             if (callback != null)
-                callback();
+                Dispatcher.InvokeOnAppThread(() => callback());
         }
 
         async Task ShowDialogAsync(string content, string title, Action<bool> callback, string okText, string cancelText)
         {
             var dialog = string.IsNullOrWhiteSpace(title) ? new MessageDialog(content) : new MessageDialog(content, title);
 
+            Action<bool> callbackOnApp = b => Dispatcher.InvokeOnAppThread(() => callback(b));
+
             if (!string.IsNullOrWhiteSpace(okText))
             {
-                dialog.Commands.Add(new UICommand(okText, new UICommandInvokedHandler((command) => { if (callback != null) callback(true); })));
+                dialog.Commands.Add(new UICommand(okText, new UICommandInvokedHandler(
+                    (command) => { if (callback != null) callbackOnApp(true); })));
             }
             if (!string.IsNullOrWhiteSpace(cancelText))
             {
-                dialog.Commands.Add(new UICommand(cancelText, new UICommandInvokedHandler((command) => { if (callback != null) callback(false); })));
+                dialog.Commands.Add(new UICommand(cancelText, new UICommandInvokedHandler(
+                    (command) => { if (callback != null) callbackOnApp(false); })));
             }
 
             if (!string.IsNullOrWhiteSpace(okText) && !string.IsNullOrWhiteSpace(cancelText))
