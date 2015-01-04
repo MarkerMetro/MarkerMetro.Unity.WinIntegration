@@ -348,6 +348,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #endif
         }
 
+        /// <summary>
+        /// Show Request Dialog.
+        /// to, title, data, filters, excludeIds and maxRecipients are not currently supported at this time.
+        /// </summary>
         public static void AppRequest(
                 string message,
                 string[] to = null,
@@ -432,12 +436,16 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
             // throw not supported exception when user passed in parameters not supported currently
             if (!string.IsNullOrWhiteSpace(filters) || excludeIds != null || maxRecipients != null || to != null || !string.IsNullOrWhiteSpace(data) || !string.IsNullOrWhiteSpace(title))
-                throw new NotSupportedException("filters, excludeIds and maxRecipients are not currently supported at this time.");
+                throw new NotSupportedException("to, title, data, filters, excludeIds and maxRecipients are not currently supported at this time.");
 #else
             throw new PlatformNotSupportedException("");
 #endif
         }
 
+        /// <summary>
+        /// Show the Feed Dialog.
+        /// mediaSource, actionName, actionLink, reference and properties are not currently supported at this time.
+        /// </summary>
         public static void Feed(
             string toId = "",
             string link = "",

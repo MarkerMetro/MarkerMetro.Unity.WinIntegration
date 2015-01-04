@@ -143,7 +143,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         }
 
         /// <summary>
-        /// Show Request Dialog in browser
+        /// Show Request Dialog.
+        /// filters, excludeIds and maxRecipients are not currently supported at this time.
         /// </summary>
         public static void AppRequest(
                 string message,
@@ -184,7 +185,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         }
 
         /// <summary>
-        /// Show the Feed Dialog in browser
+        /// Show the Feed Dialog.
+        /// mediaSource, actionName, actionLink, reference and properties are not currently supported at this time.
         /// </summary>
         public static void Feed(
             string toId = "",
