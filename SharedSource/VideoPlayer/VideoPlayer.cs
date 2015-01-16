@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 #elif NETFX_CORE
 using Windows.UI.Xaml;
@@ -54,50 +55,71 @@ namespace MarkerMetro.Unity.WinIntegration.VideoPlayer
 
         private static MediaElement _videoElement;
         private static Popup _videoPopup;
+
+#if WINDOWS_PHONE
+        // Need to draw a dark background manually on WP8.
+        private static Popup _backgroundPopup;
+#endif
 #endif
 
         /// <summary>
         /// Initialize VideoPlayer.
         /// </summary>
-        public static void Initialize(VideoStretch stretch = VideoStretch.None)
+        private static void Initialize(VideoStretch stretch)
         {
 #if WINDOWS_PHONE || NETFX_CORE
-            Dispatcher.InvokeOnUIThread(() =>
-            {
-                _videoPopup = new Popup();
-
-                _videoPopup.VerticalOffset = 0;
-                _videoPopup.HorizontalOffset = 0;
-
-                _videoElement = new MediaElement();
-                _videoPopup.Child = _videoElement;
-
-                _videoElement.MediaEnded += _videoElement_MediaEnded;
-                _videoElement.MediaOpened += _videoElement_MediaOpened;
-
 #if WINDOWS_PHONE
-                _videoPopup.Height = Application.Current.Host.Content.ActualHeight;
-                _videoPopup.Width = Application.Current.Host.Content.ActualWidth;
-
-                _videoElement.Tap += _videoElement_Tap;
-                _videoElement.Stretch = (Stretch)stretch;
-#else
-                _videoPopup.Height = Window.Current.Bounds.Height;
-                _videoPopup.Width = Window.Current.Bounds.Width;
-
-                _videoElement.Tapped += _videoElement_Tapped;
-                _videoElement.Stretch = (Stretch)stretch;
+            if (_backgroundPopup == null)
+            {
+                _backgroundPopup = new Popup();
+            }
+            _backgroundPopup.Height = Application.Current.Host.Content.ActualHeight;
+            _backgroundPopup.Width = Application.Current.Host.Content.ActualWidth;
+            _backgroundPopup.Child = new Rectangle()
+            {
+                Fill = new SolidColorBrush(Colors.Black),
+                Width = _backgroundPopup.Width,
+                Height = _backgroundPopup.Height
+            };
+            _backgroundPopup.IsOpen = true;
 #endif
 
-                _videoElement.AutoPlay = false;
+            if (_videoPopup == null)
+            {
+                _videoPopup = new Popup();
+            }
+            _videoPopup.VerticalOffset = 0;
+            _videoPopup.HorizontalOffset = 0;
 
-                _videoElement.Height = _videoPopup.Height;
-                _videoElement.Width = _videoPopup.Width;
+            if (_videoElement == null)
+            {
+                _videoElement = new MediaElement();
+            }
+            _videoPopup.Child = _videoElement;
 
-                _videoPopup.IsOpen = true;
-                _videoPopup.Visibility = Visibility.Collapsed;
-                _videoElement.Visibility = Visibility.Collapsed;
-            });
+            _videoElement.MediaEnded += _videoElement_MediaEnded;
+            _videoElement.MediaOpened += _videoElement_MediaOpened;
+
+#if WINDOWS_PHONE
+            _videoPopup.Height = Application.Current.Host.Content.ActualHeight;
+            _videoPopup.Width = Application.Current.Host.Content.ActualWidth;
+
+            _videoElement.Tap += _videoElement_Tap;
+            _videoElement.Stretch = (Stretch)stretch;
+#else
+            _videoPopup.Height = Window.Current.Bounds.Height;
+            _videoPopup.Width = Window.Current.Bounds.Width;
+
+            _videoElement.Tapped += _videoElement_Tapped;
+            _videoElement.Stretch = (Stretch)stretch;
+#endif
+
+            _videoElement.AutoPlay = false;
+
+            _videoElement.Height = _videoPopup.Height;
+            _videoElement.Width = _videoPopup.Width;
+
+            _videoPopup.IsOpen = true;
 #endif
         }
 
@@ -128,25 +150,19 @@ namespace MarkerMetro.Unity.WinIntegration.VideoPlayer
         /// <summary>
         /// Plays the video given path of the file.
         /// </summary>
-        public static void PlayVideo(string filename, Action onVideoEnded)
+        public static void PlayVideo(string filename, Action onVideoEnded, VideoStretch stretch = VideoStretch.None)
         {
 #if WINDOWS_PHONE || NETFX_CORE
             Dispatcher.InvokeOnUIThread(() =>
             {
-                if (_videoPopup == null || _videoElement == null)
-                {
-                    throw new Exception("VideoPlayer not initialized");
-                }
+                Initialize(stretch);
 
                 IsPlaying = true;
-                _videoElement.Visibility = Visibility.Visible;
-                _videoPopup.Visibility = Visibility.Visible;
-
 #if NETFX_CORE
-                _videoPopup.Height = Window.Current.Bounds.Height;
-                _videoPopup.Width = Window.Current.Bounds.Width;
-                _videoElement.Height = _videoPopup.Height;
-                _videoElement.Width = _videoPopup.Width;
+                //_videoPopup.Height = Window.Current.Bounds.Height;
+                //_videoPopup.Width = Window.Current.Bounds.Width;
+                //_videoElement.Height = _videoPopup.Height;
+                //_videoElement.Width = _videoPopup.Width;
 #endif
 
                 _onVideoEnded = onVideoEnded;
@@ -167,12 +183,17 @@ namespace MarkerMetro.Unity.WinIntegration.VideoPlayer
             {
                 if (_videoPopup == null || _videoElement == null)
                 {
-                    throw new Exception("VideoPlayer not initialized");
+                    throw new Exception("VideoPlayer not initialized.");
                 }
 
+                _videoElement.MediaEnded -= _videoElement_MediaEnded;
+                _videoElement.MediaOpened -= _videoElement_MediaOpened;
+#if WINDOWS_PHONE
+                _videoElement.Tap -= _videoElement_Tap;
+#else
+                _videoElement.Tapped -= _videoElement_Tapped;
+#endif
                 _videoElement.Stop();
-                _videoElement.Visibility = Visibility.Collapsed;
-                _videoPopup.Visibility = Visibility.Collapsed;
 
                 IsPlaying = false;
 
@@ -183,6 +204,15 @@ namespace MarkerMetro.Unity.WinIntegration.VideoPlayer
                         _onVideoEnded();
                     });
                 }
+
+                _videoElement.Source = null;
+                _videoElement = null;
+                _videoPopup.Child = null;
+                _videoPopup = null;
+#if WINDOWS_PHONE
+                _backgroundPopup.Child = null;
+                _backgroundPopup = null;
+#endif
             });
 #else
             throw new PlatformNotSupportedException("");
