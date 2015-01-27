@@ -590,30 +590,15 @@ namespace MarkerMetro.Unity.WinIntegration
             picker.CommitButtonText = buttonText;
             picker.SelectionMode = ContactSelectionMode.Fields;
             picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Email);
-            
-            Action<IAsyncOperation<IList<Contact>>, AsyncStatus> onCompleted = (asyncOp, status) =>
+
+            Dispatcher.InvokeOnUIThread(async () =>
             {
-                Dispatcher.InvokeOnUIThread(() =>
-                {
-                    if (asyncOp.ErrorCode != null)
-                        throw asyncOp.ErrorCode;
-
-                    List<EmailContact> contactList = new List<EmailContact>();
-                    foreach (var contact in asyncOp.GetResults())
-                        contactList.Add(new EmailContact(contact.DisplayName, contact.Emails[0].Address));
-
-                    Dispatcher.InvokeOnAppThread(() =>
-                    {
-                        if(callback != null)
-                            callback(contactList);
-                    });
-                });
-            };
-
-            Dispatcher.InvokeOnUIThread(() =>
-            {
-                var operation = picker.PickContactsAsync();
-                operation.Completed = new AsyncOperationCompletedHandler<IList<Contact>>(onCompleted);
+                IList<Contact> contacts = await picker.PickContactsAsync();
+                IList<EmailContact> emailContacts = contacts.Select(c => 
+                    new EmailContact(c.DisplayName, c.Emails[0].Address)).ToList();
+                
+                if (callback != null)
+                    callback(emailContacts);
             });
 
 #elif WINDOWS_PHONE
@@ -645,22 +630,23 @@ namespace MarkerMetro.Unity.WinIntegration
 #endif
 		}
 
-		/// <summary>
-		/// Win8 - Launches a mailto: URI 
-		/// WP8 - Calls email compose task
-		/// </summary>
-		/// <param name="to">A ; delimited list of email addresses to send the message to</param>
-		/// <param name="subject">The subject of the message</param>
-		/// <param name="body">The body of the message</param>
-		/// <param name="callback">The callback method with a bool param, true = success, false = failed</param>
-		public void SendEmail(string to, string subject, string body, Action<bool, string> callback)
-		{
+        /// <summary>
+        /// Win8 - Launches a mailto: URI.
+        /// WP8 - Calls email compose task.
+        /// </summary>
+        /// <param name="to">A comma-separated list of email addresses.</param>
+        /// <param name="subject">The subject of the message.</param>
+        /// <param name="body">The body of the message.</param>
+        public void SendEmail(string to, string subject, string body)
+        {
 #if NETFX_CORE
             Dispatcher.InvokeOnUIThread(async () =>
             {
-                var mailto = new Uri("mailto:" + to + "?subject=" + subject + "&body=" + body);
-                var success = await Launcher.LaunchUriAsync(mailto);
-                callback(success, to);
+                subject = Uri.EscapeDataString(subject);
+                body = Uri.EscapeDataString(body);
+
+                var mailto = new Uri(String.Format("mailto:?to={0}&subject={1}&body={2}", to, subject, body));
+                await Launcher.LaunchUriAsync(mailto);
             });
 #elif WINDOWS_PHONE
 			Dispatcher.InvokeOnUIThread(() =>
