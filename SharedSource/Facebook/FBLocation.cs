@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
 using Facebook.Client;
 #endif
 
@@ -23,7 +23,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
         }
 
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
         /// <summary>
         /// Initializes a new instance of the FBLocation class from a GraphLocation object.
         /// </summary>

@@ -18,6 +18,7 @@ using System.Xml.Linq;
 using System.IO;
 using System.Linq;
 #elif NETFX_CORE
+using Facebook.Client;
 using Windows.Storage;
 #endif
 
@@ -30,7 +31,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
     public static class FBNative
     {
 
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
         private static FacebookSessionClient _fbSessionClient;
         private static HideUnityDelegate _onHideUnity;
 #endif
@@ -43,7 +44,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// </remarks>
         public static void Init(InitDelegate onInitComplete, string appId, HideUnityDelegate onHideUnity)
         {
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
             _onHideUnity = onHideUnity;
             _fbSessionClient = new FacebookSessionClient(appId);
 
@@ -64,7 +65,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         public static void Logout()
         {
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
             _fbSessionClient.Logout();
 #else
             throw new PlatformNotSupportedException("");
@@ -73,14 +74,17 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         public static void Login(string permissions, FacebookDelegate callback)
         {
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
             FacebookSessionClient.OnFacebookAuthenticationFinished = (success, session, error) =>
             {
                 if (callback != null)
                     Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = success ? "Success" : "Fail", Error = error }); });
             };
 
-            _fbSessionClient.LoginWithBehavior(permissions, FacebookLoginBehavior.LoginBehaviorMobileInternetExplorerOnly);
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                _fbSessionClient.LoginWithBehavior(permissions, FacebookLoginBehavior.LoginBehaviorMobileInternetExplorerOnly);
+            });
 #else
             throw new PlatformNotSupportedException("");
 #endif
@@ -91,15 +95,15 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             HttpMethod method,
             FacebookDelegate callback)
         {
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
             
-            if (method != HttpMethod.GET) throw new NotImplementedException();        
+            if (method != HttpMethod.GET) throw new NotImplementedException();
             Task.Run(async () =>
             {
                 FacebookClient fb = new FacebookClient(FacebookSessionClient.CurrentSession.AccessToken);
                 FBResult fbResult = null;
                 try
-                { 
+                {
                     var apiCall = await fb.GetTaskAsync(endpoint, null);
                     if (apiCall != null)
                     {
@@ -128,14 +132,14 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// </summary>
         public static void GetCurrentUser(Action<FBUser> callback)
         {
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
             API("me", HttpMethod.GET, (result) =>
             {
                 var data = (IDictionary<string, object>)result.Json;
                 var me = new GraphUser(data);
 
                 if (callback != null)
-                    Dispatcher.InvokeOnAppThread(() => { callback(new FBUser(me)); });
+                    callback(new FBUser(me));
             });
 #else
             throw new PlatformNotSupportedException("");
@@ -157,7 +161,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 FacebookDelegate callback = null
             )
         {
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
             if (!IsLoggedIn)
             {
                 // not logged in
@@ -173,7 +177,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             };
 
             // pass in params to facebook client's app request
-            FacebookSessionClient.AppRequestViaBrowser(message, to, data, title);
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                FacebookSessionClient.AppRequestViaBrowser(message, to, data, title);
+            });
 
             // throw not supported exception when user passed in parameters not supported currently
             if (!string.IsNullOrWhiteSpace(filters) || excludeIds != null || maxRecipients != null)
@@ -202,7 +209,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             Dictionary<string, string[]> properties = null,
             FacebookDelegate callback = null)
         {
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
             if (!IsLoggedIn)
             {
                 // not logged in
@@ -218,7 +225,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             };
 
             // pass in params to facebook client's app request
-            FacebookSessionClient.FeedViaBrowser(toId, link, linkName, linkCaption, linkDescription, picture);
+            Dispatcher.InvokeOnUIThread(() =>
+            {
+                FacebookSessionClient.FeedViaBrowser(toId, link, linkName, linkCaption, linkDescription, picture);
+            });
 
             // throw not supported exception when user passed in parameters not supported currently
             if (!string.IsNullOrWhiteSpace(mediaSource) || !string.IsNullOrWhiteSpace(actionName) || !string.IsNullOrWhiteSpace(actionLink) ||
@@ -235,7 +245,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
             get
             {
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
                 return FacebookSessionClient.CurrentSession != null && !String.IsNullOrEmpty(FacebookSessionClient.CurrentSession.AccessToken);
 #else
                 throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
@@ -262,12 +272,22 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
             get
             {
-#if WINDOWS_PHONE //|| NETFX_CORE
+#if WINDOWS_PHONE || NETFX_CORE
                 return _fbSessionClient != null;
 #else
                 throw new PlatformNotSupportedException("");
 #endif
             }
+        }
+
+        public static void MapUri (Uri uri)
+        {
+#if NETFX_CORE
+            Dispatcher.InvokeOnAppThread(() =>
+            {
+                FacebookUriMapper.MapUri(uri);
+            });
+#endif
         }
     }
 }
