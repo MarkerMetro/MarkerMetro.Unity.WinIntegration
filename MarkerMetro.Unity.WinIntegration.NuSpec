@@ -4,7 +4,7 @@
     <id>MarkerMetro.Unity.WinIntegration</id>
     <version>$version$</version>
     <title>MarkerMetro.Unity.WinIntegration</title>
-    <description>WinIntegration Windows Store and Windows Phone Unity Plugin</description>
+    <description>WinIntegration Windows Store and Windows Phone Unity Plugin - Implements platform integration features</description>
     <authors>MarkerMetro</authors>
     <owners>MarkerMetro</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
