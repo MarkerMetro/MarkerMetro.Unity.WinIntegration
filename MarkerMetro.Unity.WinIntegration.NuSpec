@@ -10,6 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright Marker Metro © 2015</copyright>
     <projectUrl>https://github.com/MarkerMetro/MarkerMetro.Unity.WinIntegration</projectUrl>
+    <iconUrl>http://i.imgur.com/kR2gOc6.png</iconUrl>
     <dependencies/>
   </metadata>
   <files>
