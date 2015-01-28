@@ -1,5 +1,5 @@
 #if WINDOWS_PHONE || NETFX_CORE
-using MarkerMetro.Unity.WinLegacy.Cryptography;
+using MarkerMetro.Unity.WinLegacy.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Globalization;
 

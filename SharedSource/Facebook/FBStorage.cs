@@ -1,6 +1,6 @@
 #if WINDOWS_PHONE || NETFX_CORE
 
-using MarkerMetro.Unity.WinLegacy.Cryptography;
+using MarkerMetro.Unity.WinLegacy.Security.Cryptography;
 using Facebook;
 using System;
 #if WINDOWS_PHONE
