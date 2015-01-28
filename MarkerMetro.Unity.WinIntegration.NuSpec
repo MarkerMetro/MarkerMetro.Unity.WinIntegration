@@ -3,12 +3,12 @@
   <metadata>
     <id>MarkerMetro.Unity.WinIntegration</id>
     <version>$version$</version>
-    <title>MarkerMetro's Unity WinIntegration Library</title>
-    <description>MarkerMetro's Unity Windows Integration Library to help with porting Unity projects to Windows 8 and Windows Phone 8</description>
+    <title>MarkerMetro.Unity.WinIntegration</title>
+    <description>WinIntegration Windows Store and Windows Phone Unity Plugin</description>
     <authors>MarkerMetro</authors>
     <owners>MarkerMetro</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <copyright>Copyright MarkerMetro© 2013</copyright>
+    <copyright>Copyright Marker Metro © 2015</copyright>
     <projectUrl>https://github.com/MarkerMetro/MarkerMetro.Unity.WinIntegration</projectUrl>
     <dependencies/>
   </metadata>
