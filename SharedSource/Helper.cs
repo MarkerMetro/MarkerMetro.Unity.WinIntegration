@@ -583,53 +583,6 @@ namespace MarkerMetro.Unity.WinIntegration
         }
 #endif
 
-		public void ChooseEmailContacts(Action<IList<EmailContact>> callback, string buttonText = "Select")
-		{
-#if NETFX_CORE
-            ContactPicker picker = new ContactPicker();
-            picker.CommitButtonText = buttonText;
-            picker.SelectionMode = ContactSelectionMode.Fields;
-            picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Email);
-
-            Dispatcher.InvokeOnUIThread(async () =>
-            {
-                IList<Contact> contacts = await picker.PickContactsAsync();
-                IList<EmailContact> emailContacts = contacts.Select(c => 
-                    new EmailContact(c.DisplayName, c.Emails[0].Address)).ToList();
-                
-                if (callback != null)
-                    callback(emailContacts);
-            });
-
-#elif WINDOWS_PHONE
-			Contacts contacts = new Contacts();
-
-			Action<object, ContactsSearchEventArgs> onCompleted = (sender, e) =>
-				{
-					Dispatcher.InvokeOnUIThread(() =>
-					{
-						List<EmailContact> contactList = new List<EmailContact>();
-						foreach (var contact in e.Results)
-							foreach (var em in contact.EmailAddresses)
-								contactList.Add(new EmailContact(contact.DisplayName, em.EmailAddress));
-
-						Dispatcher.InvokeOnAppThread(() =>
-						{
-							if (callback != null)
-								callback(contactList);
-						});
-					});
-				};
-			contacts.SearchCompleted += new EventHandler<ContactsSearchEventArgs>(onCompleted);
-			Dispatcher.InvokeOnUIThread(() =>
-			{
-				contacts.SearchAsync(String.Empty, FilterKind.None, "");
-			});
-#else
-            throw new PlatformNotSupportedException();
-#endif
-		}
-
         /// <summary>
         /// Win8 - Launches a mailto: URI.
         /// WP8 - Calls email compose task.
@@ -660,17 +613,6 @@ namespace MarkerMetro.Unity.WinIntegration
 				task.Show();
 			});
 #endif
-		}
-
-		public class EmailContact
-		{
-			public string name { get; private set; }
-			public string email { get; private set; }
-			public EmailContact(string name, string email)
-			{
-				this.name = name;
-				this.email = email;
-			}
 		}
 
 #if !NETFX_CORE
