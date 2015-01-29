@@ -61,41 +61,39 @@ We recommend you look at [WinShared](https://github.com/MarkerMetro/MarkerMetro.
 
 There is no Unity Plugin for Windows at this time. We have filled the gap by providing the most used functionality in WinIntegration.
 
-#### Windows Phone 8.x
+#### Windows Phone
 
-Windows Phone (both 8.0 and 8.1) supports uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issue. 
+Windows Phone (both 8.0 and 8.1) supports uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issues. 
 
-The Windows Phone native IE Facebook experience is provided by the FBNative.cs class.
+Modify the app's manifest to add a protocal handler to ensure the native mobile IE facebook integration can work. 
 
-For Windows Phone 8.0, ensure you modify the WMAppManifest.xml to change the protocal handler to fb[appid] in the Extensions element. This will ensure the native mobile IE facebook integration can work. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/Properties/WMAppManifest.xml#L56)
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/Properties/WMAppManifest.xml#L56)
+- [Windows Phone 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.WindowsPhone/Package.appxmanifest#L25)
 
 #### Windows 8.1
 
-Windows 8.1 still a traditional web view approach which we will be looking to ugprade to in the future release if and when possible. The Windows 8.1 web view based Facebook experience is provided by the FB.cs class.
+Windows 8.1 uses a traditional web view approach which we will be looking to ugprade to in the future release if and when possible. 
 
 ##### Adding and initializing a web view
 
-For Windows 8.1, ensure that you add a web view control to handle the facebook integration. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/tree/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/Controls) which you can add to your app and customize to your requirements.
+Add a web view control to your app to handle the facebook integration. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/tree/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/Controls) which you can customize to your requirements.
 
-You need to provide
+You also need to provide an instance of the web view to WinIntegration so that the facebook integration can work.
 
 - [Windows 8.1 Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/MainPage.xaml.cs#L81)
-- [Non Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/Common/CommonMainPage.cs#L69)
+- [Windows 8.1 Non Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/Common/CommonMainPage.cs#L69)
 
-#### Initialization
+#### Sample usage
 
-- FBWebView.xaml/.cs for Windows Store
-- Ensure you set the app id in Assets/Plugins/MarkerMetro/Constants.cs
+[Note here about how we try and mimic the Unity Facebook SDK as much as possible]
 
-
-
-Add using statements to include the Facebook APIs as follows:
+Add using statements to include the Facebook APIs as follows.
 
 ```csharp
 #if UNITY_WINRT && !UNITY_EDITOR
 using MarkerMetro.Unity.WinIntegration.Facebook;
 
-#if UNITY_WP8
+#if (UNITY_WP8 || UNITY_WP_8_1) && !UNITY_EDITOR
 using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FBNative;
 #else
 using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FB;
@@ -104,11 +102,7 @@ using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FB;
 #endif
 ```
 
-
-
-
-
-Facebook implementations are quite game specific, however you will always need to initialize the FB client, for which you can use the Marker Metro test Faceboook app created by markermetro@live.com facebook account (see \MM Team - Administration\Logins\Facebook accounts.txt" for the password on dropbox).
+Facebook implementations are quite game specific, however you will always need to initialize the FB client with your App ID.
 
 Here's an example of the basic init call:
 
@@ -117,7 +111,7 @@ FBWin.Init(fbInitComplete, "682783485145217", fbOnHideUnity);
 
 private void fbInitComplete()
 {
-    // handler for Unity to deal with FB initializati complete
+    // handler for Unity to deal with FB initialization complete
 }
 
 private void fbOnHideUnity(bool isShow)
@@ -155,7 +149,7 @@ FBWin.AppRequest(
 });
 ```
 
-For FB.cs, note that only the message and callback are supported at this time, for FBNative message, to, data and title parameters are supported. The other parameters are included to provide api parity with the Unity facebook sdk, but are not functional.
+For Windows 8.1 (FB.cs), note that only the message and callback are supported at this time, for Windows Phone (FBNative.cs) message, to, data and title parameters are supported. The other parameters are included to provide api parity with the Unity Facebook SDK, but are not functional at this time.
 
 A callback approach is used for feed dialog requests:
 
@@ -178,13 +172,11 @@ FBWin.Feed(
 });
 ```
 
-For both FB.cs and FBNative.cs, note that only the toId, link, linkName, linkDescription and picture parameters are supported at this time, for FBNative message, to, data and title parameters are supported. The other paramters are included to provide api parity with the Unity facebook sdk, but are not functional.
+For both Windows 8.1 (FB.cs) and Windows Phone (FBNative.cs), note that only the toId, link, linkName, linkDescription and picture parameters are supported at this time, for Windows Phone (FBNative.cs) message, to, data and title parameters are supported. The other parameters are included to provide API parity with the Unity Facebook sdk, but are not functional.
 
-Note that on Windows Phone 8 the app actually deactivates and resumes as it hands off to mobile IE for all facebook integration, however the callback will still fire on resume.
+Note that on Windows Phone the app actually deactivates and resumes as it hands off to mobile IE for all facebook integration, however the callback will still fire on resume.
 
-For Windows 8.1, it is assumed you will be using MarkerMetro.Unity.WinShared  which includes the necessary web view/browser controls for displaying all necessary facebook dialogs for Window as well as initializing the links between the app and Unity sides. 
-
-The FB and FBNative classes in WinIntegration are very similar and we are working on aligning more closely. It is expected that FB will be fully deprecated after we get Windows 8.1 native mobile IE facebook integration working. 
+Lastly note, the FB.cs and FBNative.cs classes in WinIntegration are very similar and we are working on aligning more closely. It is expected that FB.cs will be fully deprecated after Windows 8.1 native mobile IE facebook integration is working.
 
 ### Store Integration
 
