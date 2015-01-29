@@ -1,23 +1,62 @@
-MarkerMetro.Unity.WinIntegration
-================================
+## Getting Started
 
-Plugin Libraries to support implementations of Windows 8 or Windows Phone platform specific functionality
+Unity Plugin for Windows Universal 8.1, Windows 8.1 and Windows Phone 8.0 used to support implementations of Windows or Windows Phone platform specific functionality missing within Unity.
 
-This plugin should be used by the MarkerMetro.Unity.WinShared Unity Project and Windows Apps Template:
-https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared
+See the [Unity FAQ on Universal Apps](http://docs.unity3d.com/Manual/WindowsUniversalApps-faq.html) which contains a complete breakdown of the platform conditional compilation you can use with Windows Apps and also broad guidance around the special plugin folders on Windows apps.
 
-Why?
-================================
-Not all platform specific features are implemented, or implemented well by either Unity or other commercial plugins. 
+## Prerequisites
 
-Where this is the case, we have implemented plugins to help
+- Visual Studio 2013
+- Unity 4.6.1f1 (tested only on this version but should work on other 4.x builds)
+
+## Getting Latest
+
+### Build Latest from Source
+
+We recommend using the latest stable tagged release, or you can build straight off the head if you are brave.
+
+Configure the solution to Release | Any CPU and Rebuild.
+
+You can then copy the folder contents as follows:
+
+- /MarkerMetro.Unity.WinIntegrationMetro/bin/Release > /Assets/Plugins/Metro/
+- /MarkerMetro.Unity.WinIntegrationUnity/bin/Release > /Assets/Plugins/
+- /MarkerMetro.Unity.WinIntegrationWP8/bin/Release > /Assets/Plugins/WP8/
+
+### Download Latest Stable Binaries
+
+Alternatively, you can download latest from [Nuget](https://www.nuget.org/api/v2/package/MarkerMetro.Unity.WinIntegration)
+
+Extract the files from the package and copy the folder contents as follows:
+
+- /lib/netcore45/ > /Assets/Plugins/Metro/
+- /lib/net35 > /Assets/Plugins/
+- /lib/windowsphone8 > /Assets/Plugins/WP8/
+
+Note: The Metro output will work fine for Universal projects with both Windows 8.1 and Windows Phone 8.1
+
+## Initialize the Plugins
+
+Within your Windows application, just need to ensure you initialize the plugin appropriately with examples as follows:
+
+For Windows Universal Apps (Windows 8.1/Windows Phone 8.1):
+https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs#L204
+
+For Windows 8.1 Apps:
+https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs#L130
+
+For Windows Phone 8.0 Apps:
+https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/MainPage.xaml.cs#L106
 
 
-What?
-================================
-This plugin helps with: Facebook integration, Store Integration, Helper to Get App Version, (More TBC!)
+## Guidance for Usage
 
-## Facebook Integration
+This plugin helps with a number of missing pieces of missing functionality within Unity. Use the Unity APIs if you can, and use WinIntegration where they are missing functionality.
+
+Wherever possible you want to minimize the changes to existing code, therefore we recommend applying a using statement for the platforms you need to provide support for. 
+
+
+### Facebook Integration
 
 Ensure you set the app id in Assets/Plugins/MarkerMetro/Constants.cs
 
@@ -120,7 +159,7 @@ For Windows 8.1, it is assumed you will be using MarkerMetro.Unity.WinShared  wh
 
 The FB and FBNative classes in WinIntegration are very similar and we are working on aligning more closely. It is expected that FB will be fully deprecated after we get Windows 8.1 native mobile IE facebook integration working. 
 
-## Store Integration
+### Store Integration
 
 Add a using statement to include the Store APIs.
 
@@ -161,13 +200,13 @@ Specifically for WP8, the only other StatusCode used is NotReady when after a su
 ```csharp
 void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
-## Exception Logging
+### Exception Logging
 
 WinIntegration supports both [Raygun.io](https://raygun.io/) and Bugsense via the ExceptionLogger class.
 
 This is enabled via MarkerMetro.Unity.WinIntegration.ExceptionLogger. Integration is disabled by default. 
 
-### To enable exception logging
+#### To enable exception logging
 
 Go straight to 3. if you have an api key provided by the client.
 
@@ -176,11 +215,11 @@ Go straight to 3. if you have an api key provided by the client.
 3. Replace the **API Key** in /WindowsSolution/Common/CommonApp.InitializeExceptionLogger() method and uncomment the lines.
 4. In _Unity_ attach /Assets/Scripts/MarkerMetro/ExceptionLogger.cs to first object that starts, this will allow reporting of _Unity_ errors using 
 
-### To disable exception logging
+#### To disable exception logging
 
 Comment out the line to initialize the ExceptionLogger here: /WindowsSolution/Common/CommonApp.InitializeExceptionLogger()
 
-### To remove exception logging libraries
+#### To remove exception logging libraries
 
 By default, binaries for the exception loggers will be included when you update WinIntegration from Nuget script. You should do the following to ensure that these binaries are not included. 
 
@@ -194,7 +233,7 @@ In _WinShared_ project there are 3 locations from which test exceptions can be t
 2. **Windows Phone** project has AppBar to allow crash testing (only for Debug)
 3. **Unity** project has extra button in `UIStart.cs` in /Assets/WinIntegrationExample/FaceFlip.unity test scene in WinShared.
 
-## Local Notifications
+### Local Notifications
 
 Reminders can be managedf using LocalNotifications.ReminderManager.
 
@@ -206,7 +245,7 @@ Usage Guidelines:
 - Add an option in settings screen to disable reminders
 - Win 8.1 Add toggle in settings charm to disable reminders
 
-## Helper
+### Helper
 
 Add a using statement to include the  APIs.
 
@@ -219,17 +258,17 @@ This class will help with various things such as gettign app version, the device
 https://github.com/MarkerMetro/MarkerMetro.Unity.WinIntegration/blob/master/SharedSource/Helper.cs
 
 
-How?
-================================
-This library is published on the Marker Metro NuGet Feed (https://github.com/MarkerMetro/MarkerMetro.ProcessAutomation/wiki)
+## Use WinShared to make things easier
 
-This plugin should be used by the MarkerMetro.Unity.WinShared Unity Project and Windows Apps Template:
-https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared
+If you are starting a new port and/or you want the best ongoing Unity integration with WinLegacy and related plugins, consider [MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared). 
 
-The MarkerMetro.Unity.WinShared framework will take care of proper initialization of the plugin.
+This will provide features such as:
 
-Updating and using this plugin on a project based on MarkerMetro.Unity.WinShared is easy. 
+- Initialization included within Windows projects provided
+- Test scene demonstrating end to end WinIntegration features such as Facebook and IAP integration.
+- Unity menu integration allowing you to get the latest stable version automatically from (Nuget)[https://www.nuget.org/packages/MarkerMetro.Unity.WinLegacy/]
+- Unity menu integration for using local solution with automatic copy of build output into correct Unity plugin folders
 
-1. Push Changes to this repo
-2. Run a new build via the http://mmbuild1.cloudapp.net/ build server
-3. Run the bat file in /Nuget folder of your project based on MarkerMetro.Unity.WinShared which will copy new versions into Unity plugins folders
+## Please Contribute
+
+We're open source, so please help everyone out by [contributing](CONTRIBUTING.md) as much as you can.
