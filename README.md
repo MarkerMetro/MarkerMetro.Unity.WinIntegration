@@ -55,12 +55,39 @@ This plugin helps with a number of missing pieces of missing functionality withi
 
 Wherever possible you want to minimize the changes to existing code, therefore we recommend applying a using statement for the platforms you need to provide support for. 
 
+We recommend you look at [WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinIntegration#use-winshared-to-make-things-easier) which uses WinIntegration to demonstrate capabilities.
 
 ### Facebook Integration
 
-Ensure you set the app id in Assets/Plugins/MarkerMetro/Constants.cs
+There is no Unity Plugin for Windows at this time. We have filled the gap by providing the most used functionality in WinIntegration.
 
-For Windows Phone, ensure you modify the WMAppManifest.xml to change the protocal handler to fb[appid] in the Extensions element. This will ensure the native mobile IE facebook integration can work.
+#### Windows Phone 8.x
+
+Windows Phone (both 8.0 and 8.1) supports uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issue. 
+
+The Windows Phone native IE Facebook experience is provided by the FBNative.cs class.
+
+For Windows Phone 8.0, ensure you modify the WMAppManifest.xml to change the protocal handler to fb[appid] in the Extensions element. This will ensure the native mobile IE facebook integration can work. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/Properties/WMAppManifest.xml#L56)
+
+#### Windows 8.1
+
+Windows 8.1 still a traditional web view approach which we will be looking to ugprade to in the future release if and when possible. The Windows 8.1 web view based Facebook experience is provided by the FB.cs class.
+
+##### Adding and initializing a web view
+
+For Windows 8.1, ensure that you add a web view control to handle the facebook integration. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/tree/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/Controls) which you can add to your app and customize to your requirements.
+
+You need to provide
+
+- [Windows 8.1 Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/MainPage.xaml.cs#L81)
+- [Non Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/Common/CommonMainPage.cs#L69)
+
+#### Initialization
+
+- FBWebView.xaml/.cs for Windows Store
+- Ensure you set the app id in Assets/Plugins/MarkerMetro/Constants.cs
+
+
 
 Add using statements to include the Facebook APIs as follows:
 
@@ -77,9 +104,9 @@ using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FB;
 #endif
 ```
 
-Windows Phone uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issue. 
 
-Windows 8.1 uses a traditional web view approach which we will be looking to ugprade to a  in the future.
+
+
 
 Facebook implementations are quite game specific, however you will always need to initialize the FB client, for which you can use the Marker Metro test Faceboook app created by markermetro@live.com facebook account (see \MM Team - Administration\Logins\Facebook accounts.txt" for the password on dropbox).
 
