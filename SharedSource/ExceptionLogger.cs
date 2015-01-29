@@ -15,7 +15,7 @@ namespace MarkerMetro.Unity.WinIntegration
 {
 
     /// <summary>
-    /// Exception Logger 
+    /// Exception Logger.
     /// </summary>
     public class ExceptionLogger
     {
@@ -49,6 +49,29 @@ namespace MarkerMetro.Unity.WinIntegration
                         _instance = new ExceptionLogger();
                 }
                 return _instance;
+            }
+        }
+
+        public bool Initialized
+        {
+            get
+            {
+#if NETFX_CORE || WINDOWS_PHONE
+                if (_loggerType == LoggerType.RaygunIO)
+                {
+                    return _raygun != null;
+                }
+                else if (_loggerType == LoggerType.BugSense)
+                {
+                    return _bugsenseCreated;
+                }
+                else
+                {
+                    return false;
+                }
+#else
+                return false;
+#endif
             }
         }
 
