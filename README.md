@@ -185,21 +185,29 @@ There is a single Store API for both Windows 8.1 and Windows Phone 8.x.
 
 For a complete implementation of IAP Integration using WinIntegration check out our starter template  [MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared)
 
-##### Setup and Initialization
+#### Setup and Initialization
 
-Add an iapsimulator.xml file to the root of your project. 
+Add an iapsimulator.xml file to the root of your project. This will be used when the store manager is in simulator mode.
 
-[TBC - iapsimulator links]
+- [Windows 8.1 and Windows Universal] (https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/iap_simulator.xml)
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/iap_simulator.xml)
 
-Ensure you have initialized the store as follows:
-
-[TBC winshared links]
+Then ensure you have initialized the store with the following code
 
 ```csharp
-void StoreManager.Initialise(bool useSimulator)
+            //Initialise Store system
+#if QA || DEBUG
+            StoreManager.Instance.Initialise(true);
+#else
+            StoreManager.Instance.Initialise(false);
+#endif
 ```
 
-Note the practice touse a conditional compilation symbol so that you can have IAP simulator or real store api interaction depending on which build you are delivering. 
+For Windows Phone 8.0, place it in the Unity_Loaded method in MainPage.xaml.cs. 
+
+For Windows Universal or Windows 8.1, place it in the InitializeUnity method within App.xaml.cs just before the call to construct MainPage.
+
+Note the practice of using a conditional compilation symbol so that you can have IAP simulator or real store api interaction depending on which build you are delivering. 
 
 #### Sample usage
 
@@ -279,6 +287,8 @@ ReminderManage will use system reminders on WP8, and scheduled notification toas
 - Add an option in settings screen to disable reminders
 - Win 8.1 Add toggle in settings charm to disable reminders
 
+### Video Player (TBC)
+
 ### Helper
 
 Add a using statement to include the  APIs.
@@ -299,7 +309,7 @@ If you are starting a new port and/or you want the best ongoing Unity integratio
 This will provide features such as:
 
 - Initialization included within Windows projects provided
-- Test scene demonstrating end to end WinIntegration features such as Facebook and IAP integration.
+- Test scene demonstrating end to end all the WinIntegration features above, including Facebook and IAP integration.
 - Unity menu integration allowing you to get the latest stable version automatically from (Nuget)[https://www.nuget.org/packages/MarkerMetro.Unity.WinLegacy/]
 - Unity menu integration for using local solution with automatic copy of build output into correct Unity plugin folders
 
