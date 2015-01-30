@@ -82,7 +82,7 @@ public void InvokeOnUIThread(System.Action callback)
 }
 ```
 
-You can see existing implementattions in [WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared) here:
+You can see existing implementations in [WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared) here:
 
 - [Windows Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs) 
 - [Windows 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs)
