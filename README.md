@@ -350,7 +350,7 @@ This will provide features such as:
 
 - Initialization included within Windows projects provided
 - Test scene demonstrating end to end all the WinIntegration features above, including Facebook and IAP integration.
-- Unity menu integration allowing you to get the latest stable version automatically from (Nuget)[https://www.nuget.org/packages/MarkerMetro.Unity.WinLegacy/]
+- Unity menu integration allowing you to get the latest stable version automatically from [Nuget](https://www.nuget.org/packages/MarkerMetro.Unity.WinLegacy/)
 - Unity menu integration for using local solution with automatic copy of build output into correct Unity plugin folders
 
 ## Please Contribute
