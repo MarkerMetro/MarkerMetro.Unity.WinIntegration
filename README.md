@@ -48,7 +48,6 @@ https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSo
 For Windows Phone 8.0 Apps:
 https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/MainPage.xaml.cs#L106
 
-
 ## Guidance for Usage
 
 This plugin helps with a number of missing pieces of missing functionality within Unity. Use the Unity APIs if you can, and use WinIntegration where they are missing functionality.
@@ -59,7 +58,7 @@ We recommend you look at [WinShared](https://github.com/MarkerMetro/MarkerMetro.
 
 ### Facebook Integration
 
-There is no Unity Plugin for Windows at this time. We have filled the gap by providing the most used functionality in WinIntegration.
+There is no Unity Plugin for Windows at this time. We have filled the gap by providing the most used functionality from the [Unity SDK for Facebook](https://developers.facebook.com/docs/unity/) in WinIntegration.
 
 #### Windows Phone
 
@@ -85,9 +84,11 @@ You also need to provide an instance of the web view to WinIntegration so that t
 
 #### Sample usage
 
-[Note here about how we try and mimic the Unity Facebook SDK as much as possible]
+We aim to mimic the [Unity SDK for Facebook](https://developers.facebook.com/docs/unity/) functionality as much as possible with a wrapper/facade class. 
 
-Add using statements to include the Facebook APIs as follows.
+For a complete implementation of Facebook Integration using WinIntegration check out our starter template  [MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared). 
+
+To begin, add using statements to include the Facebook APIs as follows within your Unity script.
 
 ```csharp
 #if UNITY_WINRT && !UNITY_EDITOR
@@ -107,7 +108,7 @@ Facebook implementations are quite game specific, however you will always need t
 Here's an example of the basic init call:
 
 ```csharp
-FBWin.Init(fbInitComplete, "682783485145217", fbOnHideUnity); 
+FBWin.Init(fbInitComplete, "[api key]", fbOnHideUnity); 
 
 private void fbInitComplete()
 {
@@ -116,12 +117,12 @@ private void fbInitComplete()
 
 private void fbOnHideUnity(bool isShow)
 {
-    // handler for UNity to deal with FB web browser visibility changes
+    // handler for UNity to deal with FB web browser visibility changes (only applies to Win 8.1)
 }
 
 ```
 
-Note: a redirect url may need to be explicitly passed in if the default FB.Init call does not work and you get "Given URL is not allowed by the Application configuration". In this case, the client will need to provide a value redirectUrl via their facebook app page. This is at > settings > advanced > Valid OAuth redirect URIs. Client should provide  a value from their we can use, and it should NOT be a local address (e.g .http://localhost...) as that causes problems on Windows Store. It doesn't really matter what it is, just that it's a valid url.
+Note: a redirect url may need to be explicitly passed in if the default FB.Init call does not work and you get "Given URL is not allowed by the Application configuration". In this case, the you will need to provide a valid redirectUrl via their facebook app page. This is at > Settings > Advanced > Valid OAuth redirect URIs within Facebook App. This value should NOT be a local address (e.g .http://localhost...) as that causes problems on Windows 8.1. It doesn't really matter what it is, just that it's a valid url.
 
 A callback approach is used for login:
 
@@ -149,7 +150,7 @@ FBWin.AppRequest(
 });
 ```
 
-For Windows 8.1 (FB.cs), note that only the message and callback are supported at this time, for Windows Phone (FBNative.cs) message, to, data and title parameters are supported. The other parameters are included to provide api parity with the Unity Facebook SDK, but are not functional at this time.
+For Windows 8.1, note that only the message and callback are supported at this time. For Windows Phone  message, to, data and title parameters are supported. The other parameters are included to provide API parity with the Unity Facebook SDK, but are not functional at this time.
 
 A callback approach is used for feed dialog requests:
 
@@ -172,7 +173,7 @@ FBWin.Feed(
 });
 ```
 
-For both Windows 8.1 (FB.cs) and Windows Phone (FBNative.cs), note that only the toId, link, linkName, linkDescription and picture parameters are supported at this time, for Windows Phone (FBNative.cs) message, to, data and title parameters are supported. The other parameters are included to provide API parity with the Unity Facebook sdk, but are not functional.
+For both Windows 8.1 and Windows Phone, note that only the toId, link, linkName, linkDescription and picture parameters are supported at this time, for Windows Phone message, to, data and title parameters are supported. The other parameters are included to provide API parity with the Unity Facebook sdk, but are not functional.
 
 Note that on Windows Phone the app actually deactivates and resumes as it hands off to mobile IE for all facebook integration, however the callback will still fire on resume.
 
@@ -180,19 +181,33 @@ Lastly note, the FB.cs and FBNative.cs classes in WinIntegration are very simila
 
 ### Store Integration
 
-Add a using statement to include the Store APIs.
+There is a single Store API for both Windows 8.1 and Windows Phone 8.x.
 
-```csharp
-using MarkerMetro.Unity.WinIntegration.Store;
-```
+For a complete implementation of IAP Integration using WinIntegration check out our starter template  [MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared)
 
-It is assumed you will be using MarkerMetro.Unity.WinShared which will include an iap_simulator.xml file in the root of both Windows projects. You will just need to update the IAP codes for your particular game in the respective xml files for each project.
+##### Setup and Initialization
+
+Add an iapsimulator.xml file to the root of your project. 
+
+[TBC - iapsimulator links]
+
+Ensure you have initialized the store as follows:
+
+[TBC winshared links]
 
 ```csharp
 void StoreManager.Initialise(bool useSimulator)
 ```
 
-There is a single Store API for both Win 8.1 and WP8:
+Note the practice touse a conditional compilation symbol so that you can have IAP simulator or real store api interaction depending on which build you are delivering. 
+
+#### Sample usage
+
+To begin, add a using statement to include the Store APIs.
+
+```csharp
+using MarkerMetro.Unity.WinIntegration.Store;
+```
 
 Determine whether the app has a currently active trial:
 
@@ -214,12 +229,12 @@ void StoreManager.Instance.RetrieveProducts(ProductListDelegate callback)
 
 Attempt to purchase an IAP product. The receipt object returned in the delegate will have a StatusCode of Success or ExceptionThrow if something went badly wrong. 
 
-Specifically for WP8, the only other StatusCode used is NotReady when after a successful purchase the license information does not appear to be valid. Windows 8.1 uses all the other status codes as more information is available.
+Specifically for Windows Phone 8.0, the only other StatusCode used is NotReady when after a successful purchase the license information does not appear to be valid. Windows 8.1 uses all the other status codes as more information is available.
 
 ```csharp
 void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
-### Exception Logging
+### Exception Logging (TBC)
 
 WinIntegration supports both [Raygun.io](https://raygun.io/) and Bugsense via the ExceptionLogger class.
 
@@ -244,7 +259,7 @@ By default, binaries for the exception loggers will be included when you update 
 
 These steps are currently in development
  
-### Testing exceptions/crashes
+#### Testing exceptions/crashes
 
 In _WinShared_ project there are 3 locations from which test exceptions can be thrown. 
 
@@ -252,13 +267,13 @@ In _WinShared_ project there are 3 locations from which test exceptions can be t
 2. **Windows Phone** project has AppBar to allow crash testing (only for Debug)
 3. **Unity** project has extra button in `UIStart.cs` in /Assets/WinIntegrationExample/FaceFlip.unity test scene in WinShared.
 
-### Local Notifications
+### Local Notifications (TBC)
 
 Reminders can be managedf using LocalNotifications.ReminderManager.
 
 ReminderManage will use system reminders on WP8, and scheduled notification toasts on Win8.1 allowing you to set deterministic timer based prompts to the user.
 
-Usage Guidelines:
+#### Usage Guidelines
 
 - Win 8.1 Ensure that you have enabled "Is Toast Capable" in your manifest
 - Add an option in settings screen to disable reminders
