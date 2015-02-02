@@ -109,11 +109,20 @@ Modify the app's manifest to add a protocal handler to ensure the native mobile 
 - [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/Properties/WMAppManifest.xml)
 - [Windows Phone 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.WindowsPhone/Package.appxmanifest)
 
+You also need to assign a UriMapper
+
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/App.xaml.cs) See the App() constructor.
+- [Windows Phone 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs) See the OnActivated method.
+
+For Windows Phone 8.0 ensrue you have added the ID_CAP_NETWORKING capability and for Windows Phone 8.1 the Internet capability. 
+
 #### Windows 8.1
 
 Windows 8.1 uses a traditional web view approach which we will be looking to ugprade to in the future release if and when possible. 
 
 ##### Adding and initializing a web view
+
+You will need to ensure you have assigned the Internet capability.
 
 Add a web view control to your app to handle the facebook integration. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/tree/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/Controls) which you can customize to your requirements.
 
@@ -318,6 +327,8 @@ To disable exception logging you should comment out any code that initializes th
 Local Notifications can be set using LocalNotifications.ReminderManager.
 
 The ReminderManager will use system reminders on WP8, and scheduled notification toasts on Win8.1 allowing you to set deterministic timer based prompts easily for the user. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/MarkerMetro/Example/Scripts/GameMaster.cs)
+
+You should ensure that you add IsToastCapable = true within your manifest on Windows 8.1 and Windows Phone 8.1
 
 #### Usage Guidelines
 
