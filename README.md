@@ -35,19 +35,58 @@ Extract the files from the package and copy the folder contents as follows:
 
 Note: The Metro output will work fine for Universal projects with both Windows 8.1 and Windows Phone 8.1
 
-## Initialize the Plugins
+## Initialize the Plugin
 
 Within your Windows application, just need to ensure you initialize the plugin appropriately with examples as follows:
 
-For Windows Universal Apps (Windows 8.1/Windows Phone 8.1):
-https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs#L204
+For Windows Universal and Windows 8.1 Apps add the following method to App.xaml.cs and call it after the call to appCallbacks.InitializeD3DXAML().
 
-For Windows 8.1 Apps:
-https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs#L130
+For Windows Phone 8.0 add the following method to MainPage.xaml.cs at the end of DrawingSurfaceBackground_Loaded method within the if (!_unityStartedLoading) code branch at the bottom.
 
-For Windows Phone 8.0 Apps:
-https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/MainPage.xaml.cs#L106
+```csharp
 
+void InitializePlugins()
+{
+    // wire up dispatcher for plugin
+    MarkerMetro.Unity.WinIntegration.Dispatcher.InvokeOnAppThread = InvokeOnAppThread;
+    MarkerMetro.Unity.WinIntegration.Dispatcher.InvokeOnUIThread = InvokeOnUIThread;
+}
+
+```
+For Windows Universal and Windows 8.1 Apps the handlers should be as follows:
+
+```csharp
+public void InvokeOnAppThread(Action callback)
+{
+    appCallbacks.InvokeOnAppThread(() => callback(), false);
+}
+
+public void InvokeOnUIThread(Action callback)
+{
+    appCallbacks.InvokeOnUIThread(() => callback(), false);
+}
+```
+
+For Windows Phone 8.0 Apps the handlers should be as follows:
+
+```csharp
+
+public void InvokeOnAppThread(System.Action callback)
+{
+    UnityApp.BeginInvoke(() => callback());
+}
+
+public void InvokeOnUIThread(System.Action callback)
+{
+    Dispatcher.BeginInvoke(() => callback());
+}
+```
+
+You can see existing implementations in [WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared) here:
+
+- [Windows Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs) 
+- [Windows 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs)
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/MainPage.xaml.cs)
 
 ## Guidance for Usage
 
@@ -55,20 +94,64 @@ This plugin helps with a number of missing pieces of missing functionality withi
 
 Wherever possible you want to minimize the changes to existing code, therefore we recommend applying a using statement for the platforms you need to provide support for. 
 
+We recommend you look at [WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinIntegration#use-winshared-to-make-things-easier) which uses WinIntegration to demonstrate capabilities.
 
 ### Facebook Integration
 
-Ensure you set the app id in Assets/Plugins/MarkerMetro/Constants.cs
+There is no Unity Plugin for Windows at this time. We have filled the gap by providing the most used functionality from the [Unity SDK for Facebook](https://developers.facebook.com/docs/unity/) in WinIntegration.
 
-For Windows Phone, ensure you modify the WMAppManifest.xml to change the protocal handler to fb[appid] in the Extensions element. This will ensure the native mobile IE facebook integration can work.
+#### Windows Phone
 
-Add using statements to include the Facebook APIs as follows:
+Windows Phone (both 8.0 and 8.1) supports uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issues. 
+
+Modify the app's manifest to add a protocal handler to ensure the native mobile IE facebook integration can work. 
+
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/Properties/WMAppManifest.xml)
+- [Windows Phone 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.WindowsPhone/Package.appxmanifest)
+
+You also need to assign a UriMapper
+
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/App.xaml.cs) See the App() constructor.
+- [Windows Phone 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs) See the OnActivated method.
+
+For Windows Phone 8.0 ensrue you have added the ID_CAP_NETWORKING capability and for Windows Phone 8.1 the Internet capability. 
+
+#### Windows 8.1
+
+Windows 8.1 uses a traditional web view approach which we will be looking to ugprade to in the future release if and when possible. 
+
+##### Adding and initializing a web view
+
+You will need to ensure you have assigned the Internet capability.
+
+Add a web view control to your app to handle the facebook integration. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/tree/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/Controls) which you can customize to your requirements.
+
+The control can be declared in your app's MainPage.xaml. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/MainPage.xaml)
+
+Lastly, you need provide an instance of the web view to the plugin so that the facebook integration can work.
+
+```csharp
+FB.SetPlatformInterface(web);
+```
+
+You can see how this is done here:
+
+- [Windows 8.1 Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/MainPage.xaml.cs)
+- [Windows 8.1 Non Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/Common/CommonMainPage.cs)
+
+#### Sample usage
+
+We aim to mimic the [Unity SDK for Facebook](https://developers.facebook.com/docs/unity/) functionality as much as possible with a wrapper/facade class. 
+
+For a complete implementation of Facebook Integration using WinIntegration check out our starter template  [MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared). 
+
+To begin, add using statements to include the Facebook APIs as follows within your Unity script.
 
 ```csharp
 #if UNITY_WINRT && !UNITY_EDITOR
 using MarkerMetro.Unity.WinIntegration.Facebook;
 
-#if UNITY_WP8
+#if (UNITY_WP8 || UNITY_WP_8_1) && !UNITY_EDITOR
 using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FBNative;
 #else
 using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FB;
@@ -77,30 +160,26 @@ using FBWin = MarkerMetro.Unity.WinIntegration.Facebook.FB;
 #endif
 ```
 
-Windows Phone uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issue. 
-
-Windows 8.1 uses a traditional web view approach which we will be looking to ugprade to a  in the future.
-
-Facebook implementations are quite game specific, however you will always need to initialize the FB client, for which you can use the Marker Metro test Faceboook app created by markermetro@live.com facebook account (see \MM Team - Administration\Logins\Facebook accounts.txt" for the password on dropbox).
+Facebook implementations are quite game specific, however you will always need to initialize the FB client with your App ID.
 
 Here's an example of the basic init call:
 
 ```csharp
-FBWin.Init(fbInitComplete, "682783485145217", fbOnHideUnity); 
+FBWin.Init(fbInitComplete, "[api key]", fbOnHideUnity); 
 
 private void fbInitComplete()
 {
-    // handler for Unity to deal with FB initializati complete
+    // handler for Unity to deal with FB initialization complete
 }
 
 private void fbOnHideUnity(bool isShow)
 {
-    // handler for UNity to deal with FB web browser visibility changes
+    // handler for UNity to deal with FB web browser visibility changes (only applies to Win 8.1)
 }
 
 ```
 
-Note: a redirect url may need to be explicitly passed in if the default FB.Init call does not work and you get "Given URL is not allowed by the Application configuration". In this case, the client will need to provide a value redirectUrl via their facebook app page. This is at > settings > advanced > Valid OAuth redirect URIs. Client should provide  a value from their we can use, and it should NOT be a local address (e.g .http://localhost...) as that causes problems on Windows Store. It doesn't really matter what it is, just that it's a valid url.
+Note: a redirect url may need to be explicitly passed in if the default FB.Init call does not work and you get "Given URL is not allowed by the Application configuration". In this case, the you will need to provide a valid redirectUrl via their facebook app page. This is at > Settings > Advanced > Valid OAuth redirect URIs within Facebook App. This value should NOT be a local address (e.g .http://localhost...) as that causes problems on Windows 8.1. It doesn't really matter what it is, just that it's a valid url.
 
 A callback approach is used for login:
 
@@ -128,7 +207,7 @@ FBWin.AppRequest(
 });
 ```
 
-For FB.cs, note that only the message and callback are supported at this time, for FBNative message, to, data and title parameters are supported. The other parameters are included to provide api parity with the Unity facebook sdk, but are not functional.
+For Windows 8.1, note that only the message and callback are supported at this time. For Windows Phone  message, to, data and title parameters are supported. The other parameters are included to provide API parity with the Unity Facebook SDK, but are not functional at this time.
 
 A callback approach is used for feed dialog requests:
 
@@ -151,29 +230,49 @@ FBWin.Feed(
 });
 ```
 
-For both FB.cs and FBNative.cs, note that only the toId, link, linkName, linkDescription and picture parameters are supported at this time, for FBNative message, to, data and title parameters are supported. The other paramters are included to provide api parity with the Unity facebook sdk, but are not functional.
+For both Windows 8.1 and Windows Phone, note that only the toId, link, linkName, linkDescription and picture parameters are supported at this time, for Windows Phone message, to, data and title parameters are supported. The other parameters are included to provide API parity with the Unity Facebook sdk, but are not functional.
 
-Note that on Windows Phone 8 the app actually deactivates and resumes as it hands off to mobile IE for all facebook integration, however the callback will still fire on resume.
+Note that on Windows Phone the app actually deactivates and resumes as it hands off to mobile IE for all facebook integration, however the callback will still fire on resume.
 
-For Windows 8.1, it is assumed you will be using MarkerMetro.Unity.WinShared  which includes the necessary web view/browser controls for displaying all necessary facebook dialogs for Window as well as initializing the links between the app and Unity sides. 
-
-The FB and FBNative classes in WinIntegration are very similar and we are working on aligning more closely. It is expected that FB will be fully deprecated after we get Windows 8.1 native mobile IE facebook integration working. 
+Lastly note, the FB.cs and FBNative.cs classes in WinIntegration are very similar and we are working on aligning more closely. It is expected that FB.cs will be fully deprecated after Windows 8.1 native mobile IE facebook integration is working.
 
 ### Store Integration
 
-Add a using statement to include the Store APIs.
+There is a single Store API for both Windows 8.1 and Windows Phone 8.x.
+
+For a complete implementation of IAP Integration using WinIntegration check out our starter template  [MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared)
+
+#### Setup and Initialization
+
+Add an iapsimulator.xml file to the root of your project. This will be used when the store manager is in simulator mode.
+
+- [Windows 8.1 and Windows Universal] (https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/iap_simulator.xml)
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/iap_simulator.xml)
+
+Then ensure you have initialized the store with the following code
+
+```csharp
+            //Initialise Store system
+#if QA || DEBUG
+            StoreManager.Instance.Initialise(true);
+#else
+            StoreManager.Instance.Initialise(false);
+#endif
+```
+
+For Windows Phone 8.0, place it in the Unity_Loaded method in MainPage.xaml.cs. 
+
+For Windows Universal or Windows 8.1, place it in the InitializeUnity method within App.xaml.cs just before the call to construct MainPage.
+
+Note the practice of using a conditional compilation symbol so that you can have IAP simulator or real store api interaction depending on which build you are delivering. 
+
+#### Sample usage
+
+To begin, add a using statement to include the Store APIs.
 
 ```csharp
 using MarkerMetro.Unity.WinIntegration.Store;
 ```
-
-It is assumed you will be using MarkerMetro.Unity.WinShared which will include an iap_simulator.xml file in the root of both Windows projects. You will just need to update the IAP codes for your particular game in the respective xml files for each project.
-
-```csharp
-void StoreManager.Initialise(bool useSimulator)
-```
-
-There is a single Store API for both Win 8.1 and WP8:
 
 Determine whether the app has a currently active trial:
 
@@ -195,55 +294,61 @@ void StoreManager.Instance.RetrieveProducts(ProductListDelegate callback)
 
 Attempt to purchase an IAP product. The receipt object returned in the delegate will have a StatusCode of Success or ExceptionThrow if something went badly wrong. 
 
-Specifically for WP8, the only other StatusCode used is NotReady when after a successful purchase the license information does not appear to be valid. Windows 8.1 uses all the other status codes as more information is available.
+Specifically for Windows Phone 8.0, the only other StatusCode used is NotReady when after a successful purchase the license information does not appear to be valid. Windows 8.1 uses all the other status codes as more information is available.
 
 ```csharp
 void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
-### Exception Logging
+### Exception Logging (Subject To Change!)
 
-WinIntegration supports both [Raygun.io](https://raygun.io/) and Bugsense via the ExceptionLogger class.
+WinIntegration supports both [Raygun.io](https://raygun.io/) and Bugsense via the ExceptionLogger class. This is enabled via MarkerMetro.Unity.WinIntegration.ExceptionLogger.
 
-This is enabled via MarkerMetro.Unity.WinIntegration.ExceptionLogger. Integration is disabled by default. 
+#### To enable and initialize exception logging
 
-#### To enable exception logging
+First of all ensure you have an API Key
 
-Go straight to 3. if you have an api key provided by the client.
+- Create a new project on the Exception Logger portal (e.g Raygun/Bugsense)
+- Get **API Key** from the Exception Logger portal
 
-1. Create a new project on the Exception Logger portal (e.g Raygun/Bugsense)
-2. Get **API Key** from the Exception Logger portal
-3. Replace the **API Key** in /WindowsSolution/Common/CommonApp.InitializeExceptionLogger() method and uncomment the lines.
-4. In _Unity_ attach /Assets/Scripts/MarkerMetro/ExceptionLogger.cs to first object that starts, this will allow reporting of _Unity_ errors using 
+To ensure all Unity exceptions and errors are captured, create a Unity class as follows [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/Plugins/MarkerMetro/ExceptionLogger.cs)
+
+You should also ensure the exception logger is initialized and assigned to report on all unhandled exceptions at the application level:
+
+- [Windows 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs)
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/App.xaml.cs)
+- [Windows Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs)
 
 #### To disable exception logging
 
-Comment out the line to initialize the ExceptionLogger here: /WindowsSolution/Common/CommonApp.InitializeExceptionLogger()
+To disable exception logging you should comment out any code that initializes the exception logger.
 
-#### To remove exception logging libraries
+### Local Notifications 
 
-By default, binaries for the exception loggers will be included when you update WinIntegration from Nuget script. You should do the following to ensure that these binaries are not included. 
+Local Notifications can be set using LocalNotifications.ReminderManager.
 
-These steps are currently in development
- 
-### Testing exceptions/crashes
+The ReminderManager will use system reminders on WP8, and scheduled notification toasts on Win8.1 allowing you to set deterministic timer based prompts easily for the user. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/MarkerMetro/Example/Scripts/GameMaster.cs)
 
-In _WinShared_ project there are 3 locations from which test exceptions can be thrown. 
+You should ensure that you add IsToastCapable = true within your manifest on Windows 8.1 and Windows Phone 8.1
 
-1. **Windows Store** project has extra Settings charm menu item **Crash** (only for Debug)
-2. **Windows Phone** project has AppBar to allow crash testing (only for Debug)
-3. **Unity** project has extra button in `UIStart.cs` in /Assets/WinIntegrationExample/FaceFlip.unity test scene in WinShared.
-
-### Local Notifications
-
-Reminders can be managedf using LocalNotifications.ReminderManager.
-
-ReminderManage will use system reminders on WP8, and scheduled notification toasts on Win8.1 allowing you to set deterministic timer based prompts to the user.
-
-Usage Guidelines:
+#### Usage Guidelines
 
 - Win 8.1 Ensure that you have enabled "Is Toast Capable" in your manifest
 - Add an option in settings screen to disable reminders
 - Win 8.1 Add toggle in settings charm to disable reminders
+
+### Video Player
+
+This allows you to play a video over the top of the Unity scene. It will use a standard XAML MediaElement and 
+
+```csharp
+        string path = Application.streamingAssetsPath + "/MarkerMetro/ExampleVideo.mp4";
+        VideoPlayer.PlayVideo(path, () =>
+        {
+            Debug.Log("Video Stopped.");
+        }, VideoStretch.Uniform);
+```
+
+A full example is provided as part of (MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/MarkerMetro/Example/Scripts/GameMaster.cs)
 
 ### Helper
 
@@ -265,8 +370,8 @@ If you are starting a new port and/or you want the best ongoing Unity integratio
 This will provide features such as:
 
 - Initialization included within Windows projects provided
-- Test scene demonstrating end to end WinIntegration features such as Facebook and IAP integration.
-- Unity menu integration allowing you to get the latest stable version automatically from (Nuget)[https://www.nuget.org/packages/MarkerMetro.Unity.WinLegacy/]
+- Test scene demonstrating end to end all the WinIntegration features above, including Facebook and IAP integration.
+- Unity menu integration allowing you to get the latest stable version automatically from [Nuget](https://www.nuget.org/packages/MarkerMetro.Unity.WinLegacy/)
 - Unity menu integration for using local solution with automatic copy of build output into correct Unity plugin folders
 
 ## Please Contribute
