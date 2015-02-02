@@ -436,11 +436,11 @@ namespace MarkerMetro.Unity.WinIntegration
 		/// </summary>
 		/// <returns>Windows 8 Arm or Windows Phone Low Mem returns true</returns>
 		public bool IsLowEndDevice()
-		{
-#if WINDOWS_PHONE
-			long result = 0;
+        {
+#if WINDOWS_PHONE 
+            long result = 0;
 			try
-			{
+            {
 				result = (long)DeviceExtendedProperties.GetValue("ApplicationWorkingSetLimit");
 			}
 			catch (ArgumentOutOfRangeException)
@@ -449,7 +449,18 @@ namespace MarkerMetro.Unity.WinIntegration
 				// on Windows Phone OS 7.1 and older phones without OS updates.
 			}
 			return result <= 188743680; // less than or equal to 180MB including failure scenario
-
+#elif WINDOWS_PHONE_APP
+            long result = 0;
+            try
+            {
+                result = (long)MemoryManager.AppMemoryUsageLimit;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                // The device does not support querying for this value. This occurs
+                // on Windows Phone OS 7.1 and older phones without OS updates.
+            }
+            return result <= 188743680; // less than or equal to 180MB including failure scenario
 #elif NETFX_CORE
             var systemInfo = new SYSTEM_INFO();
             GetNativeSystemInfo(ref systemInfo);
@@ -458,7 +469,7 @@ namespace MarkerMetro.Unity.WinIntegration
 #else
             return false;
 #endif
-		}
+        }
 
 		public bool HasInternetConnection
 		{
