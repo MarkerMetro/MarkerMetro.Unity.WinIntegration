@@ -106,8 +106,8 @@ Windows Phone (both 8.0 and 8.1) supports uses a native mobile internet explorer
 
 Modify the app's manifest to add a protocal handler to ensure the native mobile IE facebook integration can work. 
 
-- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/Properties/WMAppManifest.xml#L56)
-- [Windows Phone 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.WindowsPhone/Package.appxmanifest#L25)
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/Properties/WMAppManifest.xml)
+- [Windows Phone 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.WindowsPhone/Package.appxmanifest)
 
 #### Windows 8.1
 
@@ -117,10 +117,18 @@ Windows 8.1 uses a traditional web view approach which we will be looking to ugp
 
 Add a web view control to your app to handle the facebook integration. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/tree/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/Controls) which you can customize to your requirements.
 
-You also need to provide an instance of the web view to WinIntegration so that the facebook integration can work.
+The control can be declared in your app's MainPage.xaml. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/MainPage.xaml)
 
-- [Windows 8.1 Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/MainPage.xaml.cs#L81)
-- [Windows 8.1 Non Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/Common/CommonMainPage.cs#L69)
+Lastly, you need provide an instance of the web view to the plugin so that the facebook integration can work.
+
+```csharp
+            FB.SetPlatformInterface(web);
+```
+
+You can see how this is done here:
+
+- [Windows 8.1 Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/MainPage.xaml.cs)
+- [Windows 8.1 Non Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/Common/CommonMainPage.cs)
 
 #### Sample usage
 
@@ -282,38 +290,28 @@ Specifically for Windows Phone 8.0, the only other StatusCode used is NotReady w
 ```csharp
 void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
-### Exception Logging (TBC)
+### Exception Logging (Subject To Change!)
 
-WinIntegration supports both [Raygun.io](https://raygun.io/) and Bugsense via the ExceptionLogger class.
+WinIntegration supports both [Raygun.io](https://raygun.io/) and Bugsense via the ExceptionLogger class. This is enabled via MarkerMetro.Unity.WinIntegration.ExceptionLogger.
 
-This is enabled via MarkerMetro.Unity.WinIntegration.ExceptionLogger. Integration is disabled by default. 
+#### To enable and initialize exception logging
 
-#### To enable exception logging
+First of all ensure you have an API Key
 
-Go straight to 3. if you have an api key provided by the client.
+- Create a new project on the Exception Logger portal (e.g Raygun/Bugsense)
+- Get **API Key** from the Exception Logger portal
 
-1. Create a new project on the Exception Logger portal (e.g Raygun/Bugsense)
-2. Get **API Key** from the Exception Logger portal
-3. Replace the **API Key** in /WindowsSolution/Common/CommonApp.InitializeExceptionLogger() method and uncomment the lines.
-4. In _Unity_ attach /Assets/Scripts/MarkerMetro/ExceptionLogger.cs to first object that starts, this will allow reporting of _Unity_ errors using 
+To ensure all Unity exceptions and errors are captured, create a Unity class as follows [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/Plugins/MarkerMetro/ExceptionLogger.cs)
+
+You should also ensure the exception logger is initialized and assigned to report on all unhandled exceptions at the application level:
+
+- [Windows 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs)
+- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/App.xaml.cs)
+- [Windows Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs)
 
 #### To disable exception logging
 
-Comment out the line to initialize the ExceptionLogger here: /WindowsSolution/Common/CommonApp.InitializeExceptionLogger()
-
-#### To remove exception logging libraries
-
-By default, binaries for the exception loggers will be included when you update WinIntegration from Nuget script. You should do the following to ensure that these binaries are not included. 
-
-These steps are currently in development
- 
-#### Testing exceptions/crashes
-
-In _WinShared_ project there are 3 locations from which test exceptions can be thrown. 
-
-1. **Windows Store** project has extra Settings charm menu item **Crash** (only for Debug)
-2. **Windows Phone** project has AppBar to allow crash testing (only for Debug)
-3. **Unity** project has extra button in `UIStart.cs` in /Assets/WinIntegrationExample/FaceFlip.unity test scene in WinShared.
+To disable exception logging you should comment out any code that initializes the exception logger.
 
 ### Local Notifications (TBC)
 
@@ -327,7 +325,19 @@ ReminderManage will use system reminders on WP8, and scheduled notification toas
 - Add an option in settings screen to disable reminders
 - Win 8.1 Add toggle in settings charm to disable reminders
 
-### Video Player (TBC)
+### Video Player
+
+This allows you to play a video over the top of the Unity scene. It will use a standard XAML MediaElement and 
+
+```csharp
+        string path = Application.streamingAssetsPath + "/MarkerMetro/ExampleVideo.mp4";
+        VideoPlayer.PlayVideo(path, () =>
+        {
+            Debug.Log("Video Stopped.");
+        }, VideoStretch.Uniform);
+```
+
+A full example is provided as part of (MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/MarkerMetro/Example/Scripts/GameMaster.cs)
 
 ### Helper
 
