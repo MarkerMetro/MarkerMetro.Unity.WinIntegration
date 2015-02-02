@@ -313,11 +313,11 @@ You should also ensure the exception logger is initialized and assigned to repor
 
 To disable exception logging you should comment out any code that initializes the exception logger.
 
-### Local Notifications (TBC)
+### Local Notifications 
 
-Reminders can be managedf using LocalNotifications.ReminderManager.
+Local Notifications can be set using LocalNotifications.ReminderManager.
 
-ReminderManage will use system reminders on WP8, and scheduled notification toasts on Win8.1 allowing you to set deterministic timer based prompts to the user.
+The ReminderManager will use system reminders on WP8, and scheduled notification toasts on Win8.1 allowing you to set deterministic timer based prompts easily for the user. [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/MarkerMetro/Example/Scripts/GameMaster.cs)
 
 #### Usage Guidelines
 
