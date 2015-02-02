@@ -41,9 +41,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\MarkerMetro.Unity.WinIntegrationUnity\StackTraceUtility.cs">
-      <Link>StackTraceUtility.cs</Link>
-    </Compile>
     <Compile Include="..\SharedSource\Dispatcher.cs">
       <Link>Dispatcher.cs</Link>
     </Compile>
@@ -76,6 +73,9 @@
     </Compile>
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\StackTraceUtility.cs">
+      <Link>StackTraceUtility.cs</Link>
     </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
@@ -133,9 +133,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
