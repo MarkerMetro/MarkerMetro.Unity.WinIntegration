@@ -2,12 +2,10 @@ using System;
 using System.Diagnostics;
 #if NETFX_CORE
 using Mindscape.Raygun4Net;
-using BugSense;
 using Windows.UI.Xaml;
 #elif WINDOWS_PHONE
 using Mindscape.Raygun4Net;
 using System.Windows;
-using BugSense;
 using Microsoft.Phone.Controls;
 #endif
 
@@ -22,17 +20,15 @@ namespace MarkerMetro.Unity.WinIntegration
 
         public enum LoggerType
         {
-            RaygunIO,
-            BugSense
+            RaygunIO
         }
 
         static ExceptionLogger _instance;
         static readonly object _sync = new object();
-        
+
 
 #if NETFX_CORE || WINDOWS_PHONE
         Lazy<RaygunClient> _raygun;
-        bool _bugsenseCreated = false;
         LoggerType _loggerType = LoggerType.RaygunIO;
 #endif
 
@@ -61,10 +57,6 @@ namespace MarkerMetro.Unity.WinIntegration
                 {
                     return _raygun != null;
                 }
-                else if (_loggerType == LoggerType.BugSense)
-                {
-                    return _bugsenseCreated;
-                }
                 else
                 {
                     return false;
@@ -90,36 +82,10 @@ namespace MarkerMetro.Unity.WinIntegration
                 { 
                     _instance._raygun = new Lazy<RaygunClient>(() => BuildRaygunClient(apiKey));
                 }
-                else if (loggerType == LoggerType.BugSense)
-                {
-#if NETFX_CORE
-                    BugSenseHandler.Instance.InitAndStartSession(new BugSense.Model.ExceptionManager(Application.Current), apiKey);
-#elif WINDOWS_PHONE
-                    BugSenseHandler.Instance.InitAndStartSession(new BugSense.Core.Model.ExceptionManager(Application.Current), ((PhoneApplicationFrame)Application.Current.RootVisual), apiKey);
-#endif
-                    _instance._bugsenseCreated = true;
-                }
 #else
                 Debug.WriteLine("ExceptionLogger not supported");
 #endif
             }
-        }
-
-        public void Close()
-        {
-#if NETFX_CORE || WINDOWS_PHONE
-            if (_loggerType == LoggerType.BugSense)
-            {
-                BugSenseHandler.Instance.CloseSession();
-                _bugsenseCreated = false;
-            }
-            else
-            {
-                throw new NotSupportedException("ExceptionLogger.Close()");
-            }
-#else
-             throw new PlatformNotSupportedException("ExceptionLogger.Close()");
-#endif
         }
 
 #if NETFX_CORE || WINDOWS_PHONE
@@ -157,14 +123,7 @@ namespace MarkerMetro.Unity.WinIntegration
         public void Send(Exception ex)
         {
 #if NETFX_CORE || WINDOWS_PHONE
-            if (_loggerType == LoggerType.BugSense)
-            {
-                if (_bugsenseCreated)
-                {
-                    BugSenseHandler.Instance.LogException(ex);
-                }
-            }
-            else if (_loggerType == LoggerType.RaygunIO)
+            if (_loggerType == LoggerType.RaygunIO)
             {
                 if (_raygun != null)
                 {
@@ -183,14 +142,7 @@ namespace MarkerMetro.Unity.WinIntegration
         public void Send(string message, string stackTrace)
         {
 #if NETFX_CORE || WINDOWS_PHONE
-            if (_loggerType == LoggerType.BugSense)
-            {
-                if (_bugsenseCreated)
-                { 
-                    BugSenseHandler.Instance.LogException(new WrappedException(message, stackTrace));
-                }
-            }
-            else if (_loggerType == LoggerType.RaygunIO)
+           if (_loggerType == LoggerType.RaygunIO)
             {
                 if (_raygun != null)
                 {
@@ -203,62 +155,9 @@ namespace MarkerMetro.Unity.WinIntegration
             }
 
 #else
-           throw new PlatformNotSupportedException("ExceptionLogger.Send()");
+            throw new PlatformNotSupportedException("ExceptionLogger.Send()");
 #endif
         }
 
-        public void AddMetadata(string key, string data)
-        {
-#if NETFX_CORE || WINDOWS_PHONE
-            if (_loggerType == LoggerType.BugSense)
-            {
-                if (_bugsenseCreated)
-                {
-                    BugSenseHandler.Instance.AddCrashExtraData(new BugSense.Core.Model.CrashExtraData(key, data));
-                }
-            }
-            else
-            {
-                throw new NotSupportedException("ExceptionLogger.AddMetadata()");
-            }
-#else
-            throw new PlatformNotSupportedException("ExceptionLogger.AddMetadata()");
-#endif
-        }
-
-        public void LeaveBreadCrumb(string crumb)
-        {
-#if NETFX_CORE || WINDOWS_PHONE
-            if(_loggerType == LoggerType.BugSense)
-            {
-                BugSenseHandler.Instance.LeaveBreadCrumb(crumb);
-            }
-            else
-            {
-                throw new NotSupportedException("ExceptionLogger.LeaveBreadCrumb()");
-            }
-#else
-            throw new PlatformNotSupportedException("ExceptionLogger.AddMetadata()");
-#endif
-        }
-
-        public void SetUsername(string username)
-        {
-#if NETFX_CORE || WINDOWS_PHONE
-            if (_loggerType == LoggerType.BugSense)
-            {
-                if (_bugsenseCreated)
-                {
-                    BugSenseHandler.Instance.UserIdentifier = username;
-                }
-            }
-            else
-            {
-                throw new NotSupportedException("ExceptionLogger.SetUsername()");
-            }
-#else
-            throw new PlatformNotSupportedException("ExceptionLogger.AddMetadata()");
-#endif
-        }
     }
 }
