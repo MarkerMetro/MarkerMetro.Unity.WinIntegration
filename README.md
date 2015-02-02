@@ -88,6 +88,15 @@ You can see existing implementations in [WinShared](https://github.com/MarkerMet
 - [Windows 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs)
 - [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/MainPage.xaml.cs)
 
+## Debugging locally
+
+You can easily debug a particular Windows Store or Windows Phone plugin project as follows:
+
+1. Add the platform specific WinIntegration project to your solution (e.g. MarkerMetro.Unity.WinIntegrationMetro)
+2. Build platform specific WinIntegration project in Debug and copy output to Unity(e.g. /Assets/Plugins/Metro)
+3. Build from Unity
+4. Set breakpoints in your platform specific WinIntegration plugin project and then F5 on your app
+
 ## Guidance for Usage
 
 This plugin helps with a number of missing pieces of missing functionality within Unity. Use the Unity APIs if you can, and use WinIntegration where they are missing functionality.
