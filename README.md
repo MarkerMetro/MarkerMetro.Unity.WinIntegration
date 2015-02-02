@@ -20,6 +20,7 @@ Configure the solution to Release | Any CPU and Rebuild.
 You can then copy the folder contents as follows:
 
 - /MarkerMetro.Unity.WinIntegrationMetro/bin/Release > /Assets/Plugins/Metro/
+- /MarkerMetro.Unity.WinIntegrationWP81/bin/Release > /Assets/Plugins/Metro/WindowsPhone81
 - /MarkerMetro.Unity.WinIntegrationUnity/bin/Release > /Assets/Plugins/
 - /MarkerMetro.Unity.WinIntegrationWP8/bin/Release > /Assets/Plugins/WP8/
 
@@ -30,6 +31,7 @@ Alternatively, you can download latest from [Nuget](https://www.nuget.org/api/v2
 Extract the files from the package and copy the folder contents as follows:
 
 - /lib/netcore45/ > /Assets/Plugins/Metro/
+- /lib/wpa81 > /Assets/Plugins/Metro/WindowsPhone81
 - /lib/net35 > /Assets/Plugins/
 - /lib/windowsphone8 > /Assets/Plugins/WP8/
 
