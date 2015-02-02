@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>MarkerMetro.Unity.WinIntegration</id>
@@ -39,14 +39,14 @@
 	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\System.Net.Http.Primitives.dll" target="lib\netcore45\"/>
 	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\System.Net.Http.Extensions.dll" target="lib\netcore45\"/>
 
-    <file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\MarkerMetro.Unity.WinIntegration.dll" target="lib\wpa81\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\Facebook.dll" target="lib\wpa81\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\Facebook.Client.dll" target="lib\wpa81\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\Mindscape.Raygun4Net.WindowsStore.dll" target="lib\wpa81\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\BugSense-WP8.1.dll" target="lib\wpa81\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\Newtonsoft.Json.dll" target="lib\wpa81\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\System.Net.Http.Primitives.dll" target="lib\wpa81\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationMetro\Bin\Release\System.Net.Http.Extensions.dll" target="lib\wpa81\"/>
+    <file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\MarkerMetro.Unity.WinIntegration.dll" target="lib\wpa81\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\Facebook.dll" target="lib\wpa81\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\Facebook.Client.dll" target="lib\wpa81\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\Mindscape.Raygun4Net.WindowsStore.dll" target="lib\wpa81\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationWP81\Bin\Release\BugSense-WP8.1.dll" target="lib\wpa81\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationWP81\Bin\Release\Newtonsoft.Json.dll" target="lib\wpa81\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationWP81\Bin\Release\System.Net.Http.Primitives.dll" target="lib\wpa81\"/>
+	<file src="MarkerMetro.Unity.WinIntegrationWP81\Bin\Release\System.Net.Http.Extensions.dll" target="lib\wpa81\"/>
 	 
   </files>
 </package>
