@@ -131,7 +131,7 @@ The control can be declared in your app's MainPage.xaml. [See example here](http
 Lastly, you need provide an instance of the web view to the plugin so that the facebook integration can work.
 
 ```csharp
-            FB.SetPlatformInterface(web);
+FB.SetPlatformInterface(web);
 ```
 
 You can see how this is done here:
