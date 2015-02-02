@@ -429,6 +429,11 @@ namespace MarkerMetro.Unity.WinIntegration
 
         [System.Runtime.InteropServices.DllImport("kernel32.dll")]
         internal static extern void GetNativeSystemInfo(ref SYSTEM_INFO lpSystemInfo);
+
+        /// <summary>
+        /// Interface for Universal project to be injected at runtime from the platform.
+        /// </summary>
+        public Func<bool> CheckIsLowEndDevice;
 #endif
 
 		/// <summary>
@@ -451,10 +456,17 @@ namespace MarkerMetro.Unity.WinIntegration
 			return result <= 188743680; // less than or equal to 180MB including failure scenario
 
 #elif NETFX_CORE
-            var systemInfo = new SYSTEM_INFO();
-            GetNativeSystemInfo(ref systemInfo);
+            if (CheckIsLowEndDevice == null)
+            {
+                var systemInfo = new SYSTEM_INFO();
+                GetNativeSystemInfo(ref systemInfo);
 
-            return systemInfo.wProcessorArchitecture == (uint)ProcessorArchitecture.ARM;
+                return systemInfo.wProcessorArchitecture == (uint)ProcessorArchitecture.ARM;
+            }
+            else
+            {
+                return CheckIsLowEndDevice();
+            }
 #else
             return false;
 #endif
