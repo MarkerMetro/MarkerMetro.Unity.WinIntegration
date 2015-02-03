@@ -39,9 +39,6 @@
     <Compile Include="..\SharedSource\Dispatcher.cs">
       <Link>Dispatcher.cs</Link>
     </Compile>
-    <Compile Include="..\SharedSource\ExceptionLogger.cs">
-      <Link>ExceptionLogger.cs</Link>
-    </Compile>
     <Compile Include="..\SharedSource\Facebook\FB.cs">
       <Link>Facebook\FB.cs</Link>
     </Compile>
@@ -66,11 +63,20 @@
     <Compile Include="..\SharedSource\LocalNotifications\ReminderManager.cs">
       <Link>LocalNotifications\ReminderManager.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Logging\ExceptionLogger.cs">
+      <Link>Logging\ExceptionLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Logging\IExceptionLogger.cs">
+      <Link>Logging\IExceptionLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Logging\StackTraceUtility.cs">
+      <Link>Logging\StackTraceUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Logging\WrappedException.cs">
+      <Link>Logging\WrappedException.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\SharedSource\StackTraceUtility.cs">
-      <Link>StackTraceUtility.cs</Link>
     </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
@@ -86,9 +92,6 @@
     </Compile>
     <Compile Include="..\SharedSource\VideoPlayer\VideoPlayer.cs">
       <Link>VideoPlayer\VideoPlayer.cs</Link>
-    </Compile>
-    <Compile Include="..\SharedSource\WrappedException.cs">
-      <Link>WrappedException.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Store\WindowsStorePlatform.cs" />
