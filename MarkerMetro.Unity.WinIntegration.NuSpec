@@ -22,18 +22,15 @@
     <file src="MarkerMetro.Unity.WinIntegrationWP8\Bin\Release\MarkerMetro.Unity.WinIntegration.dll" target="lib\windowsphone8\"/>
     <file src="MarkerMetro.Unity.WinIntegrationWP8\Bin\Release\MockIAPLib.dll" target="lib\windowsphone8\"/>
 	<file src="MarkerMetro.Unity.WinIntegrationWP8\Bin\Release\Facebook.dll" target="lib\windowsphone8\"/>
-	 <file src="MarkerMetro.Unity.WinIntegrationWP8\Bin\Release\Mindscape.Raygun4Net.WindowsPhone.dll" target="lib\windowsphone8\"/>
         <file src="MarkerMetro.Unity.WinIntegrationWP8\Bin\Release\Facebook.Client.dll" target="lib\windowsphone8\"/>
 	 
     <file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\MarkerMetro.Unity.WinIntegration.dll" target="lib\netcore45\"/>
 	<file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\Facebook.dll" target="lib\netcore45\"/>
 	<file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\Facebook.Client.dll" target="lib\netcore45\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationMetro\bin\Release\Mindscape.Raygun4Net.WindowsStore.dll" target="lib\netcore45\"/>
 
     <file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\MarkerMetro.Unity.WinIntegration.dll" target="lib\wpa81\"/>
 	<file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\Facebook.dll" target="lib\wpa81\"/>
 	<file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\Facebook.Client.dll" target="lib\wpa81\"/>
-	<file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\Mindscape.Raygun4Net.WindowsStore.dll" target="lib\wpa81\"/>
 	 
   </files>
 </package>
