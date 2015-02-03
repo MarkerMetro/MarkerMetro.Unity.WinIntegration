@@ -493,6 +493,10 @@ namespace MarkerMetro.Unity.WinIntegration
 			{
 #if WINDOWS_PHONE || NETFX_CORE
 				var profile = NetworkInformation.GetInternetConnectionProfile();
+                if (profile == null)
+                {
+                    return false;
+                }
 				return profile.GetConnectionCost().NetworkCostType != NetworkCostType.Unrestricted;
 #else
                 throw new PlatformNotSupportedException("IsMeteredConnection");
