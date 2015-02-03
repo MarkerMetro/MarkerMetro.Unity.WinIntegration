@@ -394,7 +394,7 @@ namespace MarkerMetro.Unity.WinIntegration
 
 
 
-#if NETFX_CORE
+#if NETFX_CORE && !WINDOWS_PHONE_APP
         public enum ProcessorArchitecture : ushort
         {
             INTEL = 0,
