@@ -26,6 +26,14 @@ namespace MarkerMetro.Unity.WinIntegration
             }
         }
 
+        public static bool IsEnabled
+        {
+            get
+            {
+                return IsInitialized && _logger.IsEnabled;
+            }
+        }
+
         public static void Send(Exception ex)
         {
 #if NETFX_CORE || WINDOWS_PHONE
