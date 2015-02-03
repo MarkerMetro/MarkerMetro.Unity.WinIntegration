@@ -6,5 +6,6 @@ namespace MarkerMetro.Unity.WinIntegration
     {
         void Send(string message, string stackTrace);
         void Send(Exception ex);
+        bool IsEnabled {get;set;}
     }
 }
