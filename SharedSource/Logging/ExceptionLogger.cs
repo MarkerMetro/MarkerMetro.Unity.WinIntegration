@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace MarkerMetro.Unity.WinIntegration
+namespace MarkerMetro.Unity.WinIntegration.Logging
 {
 
     /// <summary>

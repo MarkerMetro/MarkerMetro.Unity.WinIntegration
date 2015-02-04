@@ -1,4 +1,5 @@
 using MarkerMetro.Unity.WinIntegration.Resources;
+using MarkerMetro.Unity.WinIntegration.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;

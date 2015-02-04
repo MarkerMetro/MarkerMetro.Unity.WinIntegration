@@ -7,7 +7,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 #endif
 
-namespace MarkerMetro.Unity.WinIntegration
+namespace MarkerMetro.Unity.WinIntegration.Logging
 {
 
 //    [Serializable]

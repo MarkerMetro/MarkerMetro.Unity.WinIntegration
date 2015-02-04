@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MarkerMetro.Unity.WinIntegration
+namespace MarkerMetro.Unity.WinIntegration.Logging
 {
     public interface IExceptionLogger
     {
