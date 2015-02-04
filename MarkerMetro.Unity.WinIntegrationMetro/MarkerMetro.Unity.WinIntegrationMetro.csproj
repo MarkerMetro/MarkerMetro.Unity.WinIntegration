@@ -39,9 +39,6 @@
     <Compile Include="..\SharedSource\Dispatcher.cs">
       <Link>Dispatcher.cs</Link>
     </Compile>
-    <Compile Include="..\SharedSource\ExceptionLogger.cs">
-      <Link>ExceptionLogger.cs</Link>
-    </Compile>
     <Compile Include="..\SharedSource\Facebook\FB.cs">
       <Link>Facebook\FB.cs</Link>
     </Compile>
@@ -66,11 +63,20 @@
     <Compile Include="..\SharedSource\LocalNotifications\ReminderManager.cs">
       <Link>LocalNotifications\ReminderManager.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Logging\ExceptionLogger.cs">
+      <Link>Logging\ExceptionLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Logging\IExceptionLogger.cs">
+      <Link>Logging\IExceptionLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Logging\StackTraceUtility.cs">
+      <Link>Logging\StackTraceUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Logging\WrappedException.cs">
+      <Link>Logging\WrappedException.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\SharedSource\StackTraceUtility.cs">
-      <Link>StackTraceUtility.cs</Link>
     </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
@@ -87,9 +93,6 @@
     <Compile Include="..\SharedSource\VideoPlayer\VideoPlayer.cs">
       <Link>VideoPlayer\VideoPlayer.cs</Link>
     </Compile>
-    <Compile Include="..\SharedSource\WrappedException.cs">
-      <Link>WrappedException.cs</Link>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Store\WindowsStorePlatform.cs" />
   </ItemGroup>
@@ -105,9 +108,6 @@
     <Reference Include="MarkerMetro.Unity.WinLegacy, Version=1.8.0.8, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MarkerMetro.Unity.WinLegacy.1.8.0.8\lib\netcore45\MarkerMetro.Unity.WinLegacy.dll</HintPath>
-    </Reference>
-    <Reference Include="Mindscape.Raygun4Net.WindowsStore">
-      <HintPath>..\packages\Mindscape.Raygun4Net.3.2.0\lib\portable-net45+win81+wpa81+windows81\Mindscape.Raygun4Net.WindowsStore.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

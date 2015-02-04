@@ -1,4 +1,5 @@
 using MarkerMetro.Unity.WinIntegration.Resources;
+using MarkerMetro.Unity.WinIntegration.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -224,7 +225,7 @@ namespace MarkerMetro.Unity.WinIntegration
 # if DEBUG
                 Debug.WriteLine("Unable to show the share UI because of: " + ex.Message);
 # else
-                ExceptionLogger.Instance.Send(ex);
+                ExceptionLogger.Send(ex);
 # endif
             }
 
@@ -287,7 +288,7 @@ namespace MarkerMetro.Unity.WinIntegration
 # if DEBUG
                         Debug.WriteLine("Unable to show MarketplaceReviewTask because of: " + ex.Message);
 # else
-                        ExceptionLogger.Instance.Send(ex);
+                        ExceptionLogger.Send(ex);
 # endif
                     }
                 });
