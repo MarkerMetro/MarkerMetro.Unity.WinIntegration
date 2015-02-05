@@ -32,6 +32,10 @@ namespace MarkerMetro.Unity.WinIntegration.Logging
             {
                 return IsInitialized && _logger.IsEnabled;
             }
+            set
+            {
+                _logger.IsEnabled = value;
+            }
         }
 
         public static void Send(Exception ex)
