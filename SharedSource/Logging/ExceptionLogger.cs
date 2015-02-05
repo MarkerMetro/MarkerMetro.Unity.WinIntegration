@@ -30,11 +30,21 @@ namespace MarkerMetro.Unity.WinIntegration.Logging
         {
             get
             {
-                return IsInitialized && _logger.IsEnabled;
+                if (IsInitialized)
+                {
+                    return _logger.IsEnabled;
+                }
+                else
+                {
+                    return false;
+                }
             }
             set
             {
-                _logger.IsEnabled = value;
+                if (IsInitialized)
+                {
+                    _logger.IsEnabled = value;
+                }
             }
         }
 
