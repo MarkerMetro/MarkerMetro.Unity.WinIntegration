@@ -41,7 +41,10 @@ namespace MarkerMetro.Unity.WinIntegration.Logging
             }
             set
             {
-                _logger.IsEnabled = value;
+                if (IsInitialized)
+                {
+                    _logger.IsEnabled = value;
+                }
             }
         }
 
