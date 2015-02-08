@@ -11,8 +11,10 @@ using MarkerMetro.Unity.WinIntegration;
 
 #if WINDOWS_PHONE
 using System.IO.IsolatedStorage;
+using MarkerMetro.Unity.WinIntegration.Storage;
 #elif NETFX_CORE
 using Windows.Storage;
+using MarkerMetro.Unity.WinIntegration.Storage;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration.Facebook
@@ -161,8 +163,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     AccessToken = result.AccessToken;
                     Expires = result.Expires;
                     _client.AccessToken = AccessToken;
-                    FBStorage.Set(TOKEN_KEY, EncryptionProvider.Encrypt(AccessToken, AppId));
-                    FBStorage.Set(EXPIRY_DATE_BIN, Expires.ToBinary());
+                    Settings.Set(TOKEN_KEY, EncryptionProvider.Encrypt(AccessToken, AppId));
+                    Settings.Set(EXPIRY_DATE_BIN, Expires.ToBinary());
                 }
                 _web.Finish();
                 if (_onHideUnity != null)
@@ -174,8 +176,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     {
                         UserId = fbResult.Json["id"] as string;
                         UserName = fbResult.Json["name"] as string;
-                        FBStorage.Set(FBID_KEY, UserId);
-                        FBStorage.Set(FBNAME_KEY, UserName);
+                        Settings.Set(FBID_KEY, UserId);
+                        Settings.Set(FBNAME_KEY, UserName);
                     }
 
                     if (state is FacebookDelegate)
@@ -221,22 +223,22 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             AppId = _client.AppId = appId;
             _onHideUnity = onHideUnity;
 
-            if (FBStorage.HasKey(TOKEN_KEY))
+            if (Settings.HasKey(TOKEN_KEY))
             {
-                AccessToken = EncryptionProvider.Decrypt(FBStorage.GetString(TOKEN_KEY), AppId);
-                if (FBStorage.HasKey(EXPIRY_DATE))
+                AccessToken = EncryptionProvider.Decrypt(Settings.GetString(TOKEN_KEY), AppId);
+                if (Settings.HasKey(EXPIRY_DATE))
                 {
-                    string expDate = EncryptionProvider.Decrypt(FBStorage.GetString(EXPIRY_DATE), AppId);
+                    string expDate = EncryptionProvider.Decrypt(Settings.GetString(EXPIRY_DATE), AppId);
                     Expires = DateTime.Parse(expDate, CultureInfo.InvariantCulture);
                 }
                 else
                 {
-                    long expDate = FBStorage.GetLong(EXPIRY_DATE_BIN);
+                    long expDate = Settings.GetLong(EXPIRY_DATE_BIN);
                     Expires = DateTime.FromBinary(expDate);
                 }
                 _client.AccessToken = AccessToken;
-                UserId = FBStorage.GetString(FBID_KEY);
-                UserName = FBStorage.GetString(FBNAME_KEY);
+                UserId = Settings.GetString(FBID_KEY);
+                UserName = Settings.GetString(FBNAME_KEY);
 
                 // verifies if the token has expired:
                 if (DateTime.Compare(DateTime.Now, Expires) > 0)  // < timezone?
@@ -287,11 +289,11 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             UserId = null;
             UserName = null;
             _client.AccessToken = null;
-            FBStorage.DeleteKey(TOKEN_KEY);
-            FBStorage.DeleteKey(FBID_KEY);
-            FBStorage.DeleteKey(FBNAME_KEY);
-            FBStorage.DeleteKey(EXPIRY_DATE);
-            FBStorage.DeleteKey(EXPIRY_DATE_BIN);
+            Settings.DeleteKey(TOKEN_KEY);
+            Settings.DeleteKey(FBID_KEY);
+            Settings.DeleteKey(FBNAME_KEY);
+            Settings.DeleteKey(EXPIRY_DATE);
+            Settings.DeleteKey(EXPIRY_DATE_BIN);
         }
 
         private static void HandleGetCompleted(object sender, FacebookApiEventArgs e)
