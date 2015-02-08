@@ -9,7 +9,7 @@ using Windows.Storage;
 namespace MarkerMetro.Unity.WinIntegration.Storage
 {
 
-    internal static class Settings
+    public static class Settings
     {
 
 #if NETFX_CORE
