@@ -53,9 +53,6 @@
     <Compile Include="..\SharedSource\Facebook\FBNative.cs">
       <Link>Facebook\FBNative.cs</Link>
     </Compile>
-    <Compile Include="..\SharedSource\Facebook\FBStorage.cs">
-      <Link>Facebook\FBStorage.cs</Link>
-    </Compile>
     <Compile Include="..\SharedSource\Facebook\FBUser.cs">
       <Link>Facebook\FBUser.cs</Link>
     </Compile>
@@ -82,6 +79,9 @@
     </Compile>
     <Compile Include="..\SharedSource\Resources\ResourceHelper.cs">
       <Link>Resources\ResourceHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Storage\Settings.cs">
+      <Link>Storage\Settings.cs</Link>
     </Compile>
     <Compile Include="..\SharedSource\Store\IStorePlatform.cs">
       <Link>Store\IStorePlatform.cs</Link>
@@ -119,6 +119,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <ProjectExtensions />
