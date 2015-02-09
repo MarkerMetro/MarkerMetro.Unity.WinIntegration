@@ -310,20 +310,55 @@ Specifically for Windows Phone 8.0, the only other StatusCode used is NotReady w
 ```csharp
 void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
 ```
-### Exception Logging (Subject To Change!)
+### Exception Logging 
 
-WinIntegration supports both [Raygun.io](https://raygun.io/) and Bugsense via the ExceptionLogger class. This is enabled via MarkerMetro.Unity.WinIntegration.ExceptionLogger.
+WinIntegration provides an abstraction for exception logging. This is enabled via MarkerMetro.Unity.WinIntegration.Logging.ExceptionLogger. 
 
-#### To enable and initialize exception logging
+For a complete implementation of Exception Logging using WinIntegration and the popular crash reporting service Raygun.IO check out our starter template  [MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared)
 
-First of all ensure you have an API Key
+#### Enable Unity Exception and Error Logging
 
-- Create a new project on the Exception Logger portal (e.g Raygun/Bugsense)
-- Get **API Key** from the Exception Logger portal
+You should ensure that exceptions and crashes are reported at both the Unity level and at the app level. 
 
-To ensure all Unity exceptions and errors are captured, create a Unity class as follows [See example here](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/Plugins/MarkerMetro/ExceptionLogger.cs)
+Here is a sample method which should be called when Unity is loaded to ensure the logger is wired up for all Unity exceptions and errors:
 
-You should also ensure the exception logger is initialized and assigned to report on all unhandled exceptions at the application level:
+```csharp
+/// <summary>
+/// Allows for handling of all unity exceptions
+/// </summary>
+static void InitExceptionLogger()
+{
+    Application.LogCallback handleException = (message, stackTrace, type) =>
+    {
+        if (type == LogType.Exception || type == LogType.Error)
+        {
+            if (WinIntegration.Logging.ExceptionLogger.IsEnabled)
+            {
+                MarkerMetro.Unity.WinIntegration.Logging.ExceptionLogger.Send(message, stackTrace);
+            }
+        }
+    };
+    Application.RegisterLogCallback(handleException);
+}
+```
+
+You can see an [example of Unity Logging](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/Plugins/MarkerMetro/IntegrationManager.cs) in WinShared. 
+
+#### Enable Application Unhandled Logging
+
+Create a method as follows and then call it from the bottom of the constructor in App.xaml.cs.
+
+```csharp
+void InitializeExceptionLogger()
+{
+    // swap RaygunExceptionLogger out with an IExceptionLogger implementation as required
+    ExceptionLogger.Initialize(new RaygunExceptionLogger("API KEY"));
+}
+```
+
+You can see an [Example of Raygun Exception Logger](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/Logging/RaygunExceptionLogger.cs) in WinShared. You will need to implement IExceptionLogger for any other crash reporting solution and make sure your app projects have a reference to the required libraries. 
+
+You can see a full example of App Unhandled Exception Logging in WinShared using Raygun:
 
 - [Windows 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs)
 - [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/App.xaml.cs)
@@ -332,6 +367,8 @@ You should also ensure the exception logger is initialized and assigned to repor
 #### To disable exception logging
 
 To disable exception logging you should comment out any code that initializes the exception logger.
+
+If you are using WinShared, exception logging is configured [via AppConfig.cs](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/Config/AppConfig.cs), specifically the ExceptionLoggingAllowed and ExceptionLoggingBuildConfigs properties.
 
 ### Local Notifications 
 
