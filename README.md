@@ -344,7 +344,7 @@ static void InitExceptionLogger()
 
 You can see an [example of Unity Logging](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Assets/Plugins/MarkerMetro/IntegrationManager.cs) in WinShared. 
 
-#### Enable Application Unhandled Logging
+#### Enable Application Unhandled Exception Logging
 
 Create a method as follows and then call it from the bottom of the constructor in App.xaml.cs.
 
