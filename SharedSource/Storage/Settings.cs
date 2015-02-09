@@ -1,4 +1,3 @@
-#if WINDOWS_PHONE || NETFX_CORE
 using System;
 #if WINDOWS_PHONE
 using System.IO.IsolatedStorage;
@@ -20,10 +19,12 @@ namespace MarkerMetro.Unity.WinIntegration.Storage
         {
 
 #if WINDOWS_PHONE
-                return IsolatedStorageSettings.ApplicationSettings.Contains(key);
+            return IsolatedStorageSettings.ApplicationSettings.Contains(key);
 #elif NETFX_CORE
             Object value = null;
             return roamingSettings.Values.TryGetValue(key, out value);
+#else
+            return false;
 #endif
         }
 
@@ -84,5 +85,3 @@ namespace MarkerMetro.Unity.WinIntegration.Storage
         }
     }
 }
-
-#endif
