@@ -72,9 +72,6 @@
     <Compile Include="..\SharedSource\Logging\IExceptionLogger.cs">
       <Link>Logging\IExceptionLogger.cs</Link>
     </Compile>
-    <Compile Include="..\SharedSource\Logging\StackTraceUtility.cs">
-      <Link>Logging\StackTraceUtility.cs</Link>
-    </Compile>
     <Compile Include="..\SharedSource\Logging\WrappedException.cs">
       <Link>Logging\WrappedException.cs</Link>
     </Compile>
