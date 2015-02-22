@@ -7,6 +7,7 @@ See the [Unity FAQ on Universal Apps](http://docs.unity3d.com/Manual/WindowsUniv
 ## Prerequisites
 
 - Visual Studio 2013
+- Nuget Package Manager
 - Unity 4.6.1f1 (tested only on this version but should work on other 4.x builds)
 
 ## Getting Latest
