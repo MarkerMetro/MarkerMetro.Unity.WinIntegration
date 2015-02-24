@@ -133,7 +133,7 @@ namespace MarkerMetro.Unity.WinIntegration.VideoPlayer
         static void _videoElement_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
 #endif
         {
-            StopVideo();
+            StopVideoFromUIThread();
         }
 
         static void _videoElement_MediaOpened(object sender, RoutedEventArgs e)
@@ -143,7 +143,7 @@ namespace MarkerMetro.Unity.WinIntegration.VideoPlayer
 
         static void _videoElement_MediaEnded(object sender, RoutedEventArgs e)
         {
-            StopVideo();
+            StopVideoFromUIThread();
         }
 #endif
 
@@ -183,39 +183,48 @@ namespace MarkerMetro.Unity.WinIntegration.VideoPlayer
 #if WINDOWS_PHONE || NETFX_CORE
             Dispatcher.InvokeOnUIThread(() =>
             {
-                if (_videoPopup == null || _videoElement == null)
-                {
-                    throw new Exception("VideoPlayer not initialized.");
-                }
+                StopVideoFromUIThread();
+            });
+#else
+            throw new PlatformNotSupportedException("");
+#endif
+        }
 
-                _videoElement.MediaEnded -= _videoElement_MediaEnded;
-                _videoElement.MediaOpened -= _videoElement_MediaOpened;
+        static void StopVideoFromUIThread ()
+        {
+#if WINDOWS_PHONE || NETFX_CORE
+            if (_videoPopup == null || _videoElement == null)
+            {
+                throw new Exception("VideoPlayer not initialized.");
+            }
+
+            _videoElement.MediaEnded -= _videoElement_MediaEnded;
+            _videoElement.MediaOpened -= _videoElement_MediaOpened;
 #if WINDOWS_PHONE
                 _videoElement.Tap -= _videoElement_Tap;
 #else
-                _videoElement.Tapped -= _videoElement_Tapped;
+            _videoElement.Tapped -= _videoElement_Tapped;
 #endif
-                _videoElement.Stop();
+            _videoElement.Stop();
 
-                IsPlaying = false;
+            IsPlaying = false;
 
-                if (_onVideoEnded != null)
+            if (_onVideoEnded != null)
+            {
+                Dispatcher.InvokeOnAppThread(() =>
                 {
-                    Dispatcher.InvokeOnAppThread(() =>
-                    {
-                        _onVideoEnded();
-                    });
-                }
+                    _onVideoEnded();
+                });
+            }
 
-                _videoElement.Source = null;
-                _videoElement = null;
-                _videoPopup.Child = null;
-                _videoPopup = null;
+            _videoElement.Source = null;
+            _videoElement = null;
+            _videoPopup.Child = null;
+            _videoPopup = null;
 #if WINDOWS_PHONE
-                _backgroundPopup.Child = null;
-                _backgroundPopup = null;
+            _backgroundPopup.Child = null;
+            _backgroundPopup = null;
 #endif
-            });
 #else
             throw new PlatformNotSupportedException("");
 #endif
