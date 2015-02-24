@@ -146,10 +146,10 @@
       <HintPath>..\packages\Facebook.6.8.0\lib\portable-win81+wpa81\Facebook.dll</HintPath>
     </Reference>
     <Reference Include="Facebook.Client">
-      <HintPath>..\References\Metro\Facebook.Client.dll</HintPath>
+      <HintPath>..\packages\Facebook.Client.1.0.1\lib\wpa81\Facebook.Client.dll</HintPath>
     </Reference>
     <Reference Include="MarkerMetro.Unity.WinLegacy">
-      <HintPath>..\packages\MarkerMetro.Unity.WinLegacy.1.8.0.8\lib\MarkerMetro.Unity.WinLegacy.dll</HintPath>
+      <HintPath>..\..\..\original_repos\MarkerMetro.Unity.WinLegacy\MarkerMetro.Unity.WinLegacyUnity\bin\Debug\MarkerMetro.Unity.WinLegacy.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">

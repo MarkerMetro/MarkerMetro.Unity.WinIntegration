@@ -35,10 +35,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Facebook.6.8.0\lib\net35-client\Facebook.dll</HintPath>
     </Reference>
-    <Reference Include="MarkerMetro.Unity.WinLegacy, Version=1.8.0.8, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MarkerMetro.Unity.WinLegacy.1.8.0.8\lib\net35\MarkerMetro.Unity.WinLegacy.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
