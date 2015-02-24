@@ -209,7 +209,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             if (_client != null)
             {
                 if (onInitComplete != null)
-                    Dispatcher.InvokeOnAppThread(() => onInitComplete());
+                    onInitComplete();
                 return;
             }
             if (_web == null) throw new MissingPlatformException();
@@ -248,7 +248,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             }
 
             if (onInitComplete != null)
-                Dispatcher.InvokeOnAppThread(() => onInitComplete());
+                onInitComplete();
 #else
             throw new PlatformNotSupportedException("");
 #endif
