@@ -338,8 +338,6 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
             if (method != HttpMethod.GET) throw new NotImplementedException();
 
-            //_client.GetAsync(endpoint, null, callback);
-
             Task.Run(async () =>
             {
                 FBResult fbResult = null;
