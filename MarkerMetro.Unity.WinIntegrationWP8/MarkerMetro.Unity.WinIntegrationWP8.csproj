@@ -103,8 +103,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Facebook.6.8.0\lib\wp8\Facebook.dll</HintPath>
     </Reference>
-    <Reference Include="Facebook.Client">
-      <HintPath>..\References\WP8\Facebook.Client.dll</HintPath>
+    <Reference Include="Facebook.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Facebook.Client.1.0.1\lib\wp8\Facebook.Client.dll</HintPath>
     </Reference>
     <Reference Include="MarkerMetro.Unity.WinLegacy">
       <HintPath>..\packages\MarkerMetro.Unity.WinLegacy.1.8.0.8\lib\windowsphone8\MarkerMetro.Unity.WinLegacy.dll</HintPath>
@@ -116,7 +117,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <ProjectExtensions />
