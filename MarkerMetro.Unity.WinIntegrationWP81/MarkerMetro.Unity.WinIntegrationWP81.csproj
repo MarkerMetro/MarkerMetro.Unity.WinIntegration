@@ -145,7 +145,8 @@
     <Reference Include="Facebook">
       <HintPath>..\packages\Facebook.6.8.0\lib\portable-win81+wpa81\Facebook.dll</HintPath>
     </Reference>
-    <Reference Include="Facebook.Client">
+    <Reference Include="Facebook.Client, Version=0.9.1.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Metro\Facebook.Client.dll</HintPath>
     </Reference>
     <Reference Include="MarkerMetro.Unity.WinLegacy">

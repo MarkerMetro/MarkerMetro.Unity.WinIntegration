@@ -21,7 +21,7 @@ using System.Linq;
 using Facebook.Client;
 using Windows.Storage;
 #endif
-
+using System.Linq;
 namespace MarkerMetro.Unity.WinIntegration.Facebook
 {
 
@@ -32,7 +32,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
     {
 
 #if WINDOWS_PHONE || NETFX_CORE
-        private static FacebookSessionClient _fbSessionClient;
+        private static Session _fbSessionClient;
         private static HideUnityDelegate _onHideUnity;
 #endif
 
@@ -45,19 +45,21 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         public static void Init(InitDelegate onInitComplete, string appId, HideUnityDelegate onHideUnity)
         {
 #if WINDOWS_PHONE || NETFX_CORE
-            _onHideUnity = onHideUnity;
-            _fbSessionClient = new FacebookSessionClient(appId);
-
-            Task.Run(async () =>
+            Dispatcher.InvokeOnUIThread(() =>
             {
-                // check and extend token if required
-                await FacebookSessionClient.CheckAndExtendTokenIfNeeded();
-                if (onInitComplete != null)
-                    Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
-            });
+                _onHideUnity = onHideUnity;
+                _fbSessionClient = Session.ActiveSession;
+                Task.Run(async () =>
+                {
+                    // check and extend token if required
+                    await Session.CheckAndExtendTokenIfNeeded();
+                    if (onInitComplete != null)
+                        Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
+                });
 
-            if (onHideUnity != null)
-                throw new NotSupportedException("onHideUnity is not currently supported at this time.");
+                if (onHideUnity != null)
+                    throw new NotSupportedException("onHideUnity is not currently supported at this time.");
+            });
 #else
             throw new PlatformNotSupportedException("");
 #endif
@@ -75,10 +77,10 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         public static void Login(string permissions, FacebookDelegate callback)
         {
 #if WINDOWS_PHONE || NETFX_CORE
-            FacebookSessionClient.OnFacebookAuthenticationFinished = (success, session, error) =>
+            Session.OnFacebookAuthenticationFinished = (AccessTokenData data) =>
             {
                 if (callback != null)
-                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = success ? "Success" : "Fail", Error = error }); });
+                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Fail" : "Success", Error = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Error" : null }); });
             };
 
             Dispatcher.InvokeOnUIThread(() =>
@@ -96,11 +98,11 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             FacebookDelegate callback)
         {
 #if WINDOWS_PHONE || NETFX_CORE
-            
+
             if (method != HttpMethod.GET) throw new NotImplementedException();
             Task.Run(async () =>
             {
-                FacebookClient fb = new FacebookClient(FacebookSessionClient.CurrentSession.AccessToken);
+                FacebookClient fb = new FacebookClient(_fbSessionClient.CurrentAccessTokenData.AccessToken);
                 FBResult fbResult = null;
                 try
                 {
@@ -170,7 +172,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 return;
             }
 
-            FacebookSessionClient.OnFacebookAppRequestFinished = (result) =>
+            Session.OnFacebookAppRequestFinished = (result) =>
             {
                 if (callback != null)
                     Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = result.Text, Error = result.Error, Json = result.Json }); });
@@ -179,7 +181,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             // pass in params to facebook client's app request
             Dispatcher.InvokeOnUIThread(() =>
             {
-                FacebookSessionClient.AppRequestViaBrowser(message, to, data, title);
+                Session.ShowAppRequestDialogViaBrowser(message, title, to != null ? to.ToList<string>() : null, data);
             });
 
             // throw not supported exception when user passed in parameters not supported currently
@@ -218,7 +220,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 return;
             }
 
-            FacebookSessionClient.OnFacebookFeedFinished = (result) =>
+            Session.OnFacebookFeedFinished = (result) =>
             {
                 if (callback != null)
                     Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = result.Text, Error = result.Error, Json = result.Json }); });
@@ -227,7 +229,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             // pass in params to facebook client's app request
             Dispatcher.InvokeOnUIThread(() =>
             {
-                FacebookSessionClient.FeedViaBrowser(toId, link, linkName, linkCaption, linkDescription, picture);
+                Session.ShowFeedDialogViaBrowser(toId, link, linkName, linkCaption, linkDescription, picture);
             });
 
             // throw not supported exception when user passed in parameters not supported currently
@@ -246,20 +248,20 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             get
             {
 #if WINDOWS_PHONE || NETFX_CORE
-                return FacebookSessionClient.CurrentSession != null && !String.IsNullOrEmpty(FacebookSessionClient.CurrentSession.AccessToken);
+                return _fbSessionClient != null && !String.IsNullOrEmpty(_fbSessionClient.CurrentAccessTokenData.AccessToken);
 #else
                 throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
 #endif
             }
         }
 
-#if WINDOWS_PHONE
+#if WINDOWS_PHONE || NETFX_CORE
         // return whether back button pressed event is consumed by facebook for closing the dialog
         public static bool BackButtonPressed()
         {
-            if (_fbSessionClient != null && _fbSessionClient.IsDialogOpen)
+            if (_fbSessionClient != null && Session.IsDialogOpen)
             {
-                _fbSessionClient.CloseWebDialog();
+                Session.CloseWebDialog();
                 return true;
             }
             else
@@ -285,7 +287,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #if NETFX_CORE
             Dispatcher.InvokeOnAppThread(() =>
             {
-                FacebookUriMapper.MapUri(uri);
+                (new FacebookUriMapper()).MapUri(uri);
             });
 #endif
         }
