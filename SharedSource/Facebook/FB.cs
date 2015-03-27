@@ -244,7 +244,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 UserName = Settings.GetString(FBNAME_KEY);
 
                 // verifies if the token has expired:
-                if (DateTime.Compare(DateTime.Now, Expires) > 0)  // < timezone?
+                if (DateTime.Compare(DateTime.UtcNow, Expires) > 0)
                     InvalidateData();
                 //var task = TestAccessToken();     
                 //task.Wait();
