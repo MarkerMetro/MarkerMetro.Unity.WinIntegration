@@ -42,15 +42,6 @@
     <Compile Include="..\SharedSource\Facebook\FB.cs">
       <Link>Facebook\FB.cs</Link>
     </Compile>
-    <Compile Include="..\SharedSource\Facebook\FBLocation.cs">
-      <Link>Facebook\FBLocation.cs</Link>
-    </Compile>
-    <Compile Include="..\SharedSource\Facebook\FBNative.cs">
-      <Link>Facebook\FBNative.cs</Link>
-    </Compile>
-    <Compile Include="..\SharedSource\Facebook\FBUser.cs">
-      <Link>Facebook\FBUser.cs</Link>
-    </Compile>
     <Compile Include="..\SharedSource\Facebook\IWebInterface.cs">
       <Link>Facebook\IWebInterface.cs</Link>
     </Compile>
@@ -100,10 +91,6 @@
     <Reference Include="Facebook, Version=6.0.10.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Facebook.6.8.0\lib\win8\Facebook.dll</HintPath>
-    </Reference>
-    <Reference Include="Facebook.Client, Version=0.9.1.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Metro\Facebook.Client.dll</HintPath>
     </Reference>
     <Reference Include="MarkerMetro.Unity.WinLegacy, Version=1.8.0.8, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

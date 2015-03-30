@@ -147,7 +147,7 @@
     </Reference>
     <Reference Include="Facebook.Client, Version=0.9.1.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Metro\Facebook.Client.dll</HintPath>
+      <HintPath>..\packages\Facebook.Client.1.0.2\lib\wpa81\Facebook.Client.dll</HintPath>
     </Reference>
     <Reference Include="MarkerMetro.Unity.WinLegacy">
       <HintPath>..\packages\MarkerMetro.Unity.WinLegacy.1.8.0.8\lib\MarkerMetro.Unity.WinLegacy.dll</HintPath>
