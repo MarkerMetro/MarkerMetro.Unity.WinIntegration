@@ -44,7 +44,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// </remarks>
         public static void Init(InitDelegate onInitComplete, string appId, HideUnityDelegate onHideUnity)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_PHONE || WINDOWS_PHONE_APP
             Dispatcher.InvokeOnUIThread(() =>
             {
                 _onHideUnity = onHideUnity;
@@ -163,7 +163,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 FacebookDelegate callback = null
             )
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_PHONE || WINDOWS_PHONE_APP
             if (!IsLoggedIn)
             {
                 // not logged in
@@ -211,7 +211,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             Dictionary<string, string[]> properties = null,
             FacebookDelegate callback = null)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_PHONE || WINDOWS_PHONE_APP
             if (!IsLoggedIn)
             {
                 // not logged in
@@ -284,7 +284,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         public static void MapUri (Uri uri)
         {
-#if NETFX_CORE
+#if WINDOWS_PHONE_APP
             Dispatcher.InvokeOnAppThread(() =>
             {
                 (new FacebookUriMapper()).MapUri(uri);
