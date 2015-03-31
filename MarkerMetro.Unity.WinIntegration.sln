@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkerMetro.Unity.WinIntegrationUnity", "MarkerMetro.Unity.WinIntegrationUnity\MarkerMetro.Unity.WinIntegrationUnity.csproj", "{BA146C0E-024A-4C29-817F-CBDD2A811129}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkerMetro.Unity.WinIntegrationMetro", "MarkerMetro.Unity.WinIntegrationMetro\MarkerMetro.Unity.WinIntegrationMetro.csproj", "{5A63EDA9-9F15-4444-A841-3D8586B55417}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkerMetro.Unity.WinIntegrationWP8", "MarkerMetro.Unity.WinIntegrationWP8\MarkerMetro.Unity.WinIntegrationWP8.csproj", "{E28075F4-2E4E-4ACC-B733-DC279D452CF0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkerMetro.Unity.WinIntegrationWP81", "MarkerMetro.Unity.WinIntegrationWP81\MarkerMetro.Unity.WinIntegrationWP81.csproj", "{CEAA5D43-6D13-493C-9E95-1A5867BCFA82}"
 EndProject
@@ -43,18 +41,6 @@ Global
 		{5A63EDA9-9F15-4444-A841-3D8586B55417}.Release|ARM.Build.0 = Release|Any CPU
 		{5A63EDA9-9F15-4444-A841-3D8586B55417}.Release|x86.ActiveCfg = Release|Any CPU
 		{5A63EDA9-9F15-4444-A841-3D8586B55417}.Release|x86.Build.0 = Release|Any CPU
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Debug|ARM.Build.0 = Debug|Any CPU
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Debug|x86.ActiveCfg = Debug|x86
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Debug|x86.Build.0 = Debug|x86
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Release|ARM.ActiveCfg = Release|Any CPU
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Release|ARM.Build.0 = Release|Any CPU
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Release|x86.ActiveCfg = Release|x86
-		{E28075F4-2E4E-4ACC-B733-DC279D452CF0}.Release|x86.Build.0 = Release|x86
 		{CEAA5D43-6D13-493C-9E95-1A5867BCFA82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CEAA5D43-6D13-493C-9E95-1A5867BCFA82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEAA5D43-6D13-493C-9E95-1A5867BCFA82}.Debug|ARM.ActiveCfg = Debug|ARM
