@@ -1,6 +1,6 @@
 ## Getting Started
 
-Unity Plugin for Windows Universal 8.1, Windows 8.1 and Windows Phone 8.0 used to support implementations of Windows or Windows Phone platform specific functionality missing within Unity.
+Unity Plugin for Windows 8.1 and Windows Phone 8.1 used to support implementations of Windows or Windows Phone platform specific functionality missing within Unity.
 
 See the [Unity FAQ on Universal Apps](http://docs.unity3d.com/Manual/WindowsUniversalApps-faq.html) which contains a complete breakdown of the platform conditional compilation you can use with Windows Apps and also broad guidance around the special plugin folders on Windows apps.
 
@@ -8,7 +8,7 @@ See the [Unity FAQ on Universal Apps](http://docs.unity3d.com/Manual/WindowsUniv
 
 - Visual Studio 2013
 - Nuget Package Manager
-- Unity 4.6.1f1 (tested only on this version but should work on other 4.x builds)
+- Unity 5.0.0p2 (tested only on this version but should work on other 5.x builds)
 
 ## Getting Latest
 
@@ -23,7 +23,6 @@ You can then copy the folder contents as follows:
 - /MarkerMetro.Unity.WinIntegrationMetro/bin/Release > /Assets/Plugins/Metro/
 - /MarkerMetro.Unity.WinIntegrationWP81/bin/Release > /Assets/Plugins/Metro/WindowsPhone81
 - /MarkerMetro.Unity.WinIntegrationUnity/bin/Release > /Assets/Plugins/
-- /MarkerMetro.Unity.WinIntegrationWP8/bin/Release > /Assets/Plugins/WP8/
 
 ### Download Latest Stable Binaries
 
@@ -34,9 +33,6 @@ Extract the files from the package and copy the folder contents as follows:
 - /lib/netcore45/ > /Assets/Plugins/Metro/
 - /lib/wpa81 > /Assets/Plugins/Metro/WindowsPhone81
 - /lib/net35 > /Assets/Plugins/
-- /lib/windowsphone8 > /Assets/Plugins/WP8/
-
-Note: The Metro output will work fine for Universal projects with both Windows 8.1 and Windows Phone 8.1
 
 ## Initialize the Plugin
 
@@ -44,19 +40,6 @@ Within your Windows application, just need to ensure you initialize the plugin a
 
 For Windows Universal and Windows 8.1 Apps add the following method to App.xaml.cs and call it after the call to appCallbacks.InitializeD3DXAML().
 
-For Windows Phone 8.0 add the following method to MainPage.xaml.cs at the end of DrawingSurfaceBackground_Loaded method within the if (!_unityStartedLoading) code branch at the bottom.
-
-```csharp
-
-void InitializePlugins()
-{
-    // wire up dispatcher for plugin
-    MarkerMetro.Unity.WinIntegration.Dispatcher.InvokeOnAppThread = InvokeOnAppThread;
-    MarkerMetro.Unity.WinIntegration.Dispatcher.InvokeOnUIThread = InvokeOnUIThread;
-}
-
-```
-For Windows Universal and Windows 8.1 Apps the handlers should be as follows:
 
 ```csharp
 public void InvokeOnAppThread(Action callback)
@@ -70,26 +53,9 @@ public void InvokeOnUIThread(Action callback)
 }
 ```
 
-For Windows Phone 8.0 Apps the handlers should be as follows:
-
-```csharp
-
-public void InvokeOnAppThread(System.Action callback)
-{
-    UnityApp.BeginInvoke(() => callback());
-}
-
-public void InvokeOnUIThread(System.Action callback)
-{
-    Dispatcher.BeginInvoke(() => callback());
-}
-```
-
 You can see existing implementations in [WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared) here:
 
 - [Windows Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs) 
-- [Windows 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs)
-- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/MainPage.xaml.cs)
 
 ## Debugging locally
 
@@ -114,19 +80,17 @@ There is no Unity Plugin for Windows at this time. We have filled the gap by pro
 
 #### Windows Phone
 
-Windows Phone (both 8.0 and 8.1) supports uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issues. 
+Windows Phone 8.1 supports uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issues. 
 
 Modify the app's manifest to add a protocal handler to ensure the native mobile IE facebook integration can work. 
 
-- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/Properties/WMAppManifest.xml)
 - [Windows Phone 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.WindowsPhone/Package.appxmanifest)
 
 You also need to assign a UriMapper
 
-- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/App.xaml.cs) See the App() constructor.
 - [Windows Phone 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs) See the OnActivated method.
 
-For Windows Phone 8.0 ensrue you have added the ID_CAP_NETWORKING capability and for Windows Phone 8.1 the Internet capability. 
+For  Windows Phone 8.1 ensure you add the Internet capability to the app's manifest. 
 
 #### Windows 8.1
 
@@ -149,7 +113,6 @@ FB.SetPlatformInterface(web);
 You can see how this is done here:
 
 - [Windows 8.1 Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/MainPage.xaml.cs)
-- [Windows 8.1 Non Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/Common/CommonMainPage.cs)
 
 #### Sample usage
 
@@ -250,16 +213,14 @@ Lastly note, the FB.cs and FBNative.cs classes in WinIntegration are very simila
 
 ### Store Integration
 
-There is a single Store API for both Windows 8.1 and Windows Phone 8.x.
+There is a single Store API for both Windows 8.1 and Windows Phone 8.1.
 
 For a complete implementation of IAP Integration using WinIntegration check out our starter template  [MarkerMetro.Unity.WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared)
 
 #### Setup and Initialization
 
 Add an iapsimulator.xml file to the root of your project. This will be used when the store manager is in simulator mode.
-
-- [Windows 8.1 and Windows Universal] (https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/iap_simulator.xml)
-- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/iap_simulator.xml)
+ (https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/iap_simulator.xml)
 
 Then ensure you have initialized the store with the following code
 
@@ -272,9 +233,7 @@ Then ensure you have initialized the store with the following code
 #endif
 ```
 
-For Windows Phone 8.0, place it in the Unity_Loaded method in MainPage.xaml.cs. 
-
-For Windows Universal or Windows 8.1, place it in the InitializeUnity method within App.xaml.cs just before the call to construct MainPage.
+For Windows Universal place it in the InitializeUnity method within App.xaml.cs just before the call to construct MainPage.
 
 Note the practice of using a conditional compilation symbol so that you can have IAP simulator or real store api interaction depending on which build you are delivering. 
 
@@ -305,8 +264,6 @@ void StoreManager.Instance.RetrieveProducts(ProductListDelegate callback)
 ```
 
 Attempt to purchase an IAP product. The receipt object returned in the delegate will have a StatusCode of Success or ExceptionThrow if something went badly wrong. 
-
-Specifically for Windows Phone 8.0, the only other StatusCode used is NotReady when after a successful purchase the license information does not appear to be valid. Windows 8.1 uses all the other status codes as more information is available.
 
 ```csharp
 void StoreManager.Instance.PurchaseProduct(PurchaseDelegate callback)
@@ -361,8 +318,6 @@ You can see an [Example of Raygun Exception Logger](https://github.com/MarkerMet
 
 You can see a full example of App Unhandled Exception Logging in WinShared using Raygun:
 
-- [Windows 8.1](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsStore/UnityProject/App.xaml.cs)
-- [Windows Phone 8.0](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolution/WindowsPhone/UnityProject/App.xaml.cs)
 - [Windows Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs)
 
 #### To disable exception logging
