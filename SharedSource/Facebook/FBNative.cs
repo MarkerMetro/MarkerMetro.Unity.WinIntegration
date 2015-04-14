@@ -49,6 +49,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             {
                 _onHideUnity = onHideUnity;
                 _fbSessionClient = Session.ActiveSession;
+                Session.AppId = appId;
                 Task.Run(async () =>
                 {
                     // check and extend token if required
