@@ -1,4 +1,4 @@
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
 using MarkerMetro.Unity.WinLegacy.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Globalization;
@@ -10,14 +10,7 @@ using System.Collections.Generic;
 
 using MarkerMetro.Unity.WinIntegration;
 
-#if WINDOWS_PHONE
-using Facebook.Client;
-using System.IO.IsolatedStorage;
-using Windows.Storage;
-using System.Xml.Linq;
-using System.IO;
-using System.Linq;
-#elif NETFX_CORE
+#if NETFX_CORE
 using Facebook.Client;
 using Windows.Storage;
 #endif
@@ -31,7 +24,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
     public static class FBNative
     {
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
         private static Session _fbSessionClient;
         private static HideUnityDelegate _onHideUnity;
 #endif
@@ -44,7 +37,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// </remarks>
         public static void Init(InitDelegate onInitComplete, string appId, HideUnityDelegate onHideUnity)
         {
-#if WINDOWS_PHONE || WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP
             Dispatcher.InvokeOnUIThread(() =>
             {
                 _onHideUnity = onHideUnity;
@@ -67,7 +60,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         public static void Logout()
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             _fbSessionClient.Logout();
 #else
             throw new PlatformNotSupportedException("");
@@ -76,7 +69,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         public static void Login(string permissions, FacebookDelegate callback)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             Session.OnFacebookAuthenticationFinished = (AccessTokenData data) =>
             {
                 if (callback != null)
@@ -97,7 +90,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             HttpMethod method,
             FacebookDelegate callback)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
 
             if (method != HttpMethod.GET) throw new NotImplementedException();
             Task.Run(async () =>
@@ -134,7 +127,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         /// </summary>
         public static void GetCurrentUser(Action<FBUser> callback)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             API("me", HttpMethod.GET, (result) =>
             {
                 var data = (IDictionary<string, object>)result.Json;
@@ -163,7 +156,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 FacebookDelegate callback = null
             )
         {
-#if WINDOWS_PHONE || WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP
             if (!IsLoggedIn)
             {
                 // not logged in
@@ -211,7 +204,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             Dictionary<string, string[]> properties = null,
             FacebookDelegate callback = null)
         {
-#if WINDOWS_PHONE || WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP
             if (!IsLoggedIn)
             {
                 // not logged in
@@ -247,7 +240,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
             get
             {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
                 return _fbSessionClient != null && !String.IsNullOrEmpty(_fbSessionClient.CurrentAccessTokenData.AccessToken);
 #else
                 throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
@@ -255,7 +248,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             }
         }
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
         // return whether back button pressed event is consumed by facebook for closing the dialog
         public static bool BackButtonPressed()
         {
@@ -274,7 +267,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
             get
             {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
                 return _fbSessionClient != null;
 #else
                 throw new PlatformNotSupportedException("");

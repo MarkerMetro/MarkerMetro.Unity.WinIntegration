@@ -1,6 +1,6 @@
 using System;
 
-#if NETFX_CORE || WINDOWS_PHONE
+#if NETFX_CORE
 using Windows.UI.Core;
 #endif
 
@@ -53,8 +53,6 @@ namespace MarkerMetro.Unity.WinIntegration.Store
             System.Diagnostics.Debug.WriteLine("Loaded mock store for Unity Editor");
 #elif NETFX_CORE
             _storeObject = new WindowsStorePlatform();
-#elif WINDOWS_PHONE
-            _storeObject = new WP8Platform();
 #endif
             _storeObject.Load(_useSimulator, this);
         }

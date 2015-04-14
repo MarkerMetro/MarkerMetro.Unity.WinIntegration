@@ -5,8 +5,6 @@ using System.IO;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
-#elif WINDOWS_PHONE
-using System.IO.IsolatedStorage;
 #endif
 using System.Linq;
 using System.Threading;
@@ -17,8 +15,6 @@ namespace MarkerMetro.Unity.WinIntegration.LocalNotifications
     {
 #if NETFX_CORE
         private const string ScheduleFileName = "schedule.win8";
-#elif WINDOWS_PHONE
-        private const string ScheduleFileName = "schedule.wp8";
 #endif
         private const string MutexName = "reminders";
 
@@ -39,19 +35,6 @@ namespace MarkerMetro.Unity.WinIntegration.LocalNotifications
                 remindersEnabled = Convert.ToBoolean(remindersEnabledValue);
             }
             return remindersEnabled;
-#elif WINDOWS_PHONE
-            var appSettings = IsolatedStorageSettings.ApplicationSettings;
-            var remindersEnabled = true;
-            if (appSettings.Contains("RemindersEnabled"))
-            {
-                remindersEnabled = Convert.ToBoolean(appSettings["RemindersEnabled"]);
-            }
-            else
-            {
-                appSettings.Add("RemindersEnabled", remindersEnabled);
-                appSettings.Save();
-            }        
-            return remindersEnabled;
 #else
             throw new PlatformNotSupportedException("ReminderManager.AreRemindersEnabled");
 #endif
@@ -64,17 +47,6 @@ namespace MarkerMetro.Unity.WinIntegration.LocalNotifications
 #if NETFX_CORE
             var roamingSettings = ApplicationData.Current.RoamingSettings;
             roamingSettings.Values["RemindersEnabled"] = enabled;
-#elif WINDOWS_PHONE
-            var appSettings = IsolatedStorageSettings.ApplicationSettings;
-            if (appSettings.Contains("RemindersEnabled"))
-            {
-                appSettings["RemindersEnabled"] = enabled;
-            }
-            else
-            {
-                appSettings.Add("RemindersEnabled", enabled);
-            }
-            appSettings.Save();
 #else
             throw new PlatformNotSupportedException("ReminderManager.SetRemindersStatus");
 #endif
@@ -113,17 +85,6 @@ namespace MarkerMetro.Unity.WinIntegration.LocalNotifications
             ScheduledToastNotification scheduledToast = new ScheduledToastNotification(toastXml, triggerTime);
             scheduledToast.Id = id;
             ToastNotificationManager.CreateToastNotifier().AddToSchedule(scheduledToast);
-
-#elif WINDOWS_PHONE        
-
-            if (Microsoft.Phone.Scheduler.ScheduledActionService.GetActions<Microsoft.Phone.Scheduler.Reminder>().Where(r => r.Name == id).Count() > 0)
-                Microsoft.Phone.Scheduler.ScheduledActionService.Remove(id);
-
-            var reminder = new Microsoft.Phone.Scheduler.Reminder(id);
-            reminder.BeginTime = reminder.ExpirationTime = triggerTime;
-            reminder.Title = title;
-            reminder.Content = content;
-            Microsoft.Phone.Scheduler.ScheduledActionService.Add(reminder);
 #endif
         }
 
@@ -139,10 +100,6 @@ namespace MarkerMetro.Unity.WinIntegration.LocalNotifications
             {
                 notifier.RemoveFromSchedule(reminder);
             }
-#elif WINDOWS_PHONE
-            var reminders = Microsoft.Phone.Scheduler.ScheduledActionService.GetActions<Microsoft.Phone.Scheduler.Reminder>();
-            foreach (var r in reminders)
-                Microsoft.Phone.Scheduler.ScheduledActionService.Remove(r.Name);
 #endif
         }
 
@@ -162,9 +119,6 @@ namespace MarkerMetro.Unity.WinIntegration.LocalNotifications
             {
                 notifier.RemoveFromSchedule(existingReminder);
             }
-#elif WINDOWS_PHONE
-            if (Microsoft.Phone.Scheduler.ScheduledActionService.GetActions<Microsoft.Phone.Scheduler.Reminder>().Where(r => r.Name == id).Count() > 0)
-                Microsoft.Phone.Scheduler.ScheduledActionService.Remove(id);
 #endif
         }
     }

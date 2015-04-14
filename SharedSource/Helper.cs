@@ -17,16 +17,6 @@ using Windows.UI.Popups;
 using Windows.Foundation;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.Networking.PushNotifications;
-#elif WINDOWS_PHONE
-using Microsoft.Phone.Tasks;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Windows;
-using Microsoft.Phone.Info;
-using Windows.ApplicationModel.Store;
-using Windows.Networking.Connectivity;
-using Microsoft.Phone.UserData;
-using Microsoft.Phone.Notification;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration
@@ -74,8 +64,6 @@ namespace MarkerMetro.Unity.WinIntegration
             var build = Package.Current.Id.Version.Build.ToString();
             var version = String.Format("{0}.{1}.{2}.{3}", major, minor, build, revision);
             return version;
-#elif WINDOWS_PHONE
-			return XDocument.Load("WMAppManifest.xml").Root.Element("App").Attribute("Version").Value;
 #else
             return String.Empty;
 #endif
@@ -108,27 +96,8 @@ namespace MarkerMetro.Unity.WinIntegration
                     };
                 }
             });  
-#elif WINDOWS_PHONE
-			try
-			{
-				using (var store = System.IO.IsolatedStorage.IsolatedStorageFile.GetUserStoreForApplication())
-				{
-					store.Remove();
-				}
-				if (callback != null)
-				{
-					Dispatcher.InvokeOnAppThread(() => callback(true));
-				};
-			}
-			catch
-			{
-				if (callback != null)
-				{
-					Dispatcher.InvokeOnAppThread(() => callback(false));
-				};
-			}
 #else
-             throw new PlatformNotSupportedException("ClearLocalState");
+            throw new PlatformNotSupportedException("ClearLocalState");
 #endif
 		}
 
@@ -153,41 +122,6 @@ namespace MarkerMetro.Unity.WinIntegration
 					}
 				}
 			});
-#elif WINDOWS_PHONE
-			try
-			{
-				var channelUri = String.Empty;
-				var pushChannel = HttpNotificationChannel.Find(channelName);
-
-				if (pushChannel == null)
-				{
-					pushChannel = new HttpNotificationChannel(channelName);
-
-					pushChannel.ChannelUriUpdated += (s, e) =>
-					{
-						channelUri = e.ChannelUri.ToString();
-						if (callback != null)
-							Dispatcher.InvokeOnAppThread(() => callback(channelUri));
-					};
-
-					pushChannel.Open();
-					pushChannel.BindToShellToast();
-					pushChannel.BindToShellTile();
-				}
-				else
-				{
-					channelUri = pushChannel.ChannelUri.ToString();
-					if (callback != null)
-						Dispatcher.InvokeOnAppThread(() => callback(channelUri));
-				}
-
-
-			}
-			catch
-			{
-				if (callback != null)
-					Dispatcher.InvokeOnAppThread(() => callback(String.Empty));
-			}
 #else
             throw new PlatformNotSupportedException("GetPushChannel(string channelName, Action<string> callback)");
 #endif
@@ -203,8 +137,6 @@ namespace MarkerMetro.Unity.WinIntegration
 		{
 #if NETFX_CORE
             return Windows.Globalization.ApplicationLanguages.Languages[0];
-#elif WINDOWS_PHONE
-			return System.Globalization.CultureInfo.CurrentUICulture.Name;
 #else
             return System.Globalization.CultureInfo.CurrentUICulture.Name;
 #endif
@@ -228,12 +160,6 @@ namespace MarkerMetro.Unity.WinIntegration
                 ExceptionLogger.Send(ex);
 # endif
             }
-
-#elif WINDOWS_PHONE
-			var guidString = XDocument.Load("WMAppManifest.xml").Root.Element("App").Attribute("ProductID").Value;
-			var productId = guidString.TrimStart('{').TrimEnd('}').ToLower();
-			var task = new MarketplaceDetailTask();
-			task.Show();
 #endif
 		}
 
@@ -257,12 +183,6 @@ namespace MarkerMetro.Unity.WinIntegration
 		{
 #if NETFX_CORE
             throw new NotImplementedException("Not implemented for Windows Store Apps, use ShowShareUI() instead.");
-#elif WINDOWS_PHONE
-			var task = new ShareLinkTask();
-			task.Title = text;
-			task.Message = message;
-			task.LinkUri = new Uri(linkURL);
-			task.Show();
 #endif
 		}
 
@@ -292,12 +212,6 @@ namespace MarkerMetro.Unity.WinIntegration
 # endif
                     }
                 });
-#elif WINDOWS_PHONE
-			Dispatcher.InvokeOnUIThread(() =>
-			{
-				var marketplaceReviewTask = new MarketplaceReviewTask();
-				marketplaceReviewTask.Show();
-			});
 #else
             throw new NotImplementedException("Not implemented for unknown platform");
 #endif
@@ -309,26 +223,7 @@ namespace MarkerMetro.Unity.WinIntegration
 		/// <returns></returns>
 		public string GetUserDeviceId()
 		{
-#if WINDOWS_PHONE
-			const string key = "UserDeviceId";
-
-			var store = System.IO.IsolatedStorage.IsolatedStorageSettings.ApplicationSettings;
-
-			if (!store.Contains(key))
-			{
-				var anid = Math.Abs(UserExtendedProperties.GetValue("ANID2").GetHashCode()).ToString();
-				var did = Math.Abs(DeviceExtendedProperties.GetValue("DeviceUniqueId").GetHashCode()).ToString();
-
-				store[key] = anid + did;
-				try
-				{
-					store.Save();
-				}
-				catch { }
-			}
-
-			return (string)store[key];
-#elif NETFX_CORE
+#if NETFX_CORE
             const string key = "UserDeviceId";
 
             var values = Windows.Storage.ApplicationData.Current.RoamingSettings.Values;
@@ -350,9 +245,7 @@ namespace MarkerMetro.Unity.WinIntegration
 		/// </summary>
 		public string GetManufacturer()
 		{
-#if WINDOWS_PHONE
-			return DeviceStatus.DeviceManufacturer;
-#elif NETFX_CORE
+#if NETFX_CORE
             return new EasClientDeviceInformation().SystemManufacturer;
 #else
             throw new PlatformNotSupportedException("GetManufacturer()");
@@ -368,9 +261,7 @@ namespace MarkerMetro.Unity.WinIntegration
 		/// </remarks>
 		public string GetModel()
 		{
-#if WINDOWS_PHONE
-			return DeviceStatus.DeviceName;
-#elif NETFX_CORE
+#if NETFX_CORE
             return new EasClientDeviceInformation().SystemProductName;
 #else
             throw new PlatformNotSupportedException("GetManufacturer()");
@@ -384,9 +275,7 @@ namespace MarkerMetro.Unity.WinIntegration
 		/// <returns></returns>
 		public string GetAppStoreUri()
 		{
-#if WINDOWS_PHONE
-			return "http://www.windowsphone.com/s?appid=" + CurrentApp.AppId;
-#elif NETFX_CORE
+#if NETFX_CORE
             return "ms-windows-store:PDP?PFN=" + Package.Current.Id.FamilyName;
 #else
             return "";
@@ -438,19 +327,7 @@ namespace MarkerMetro.Unity.WinIntegration
 		/// <returns>Windows 8 Arm or Windows Phone Low Mem returns true</returns>
 		public bool IsLowEndDevice()
         {
-#if WINDOWS_PHONE 
-            long result = 0;
-			try
-            {
-				result = (long)DeviceExtendedProperties.GetValue("ApplicationWorkingSetLimit");
-			}
-			catch (ArgumentOutOfRangeException)
-			{
-				// The device does not support querying for this value. This occurs
-				// on Windows Phone OS 7.1 and older phones without OS updates.
-			}
-			return result <= 188743680; // less than or equal to 180MB including failure scenario
-#elif WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP
             long result = 0;
             try
             {
@@ -476,9 +353,7 @@ namespace MarkerMetro.Unity.WinIntegration
 		{
 			get
 			{
-#if WINDOWS_PHONE
-				return Microsoft.Phone.Net.NetworkInformation.DeviceNetworkInformation.IsNetworkAvailable;
-#elif NETFX_CORE
+#if NETFX_CORE
                 var profile = NetworkInformation.GetInternetConnectionProfile();
                 return profile != null &&
                        profile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
@@ -492,7 +367,7 @@ namespace MarkerMetro.Unity.WinIntegration
 		{
 			get
 			{
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
 				var profile = NetworkInformation.GetInternetConnectionProfile();
                 if (profile == null)
                 {
@@ -507,7 +382,7 @@ namespace MarkerMetro.Unity.WinIntegration
 
 		public void ShowDialog(string contentKey, string titleKey, Action callback)
 		{
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
 			if (string.IsNullOrWhiteSpace(contentKey))
 				throw new ArgumentNullException("You must specify content resource key");
 
@@ -519,13 +394,7 @@ namespace MarkerMetro.Unity.WinIntegration
 				if (titleKey != null)
 					title = resourceHelper.GetString(titleKey);
 
-# if WINDOWS_PHONE
-				MessageBox.Show(content, title, MessageBoxButton.OK);
-
-				if (callback != null)
-					Dispatcher.InvokeOnAppThread(() => callback());
-			});
-# elif NETFX_CORE
+#if NETFX_CORE
                 ShowDialogAsync(contentKey, titleKey, callback).ContinueWith(t => { });
             });
 # endif
@@ -536,19 +405,7 @@ namespace MarkerMetro.Unity.WinIntegration
 
 		public void ShowDialog(string content, string title, Action<bool> callback, string okText = "", string cancelText = "")
 		{
-# if WINDOWS_PHONE
-			MessageBoxResult res;
-			Dispatcher.InvokeOnUIThread(() =>
-			{
-				if (string.IsNullOrWhiteSpace(okText) || (string.IsNullOrWhiteSpace(cancelText)))
-					res = MessageBox.Show(content, title, MessageBoxButton.OK);
-				else
-					res = MessageBox.Show(content, title, MessageBoxButton.OKCancel);
-
-				if (callback != null)
-					Dispatcher.InvokeOnAppThread(() => callback(res == MessageBoxResult.OK));
-			});
-# elif NETFX_CORE
+#if NETFX_CORE
 
             Dispatcher.InvokeOnUIThread(() =>
             {
@@ -617,30 +474,7 @@ namespace MarkerMetro.Unity.WinIntegration
                 var mailto = new Uri(String.Format("mailto:?to={0}&subject={1}&body={2}", to, subject, body));
                 await Launcher.LaunchUriAsync(mailto);
             });
-#elif WINDOWS_PHONE
-			Dispatcher.InvokeOnUIThread(() =>
-			{
-				var task = new EmailComposeTask
-				{
-					To = to,
-					Subject = subject,
-					Body = body
-				};
-				task.Show();
-			});
 #endif
 		}
-
-#if !NETFX_CORE
-		public System.Net.EndPoint GetDnsEndPoint(string host, int port)
-		{
-			// DnsEndPoint only exists on Windows Phone
-#if WINDOWS_PHONE
-			return new System.Net.DnsEndPoint(host, port);
-#else
-            throw new PlatformNotSupportedException();
-#endif
-		}
-#endif
 	}
 }

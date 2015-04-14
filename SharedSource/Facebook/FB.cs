@@ -1,4 +1,4 @@
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
 using MarkerMetro.Unity.WinLegacy.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Globalization;
@@ -9,10 +9,7 @@ using System.Collections.Generic;
 
 using MarkerMetro.Unity.WinIntegration;
 
-#if WINDOWS_PHONE
-using System.IO.IsolatedStorage;
-using MarkerMetro.Unity.WinIntegration.Storage;
-#elif NETFX_CORE
+#if NETFX_CORE
 using Windows.Storage;
 using MarkerMetro.Unity.WinIntegration.Storage;
 #endif
@@ -50,7 +47,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
     public static class FB
     {
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
         private static FacebookClient _client;
         private static IWebInterface _web;
         private static HideUnityDelegate _onHideUnity;
@@ -77,7 +74,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
             get
             {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
                 return _client != null;
 #else
                 throw new PlatformNotSupportedException("");
@@ -87,7 +84,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         public static void Logout()
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             if (_web == null) throw new MissingPlatformException();
             if (_web.IsActive || !IsLoggedIn) return;
 
@@ -112,7 +109,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         public static void Login(string permissions, FacebookDelegate callback)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             if (_web == null) throw new MissingPlatformException();
             if (_web.IsActive || IsLoggedIn)
             {
@@ -143,7 +140,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         }
 
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
 
         private static void LoginNavigationError(Uri url, int error, object state)
         {
@@ -208,7 +205,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             string appId,
             HideUnityDelegate onHideUnity, string redirectUrl = null)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             if (_client != null)
             {
                 if (onInitComplete != null)
@@ -259,13 +256,13 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         public static void ChangeRedirect(string redirectUrl)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             if (!string.IsNullOrEmpty(redirectUrl) && !_web.IsActive)
                 _redirectUrl = redirectUrl;
 #endif
         }
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
 
         /// <summary>
         /// Test if the access token is still valid by making a simple API call
@@ -326,7 +323,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             HttpMethod method,
             FacebookDelegate callback)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             if (_web == null) throw new MissingPlatformException();
             if (!IsLoggedIn)
             {
@@ -368,7 +365,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 
         public static void SetPlatformInterface(IWebInterface web)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             _web = web;
 #else
             throw new PlatformNotSupportedException("");
@@ -390,7 +387,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 FacebookDelegate callback = null
             )
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             ///
             /// @note: [vaughan.sanders 15.8.14] We are overriding the Unity FB.AppRequest here to send a more
             /// general web style request as WP8 does not support the actual request functionality.
@@ -487,7 +484,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
             Dictionary<string, string[]> properties = null,
             FacebookDelegate callback = null)
         {
-#if WINDOWS_PHONE || NETFX_CORE
+#if NETFX_CORE
             if (_web == null) throw new MissingPlatformException();
             if (_web.IsActive || !IsLoggedIn)
             {
