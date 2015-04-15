@@ -50,7 +50,7 @@ namespace MarkerMetro.Unity.WinIntegration.Logging
 
         public static void Send(Exception ex)
         {
-#if NETFX_CORE || WINDOWS_PHONE
+#if NETFX_CORE
             if (IsEnabled)
             {
                 _logger.Send(ex);
@@ -62,7 +62,7 @@ namespace MarkerMetro.Unity.WinIntegration.Logging
 
         public static void Send(string message, string stackTrace)
         {
-#if NETFX_CORE || WINDOWS_PHONE
+#if NETFX_CORE
             if (IsEnabled)
             {
                 _logger.Send(new WrappedException(message, stackTrace));

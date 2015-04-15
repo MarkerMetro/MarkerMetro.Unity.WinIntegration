@@ -1,7 +1,5 @@
 using System;
-#if WINDOWS_PHONE
-using System.IO.IsolatedStorage;
-#elif NETFX_CORE
+#if NETFX_CORE
 using Windows.Storage;
 #endif
 
@@ -18,9 +16,7 @@ namespace MarkerMetro.Unity.WinIntegration.Storage
         public static bool HasKey(string key)
         {
 
-#if WINDOWS_PHONE
-            return IsolatedStorageSettings.ApplicationSettings.Contains(key);
-#elif NETFX_CORE
+#if NETFX_CORE
             Object value = null;
             return roamingSettings.Values.TryGetValue(key, out value);
 #else
@@ -32,10 +28,7 @@ namespace MarkerMetro.Unity.WinIntegration.Storage
         {
             if (HasKey(key))
             {
-#if WINDOWS_PHONE
-                    IsolatedStorageSettings.ApplicationSettings.Remove(key);
-                    IsolatedStorageSettings.ApplicationSettings.Save();
-#elif NETFX_CORE
+#if NETFX_CORE
                 roamingSettings.Values.Remove(key);
 #endif
             }
@@ -43,17 +36,7 @@ namespace MarkerMetro.Unity.WinIntegration.Storage
 
         public static void Set(string key, object value)
         {
-#if WINDOWS_PHONE
-                if (HasKey(key))
-                {
-                    IsolatedStorageSettings.ApplicationSettings[key] = value;
-                }
-                else
-                {
-                    IsolatedStorageSettings.ApplicationSettings.Add(key, value);
-                }
-                IsolatedStorageSettings.ApplicationSettings.Save();
-#elif NETFX_CORE
+#if NETFX_CORE
             roamingSettings.Values[key] = value;
 #endif
         }
@@ -62,9 +45,7 @@ namespace MarkerMetro.Unity.WinIntegration.Storage
         {
             if (HasKey(key))
             {
-#if WINDOWS_PHONE
-                    return (string)IsolatedStorageSettings.ApplicationSettings[key];
-#elif NETFX_CORE
+#if NETFX_CORE
                 return (string)roamingSettings.Values[key];
 #endif
             }
@@ -75,9 +56,7 @@ namespace MarkerMetro.Unity.WinIntegration.Storage
         {
             if (HasKey(key))
             {
-#if WINDOWS_PHONE
-                    return (long)IsolatedStorageSettings.ApplicationSettings[key];
-#elif NETFX_CORE
+#if NETFX_CORE
                 return (long)roamingSettings.Values[key];
 #endif
             }
