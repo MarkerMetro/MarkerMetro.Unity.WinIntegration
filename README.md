@@ -78,9 +78,6 @@ We recommend you look at [WinShared](https://github.com/MarkerMetro/MarkerMetro.
 
 There is no Unity Plugin for Windows at this time. We have filled the gap by providing the most used functionality from the [Unity SDK for Facebook](https://developers.facebook.com/docs/unity/) in WinIntegration.
 
-#### FacebookConfig.xml
-The [FacebookConfig.xml](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/FacebookConfig.xml) should be placed in the root Shared project for your Universal App Solution, this is used by the Facebook.Client.dll at runtime. 
-
 #### Windows Phone
 
 Windows Phone 8.1 supports uses a native mobile internet explorer approach. For login, this provides a long lived SSO token which is checked and refreshed at most every 24 hours. This eliminates any problems with tokens or cookies expiring, so app request dialogs (also displayed in mobile IE) and graph calls will work without issues. 
