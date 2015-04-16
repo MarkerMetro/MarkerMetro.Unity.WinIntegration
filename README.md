@@ -4,6 +4,10 @@ Unity Plugin for Windows 8.1 and Windows Phone 8.1 used to support implementatio
 
 See the [Unity FAQ on Universal Apps](http://docs.unity3d.com/Manual/WindowsUniversalApps-faq.html) which contains a complete breakdown of the platform conditional compilation you can use with Windows Apps and also broad guidance around the special plugin folders on Windows apps.
 
+![build status](http://alice.markermetro.com/app/rest/builds/buildType:(id:WinIntegration_Ci)/statusIcon) **CI**
+
+![build status](http://alice.markermetro.com/app/rest/builds/buildType:(id:WinIntegration_Release)/statusIcon) **Release**
+
 ## Prerequisites
 
 - Visual Studio 2013
