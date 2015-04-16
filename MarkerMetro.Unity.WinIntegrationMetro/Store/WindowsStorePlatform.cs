@@ -12,7 +12,6 @@ namespace MarkerMetro.Unity.WinIntegration.Store
     internal class WindowsStorePlatform : IStorePlatform
     {
         private bool _useSimulator;
-        private StoreManager _store;
 
         public bool TrialMode
         {
@@ -36,10 +35,10 @@ namespace MarkerMetro.Unity.WinIntegration.Store
             }
         }
 
-        public void Load(bool simulator, StoreManager storeInst)
+        public void Load(bool simulator)
         {
             _useSimulator = simulator;
-            _store = storeInst;
+            
             if (_useSimulator)
                 LoadSimulator();
         }
@@ -88,7 +87,6 @@ namespace MarkerMetro.Unity.WinIntegration.Store
 
         public void RetrieveProducts(ProductListDelegate callback)
         {
-            if (_store == null ) return;
             Dispatcher.InvokeOnUIThread(async () =>
             {
                 try
@@ -165,8 +163,6 @@ namespace MarkerMetro.Unity.WinIntegration.Store
 
         public void PurchaseProduct(Product product, PurchaseDelegate callback)
         {
-            if (_store == null) return;
-
             Dispatcher.InvokeOnUIThread(async () =>
             {
                 try
