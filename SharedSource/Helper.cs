@@ -17,6 +17,7 @@ using Windows.UI.Popups;
 using Windows.Foundation;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.Networking.PushNotifications;
+using Windows.ApplicationModel.Store;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration
@@ -197,11 +198,18 @@ namespace MarkerMetro.Unity.WinIntegration
                 {
                     try
                     {
+                        Uri uri;
+#if WINDOWS_PHONE_APP
+                        uri = new Uri(String.Format("ms-windows-store:REVIEWAPP?appid={0}", CurrentApp.AppId));
+#else
                         var data = Package.Current.Id.FamilyName;
+                        uri = new Uri(String.Format("ms-windows-store:REVIEW?PFN={0}", data));
+#endif
+
 # if DEBUG
-                        Debug.WriteLine(data);
+                        Debug.WriteLine(uri.ToString());
 # endif
-                        await Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=" + data));
+                        await Launcher.LaunchUriAsync(uri);
                     }
                     catch (Exception ex)
                     {
