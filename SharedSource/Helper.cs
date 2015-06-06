@@ -282,13 +282,15 @@ namespace MarkerMetro.Unity.WinIntegration
 		/// </summary>
 		/// <returns></returns>
 		public string GetAppStoreUri()
-		{
-#if NETFX_CORE
+        {
+#if WINDOWS_PHONE_APP
+            return "ms-windows-store:navigate?appid=" + CurrentApp.AppId;
+#elif NETFX_CORE
             return "ms-windows-store:PDP?PFN=" + Package.Current.Id.FamilyName;
 #else
             return "";
 #endif
-		}
+        }
 
 
 
