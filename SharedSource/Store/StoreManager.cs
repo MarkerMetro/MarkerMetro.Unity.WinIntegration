@@ -81,6 +81,21 @@ namespace MarkerMetro.Unity.WinIntegration.Store
             _storeObject.PurchaseProduct(product, callback);
         }
 
+        public void PurchaseProduct(string productId, PurchaseDelegate callback)
+        {
+            RetrieveProducts((products) =>
+            {
+                if (products == null)
+                {
+                    if (callback != null)
+                        callback(new Receipt(StatusCode.NotReady, null));
+                    return;
+                }
+                var product = products.Find(p => p.ProductID == productId);
+                PurchaseProduct(productId, callback);
+            });
+        }
+
         public void PurchaseApplication(PurchaseDelegate callback)
         {
             if (_storeObject == null)
