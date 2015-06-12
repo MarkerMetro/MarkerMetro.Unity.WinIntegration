@@ -2,7 +2,6 @@ using System;
 
 #if NETFX_CORE
 using Windows.UI.Core;
-using System.Linq;
 #endif
 
 namespace MarkerMetro.Unity.WinIntegration.Store
@@ -92,7 +91,8 @@ namespace MarkerMetro.Unity.WinIntegration.Store
                         callback(new Receipt(StatusCode.NotReady, null));
                     return;
                 }
-                var product = products.FirstOrDefault(p => p.ProductID == productId);
+
+                var product = products.Find(p => p.ProductID == productId);
                 if (product == null)
                 {
                     if (callback != null)
