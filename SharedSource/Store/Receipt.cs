@@ -14,7 +14,8 @@ namespace MarkerMetro.Unity.WinIntegration.Store
         ConsumablePending,
         DurableOwned,
         UserCancelled,
-        ExceptionThrown
+        ExceptionThrown,
+        InvalidProduct
     }
 
     public class Receipt
