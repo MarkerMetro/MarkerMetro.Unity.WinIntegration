@@ -27,6 +27,22 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #if NETFX_CORE
         private static Session _fbSessionClient;
         private static HideUnityDelegate _onHideUnity;
+        public static string AccessToken
+        {
+            get
+            {
+                if (_fbSessionClient != null && _fbSessionClient.CurrentAccessTokenData != null)
+                {
+                    return _fbSessionClient.CurrentAccessTokenData.AccessToken;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+#else
+        public static string AccessToken { get; private set; }
 #endif
 
         /// <summary>
@@ -89,23 +105,37 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         public static void API(
             string endpoint,
             HttpMethod method,
-            FacebookDelegate callback)
+            FacebookDelegate callback,
+            object parameters = null)
         {
 #if NETFX_CORE
 
-            if (method != HttpMethod.GET) throw new NotImplementedException();
+            if (method == HttpMethod.DELETE) throw new NotImplementedException();
             Task.Run(async () =>
             {
                 FacebookClient fb = new FacebookClient(_fbSessionClient.CurrentAccessTokenData.AccessToken);
                 FBResult fbResult = null;
                 try
                 {
-                    var apiCall = await fb.GetTaskAsync(endpoint, null);
-                    if (apiCall != null)
+                    if (method == HttpMethod.GET)
                     {
-                        fbResult = new FBResult();
-                        fbResult.Text = apiCall.ToString();
-                        fbResult.Json = apiCall as JsonObject;
+                        var apiCall = await fb.GetTaskAsync(endpoint, parameters);
+                        if (apiCall != null)
+                        {
+                            fbResult = new FBResult();
+                            fbResult.Text = apiCall.ToString();
+                            fbResult.Json = apiCall as JsonObject;
+                        }
+                    }
+                    else
+                    {
+                        var apiCall = await fb.PostTaskAsync(endpoint, parameters);
+                        if (apiCall != null)
+                        {
+                            fbResult = new FBResult();
+                            fbResult.Text = apiCall.ToString();
+                            fbResult.Json = apiCall as JsonObject;
+                        }
                     }
                 }
                 catch (Exception ex)

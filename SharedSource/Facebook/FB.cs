@@ -321,7 +321,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         public static void API(
             string endpoint,
             HttpMethod method,
-            FacebookDelegate callback)
+            FacebookDelegate callback,
+            object parameters = null)
         {
 #if NETFX_CORE
             if (_web == null) throw new MissingPlatformException();
@@ -333,19 +334,32 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 return;
             }
 
-            if (method != HttpMethod.GET) throw new NotImplementedException();
+            if (method == HttpMethod.DELETE) throw new NotImplementedException();
 
             Task.Run(async () =>
             {
                 FBResult fbResult = null;
                 try
                 {
-                    var apiCall = await _client.GetTaskAsync(endpoint, null);
-                    if (apiCall != null)
+                    if (method == HttpMethod.GET)
                     {
-                        fbResult = new FBResult();
-                        fbResult.Text = apiCall.ToString();
-                        fbResult.Json = apiCall as JsonObject;
+                        var apiCall = await _client.GetTaskAsync(endpoint, parameters);
+                        if (apiCall != null)
+                        {
+                            fbResult = new FBResult();
+                            fbResult.Text = apiCall.ToString();
+                            fbResult.Json = apiCall as JsonObject;
+                        }
+                    }
+                    else
+                    {
+                        var apiCall = await _client.PostTaskAsync(endpoint, parameters);
+                        if (apiCall != null)
+                        {
+                            fbResult = new FBResult();
+                            fbResult.Text = apiCall.ToString();
+                            fbResult.Json = apiCall as JsonObject;
+                        }
                     }
                 }
                 catch (Exception ex)
