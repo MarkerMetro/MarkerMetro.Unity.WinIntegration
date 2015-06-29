@@ -13,6 +13,7 @@ using MarkerMetro.Unity.WinIntegration;
 #if NETFX_CORE
 using Facebook.Client;
 using Windows.Storage;
+using MarkerMetro.Unity.WinIntegration.Storage;
 #endif
 using System.Linq;
 namespace MarkerMetro.Unity.WinIntegration.Facebook
@@ -25,6 +26,9 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
     {
 
 #if NETFX_CORE
+        private const string FBID_KEY = "FBID";
+        private const string FBNAME_KEY = "FBNAME";
+
         private static Session _fbSessionClient;
         private static HideUnityDelegate _onHideUnity;
         public static string AccessToken
@@ -44,6 +48,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #else
         public static string AccessToken { get; private set; }
 #endif
+        public static string UserId { get; private set; }
+        public static string UserName { get; private set; }
 
         /// <summary>
         /// FB.Init as per Unity SDK
@@ -63,8 +69,17 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 {
                     // check and extend token if required
                     await Session.CheckAndExtendTokenIfNeeded();
+
+                    if (IsLoggedIn)
+                    {
+                        UserId = Settings.GetString(FBID_KEY);
+                        UserName = Settings.GetString(FBNAME_KEY);
+                    }
+
                     if (onInitComplete != null)
+                    {
                         Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
+                    }
                 });
 
                 if (onHideUnity != null)
@@ -89,8 +104,30 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #if NETFX_CORE
             Session.OnFacebookAuthenticationFinished = (AccessTokenData data) =>
             {
-                if (callback != null)
-                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Fail" : "Success", Error = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Error" : null }); });
+                var result = new FBResult() { Text = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Fail" : "Success", Error = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Error" : null };
+                if (data == null || String.IsNullOrEmpty(data.AccessToken))
+                {
+                    if (callback != null)
+                    {
+                        Dispatcher.InvokeOnAppThread(() => { callback(result); });
+                    }
+                }
+                else
+                {
+                    GetCurrentUser((user) =>
+                    {
+                        UserId = user.Id;
+                        UserName = user.Name;
+
+                        Settings.Set(FBID_KEY, UserId);
+                        Settings.Set(FBNAME_KEY, UserName);
+
+                        if (callback != null)
+                        {
+                            Dispatcher.InvokeOnAppThread(() => { callback(result); });
+                        }
+                    });
+                }
             };
 
             Dispatcher.InvokeOnUIThread(() =>
