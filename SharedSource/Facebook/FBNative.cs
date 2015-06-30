@@ -147,32 +147,30 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         {
 #if NETFX_CORE
 
-            if (method == HttpMethod.DELETE) throw new NotImplementedException();
             Task.Run(async () =>
             {
                 FacebookClient fb = new FacebookClient(_fbSessionClient.CurrentAccessTokenData.AccessToken);
                 FBResult fbResult = null;
                 try
                 {
+                    object apiCall;
                     if (method == HttpMethod.GET)
                     {
-                        var apiCall = await fb.GetTaskAsync(endpoint, parameters);
-                        if (apiCall != null)
-                        {
-                            fbResult = new FBResult();
-                            fbResult.Text = apiCall.ToString();
-                            fbResult.Json = apiCall as JsonObject;
-                        }
+                        apiCall = await fb.GetTaskAsync(endpoint, parameters);
+                    }
+                    else if (method == HttpMethod.POST)
+                    {
+                        apiCall = await fb.PostTaskAsync(endpoint, parameters);
                     }
                     else
                     {
-                        var apiCall = await fb.PostTaskAsync(endpoint, parameters);
-                        if (apiCall != null)
-                        {
-                            fbResult = new FBResult();
-                            fbResult.Text = apiCall.ToString();
-                            fbResult.Json = apiCall as JsonObject;
-                        }
+                        apiCall = await fb.DeleteTaskAsync(endpoint);
+                    }
+                    if (apiCall != null)
+                    {
+                        fbResult = new FBResult();
+                        fbResult.Text = apiCall.ToString();
+                        fbResult.Json = apiCall as JsonObject;
                     }
                 }
                 catch (Exception ex)

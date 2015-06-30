@@ -334,32 +334,29 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 return;
             }
 
-            if (method == HttpMethod.DELETE) throw new NotImplementedException();
-
             Task.Run(async () =>
             {
                 FBResult fbResult = null;
                 try
                 {
+                    object apiCall;
                     if (method == HttpMethod.GET)
                     {
-                        var apiCall = await _client.GetTaskAsync(endpoint, parameters);
-                        if (apiCall != null)
-                        {
-                            fbResult = new FBResult();
-                            fbResult.Text = apiCall.ToString();
-                            fbResult.Json = apiCall as JsonObject;
-                        }
+                        apiCall = await _client.GetTaskAsync(endpoint, parameters);
+                    }
+                    else if (method == HttpMethod.POST)
+                    {
+                        apiCall = await _client.PostTaskAsync(endpoint, parameters);
                     }
                     else
                     {
-                        var apiCall = await _client.PostTaskAsync(endpoint, parameters);
-                        if (apiCall != null)
-                        {
-                            fbResult = new FBResult();
-                            fbResult.Text = apiCall.ToString();
-                            fbResult.Json = apiCall as JsonObject;
-                        }
+                        apiCall = await _client.DeleteTaskAsync(endpoint);
+                    }
+                    if (apiCall != null)
+                    {
+                        fbResult = new FBResult();
+                        fbResult.Text = apiCall.ToString();
+                        fbResult.Json = apiCall as JsonObject;
                     }
                 }
                 catch (Exception ex)
