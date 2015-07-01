@@ -139,6 +139,11 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #endif
         }
 
+        /// <summary>
+        /// For platforms that do not support dynamic cast it to either IDictionary<string, object> if json object or IList<object> if array.
+        /// For primitive types cast it to bool, string, dobule or long depending on the type.
+        /// Reference: http://facebooksdk.net/docs/making-asynchronous-requests/#1
+        /// </summary>
         public static void API(
             string endpoint,
             HttpMethod method,
