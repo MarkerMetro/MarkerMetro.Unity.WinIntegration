@@ -321,7 +321,8 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
         public static void API(
             string endpoint,
             HttpMethod method,
-            FacebookDelegate callback)
+            FacebookDelegate callback,
+            object parameters = null)
         {
 #if NETFX_CORE
             if (_web == null) throw new MissingPlatformException();
@@ -333,14 +334,24 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 return;
             }
 
-            if (method != HttpMethod.GET) throw new NotImplementedException();
-
             Task.Run(async () =>
             {
                 FBResult fbResult = null;
                 try
                 {
-                    var apiCall = await _client.GetTaskAsync(endpoint, null);
+                    object apiCall;
+                    if (method == HttpMethod.GET)
+                    {
+                        apiCall = await _client.GetTaskAsync(endpoint, parameters);
+                    }
+                    else if (method == HttpMethod.POST)
+                    {
+                        apiCall = await _client.PostTaskAsync(endpoint, parameters);
+                    }
+                    else
+                    {
+                        apiCall = await _client.DeleteTaskAsync(endpoint);
+                    }
                     if (apiCall != null)
                     {
                         fbResult = new FBResult();

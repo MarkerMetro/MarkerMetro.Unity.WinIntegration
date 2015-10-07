@@ -13,6 +13,7 @@ using MarkerMetro.Unity.WinIntegration;
 #if NETFX_CORE
 using Facebook.Client;
 using Windows.Storage;
+using MarkerMetro.Unity.WinIntegration.Storage;
 #endif
 using System.Linq;
 namespace MarkerMetro.Unity.WinIntegration.Facebook
@@ -25,9 +26,30 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
     {
 
 #if NETFX_CORE
+        private const string FBID_KEY = "FBID";
+        private const string FBNAME_KEY = "FBNAME";
+
         private static Session _fbSessionClient;
         private static HideUnityDelegate _onHideUnity;
+        public static string AccessToken
+        {
+            get
+            {
+                if (_fbSessionClient != null && _fbSessionClient.CurrentAccessTokenData != null)
+                {
+                    return _fbSessionClient.CurrentAccessTokenData.AccessToken;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+#else
+        public static string AccessToken { get; private set; }
 #endif
+        public static string UserId { get; private set; }
+        public static string UserName { get; private set; }
 
         /// <summary>
         /// FB.Init as per Unity SDK
@@ -47,8 +69,17 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 {
                     // check and extend token if required
                     await Session.CheckAndExtendTokenIfNeeded();
+
+                    if (IsLoggedIn)
+                    {
+                        UserId = Settings.GetString(FBID_KEY);
+                        UserName = Settings.GetString(FBNAME_KEY);
+                    }
+
                     if (onInitComplete != null)
+                    {
                         Dispatcher.InvokeOnAppThread(() => { onInitComplete(); });
+                    }
                 });
 
                 if (onHideUnity != null)
@@ -73,8 +104,30 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #if NETFX_CORE
             Session.OnFacebookAuthenticationFinished = (AccessTokenData data) =>
             {
-                if (callback != null)
-                    Dispatcher.InvokeOnAppThread(() => { callback(new FBResult() { Text = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Fail" : "Success", Error = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Error" : null }); });
+                var result = new FBResult() { Text = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Fail" : "Success", Error = (data == null || String.IsNullOrEmpty(data.AccessToken)) ? "Error" : null };
+                if (data == null || String.IsNullOrEmpty(data.AccessToken))
+                {
+                    if (callback != null)
+                    {
+                        Dispatcher.InvokeOnAppThread(() => { callback(result); });
+                    }
+                }
+                else
+                {
+                    GetCurrentUser((user) =>
+                    {
+                        UserId = user.Id;
+                        UserName = user.Name;
+
+                        Settings.Set(FBID_KEY, UserId);
+                        Settings.Set(FBNAME_KEY, UserName);
+
+                        if (callback != null)
+                        {
+                            Dispatcher.InvokeOnAppThread(() => { callback(result); });
+                        }
+                    });
+                }
             };
 
             Dispatcher.InvokeOnUIThread(() =>
@@ -86,21 +139,38 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
 #endif
         }
 
+        /// <summary>
+        /// For platforms that do not support dynamic cast it to either IDictionary<string, object> if json object or IList<object> if array.
+        /// For primitive types cast it to bool, string, dobule or long depending on the type.
+        /// Reference: http://facebooksdk.net/docs/making-asynchronous-requests/#1
+        /// </summary>
         public static void API(
             string endpoint,
             HttpMethod method,
-            FacebookDelegate callback)
+            FacebookDelegate callback,
+            object parameters = null)
         {
 #if NETFX_CORE
 
-            if (method != HttpMethod.GET) throw new NotImplementedException();
             Task.Run(async () =>
             {
                 FacebookClient fb = new FacebookClient(_fbSessionClient.CurrentAccessTokenData.AccessToken);
                 FBResult fbResult = null;
                 try
                 {
-                    var apiCall = await fb.GetTaskAsync(endpoint, null);
+                    object apiCall;
+                    if (method == HttpMethod.GET)
+                    {
+                        apiCall = await fb.GetTaskAsync(endpoint, parameters);
+                    }
+                    else if (method == HttpMethod.POST)
+                    {
+                        apiCall = await fb.PostTaskAsync(endpoint, parameters);
+                    }
+                    else
+                    {
+                        apiCall = await fb.DeleteTaskAsync(endpoint);
+                    }
                     if (apiCall != null)
                     {
                         fbResult = new FBResult();
