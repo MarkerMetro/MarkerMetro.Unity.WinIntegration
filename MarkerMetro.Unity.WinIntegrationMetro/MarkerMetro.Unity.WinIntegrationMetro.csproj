@@ -42,6 +42,9 @@
     <Compile Include="..\SharedSource\Facebook\FB.cs">
       <Link>Facebook\FB.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Facebook\FBCommon.cs">
+      <Link>Facebook\FBCommon.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Facebook\IWebInterface.cs">
       <Link>Facebook\IWebInterface.cs</Link>
     </Compile>

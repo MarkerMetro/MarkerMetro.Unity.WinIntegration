@@ -6,8 +6,6 @@ using Windows.UI.Core;
 
 namespace MarkerMetro.Unity.WinIntegration.Store
 {
-
-
     public class StoreManager
     {
         private bool _useSimulator;

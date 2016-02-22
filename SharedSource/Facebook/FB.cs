@@ -16,26 +16,6 @@ using MarkerMetro.Unity.WinIntegration.Storage;
 
 namespace MarkerMetro.Unity.WinIntegration.Facebook
 {
-    public delegate void FacebookDelegate(FBResult result);
-
-    public delegate void InitDelegate();
-
-    public delegate void HideUnityDelegate(bool hideUnity);
-
-    public enum HttpMethod
-    {
-        GET,
-        POST,
-        DELETE
-    }
-
-    public class FBResult
-    {
-        public string Error { get; set; }
-        public string Text { get; set; }
-        public JsonObject Json { get; set; }
-    }
-
     public class MissingPlatformException : Exception
     {
         public MissingPlatformException()
