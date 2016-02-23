@@ -53,7 +53,27 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 FBSession session = FBSession.ActiveSession;
                 return session != null ? session.LoggedIn : false;
 #else
-                throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
+                throw new PlatformNotSupportedException("");
+#endif
+            }
+        }
+
+        public static string AccessToken
+        {
+            get
+            {
+#if WINDOWS_UWP
+                FBSession session = FBSession.ActiveSession;
+                if (session != null && session.AccessTokenData != null)
+                {
+                    return session.AccessTokenData.AccessToken;
+                }
+                else
+                {
+                    return null;
+                }
+#else
+                throw new PlatformNotSupportedException("");
 #endif
             }
         }
@@ -73,7 +93,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     return null;
                 }
 #else
-                throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
+                throw new PlatformNotSupportedException("");
 #endif
             }
         }
@@ -92,7 +112,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     return null;
                 }
 #else
-                throw new PlatformNotSupportedException("CheckAndExtendTokenIfNeeded");
+                throw new PlatformNotSupportedException("");
 #endif
             }
         }
