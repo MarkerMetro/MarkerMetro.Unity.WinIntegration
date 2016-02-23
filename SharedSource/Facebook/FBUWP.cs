@@ -319,8 +319,6 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                         PropertySet parameters = new PropertySet();
                         parameters.Add("message", message);
                         parameters.Add("to", to);
-                        parameters.Add("filters", filters);
-                        parameters.Add("excludeIds", excludeIds);
                         parameters.Add("data", data);
                         parameters.Add("title", title);
 
@@ -385,6 +383,9 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                         parameters.Add("title", linkName);
                         parameters.Add("link", link);
                         parameters.Add("description", linkDescription);
+                        parameters.Add("toId", toId);
+                        parameters.Add("linkCaption", linkCaption);
+                        parameters.Add("picture", picture);
 
                         // Display feed dialog
                         global::Facebook.FBResult fbResult = await session.ShowFeedDialogAsync(parameters);
@@ -398,7 +399,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                     });
                 });
             }
-            
+
             // throw not supported exception when user passed in parameters not supported currently
             if (!string.IsNullOrWhiteSpace(mediaSource) || !string.IsNullOrWhiteSpace(actionName) || !string.IsNullOrWhiteSpace(actionLink) ||
                 !string.IsNullOrWhiteSpace(reference) || properties != null)
