@@ -361,7 +361,23 @@ namespace MarkerMetro.Unity.WinIntegration
 #endif
         }
 
-		public bool HasInternetConnection
+        /// <summary>
+        /// This is used to check whether the app is running on Windows Mobile.
+        /// Should only be used for Windows 10 Universal project.
+        /// </summary>
+        public static bool IsWindowsMobile
+        {
+            get
+            {
+#if WINDOWS_UWP && NETFX_CORE
+                return Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent ("Windows.Phone.PhoneContract", 1);
+#else
+                throw new PlatformNotSupportedException("IsWindowsMobile");
+#endif
+            }
+        }
+
+        public bool HasInternetConnection
 		{
 			get
 			{
