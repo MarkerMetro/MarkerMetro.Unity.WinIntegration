@@ -53,7 +53,7 @@ namespace MarkerMetro.Unity.WinIntegration.Facebook
                 FBSession session = FBSession.ActiveSession;
                 return session != null ? session.LoggedIn : false;
 #else
-                throw new PlatformNotSupportedException("");
+                return false;
 #endif
             }
         }
