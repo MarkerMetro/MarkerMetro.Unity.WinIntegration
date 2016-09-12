@@ -54,7 +54,7 @@ namespace MarkerMetro.Unity.WinIntegration.Store
 #elif NETFX_CORE
             _storeObject = new WindowsStorePlatform();
 #endif
-            _storeObject.Load(_useSimulator, this);
+            _storeObject.Load(_useSimulator);
         }
 
         public void RetrieveProducts(ProductListDelegate callback)

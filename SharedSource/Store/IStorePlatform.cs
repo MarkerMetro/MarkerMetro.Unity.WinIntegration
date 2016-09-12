@@ -12,7 +12,7 @@ namespace MarkerMetro.Unity.WinIntegration.Store
 
         bool ActiveLicense { get; }
 
-        void Load(bool simulator, StoreManager storeInst);
+        void Load(bool simulator);
 
         void RetrieveProducts(ProductListDelegate callback);
 
