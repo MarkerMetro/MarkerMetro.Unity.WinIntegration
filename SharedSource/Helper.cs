@@ -155,11 +155,11 @@ namespace MarkerMetro.Unity.WinIntegration
             }
             catch (Exception ex)
             {
-# if DEBUG
+#if DEBUG
                 Debug.WriteLine("Unable to show the share UI because of: " + ex.Message);
-# else
+#else
                 ExceptionLogger.Send(ex);
-# endif
+#endif
             }
 #endif
 		}
@@ -326,16 +326,20 @@ namespace MarkerMetro.Unity.WinIntegration
             public ushort wProcessorLevel;
             public ushort wProcessorRevision;
         };
-
+#if WINDOWS_UWP
+        [System.Runtime.InteropServices.DllImport("api-ms-win-core-sysinfo-l1-2-0.dll")]
+        internal static extern void GetNativeSystemInfo(ref SYSTEM_INFO lpSystemInfo);
+#else
         [System.Runtime.InteropServices.DllImport("kernel32.dll")]
         internal static extern void GetNativeSystemInfo(ref SYSTEM_INFO lpSystemInfo);
 #endif
+#endif
 
-		/// <summary>
-		/// Determine whether or not a Windows device is generally considered low end
-		/// </summary>
-		/// <returns>Windows 8 Arm or Windows Phone Low Mem returns true</returns>
-		public bool IsLowEndDevice()
+        /// <summary>
+        /// Determine whether or not a Windows device is generally considered low end
+        /// </summary>
+        /// <returns>Windows 8 Arm or Windows Phone Low Mem returns true</returns>
+        public bool IsLowEndDevice()
         {
 #if WINDOWS_PHONE_APP
             long result = 0;
@@ -359,7 +363,23 @@ namespace MarkerMetro.Unity.WinIntegration
 #endif
         }
 
-		public bool HasInternetConnection
+        /// <summary>
+        /// This is used to check whether the app is running on Windows Mobile.
+        /// Should only be used for Windows 10 Universal project.
+        /// </summary>
+        public static bool IsWindowsMobile
+        {
+            get
+            {
+#if WINDOWS_UWP && NETFX_CORE
+                return Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent ("Windows.Phone.PhoneContract", 1);
+#else
+                throw new PlatformNotSupportedException("IsWindowsMobile");
+#endif
+            }
+        }
+
+        public bool HasInternetConnection
 		{
 			get
 			{

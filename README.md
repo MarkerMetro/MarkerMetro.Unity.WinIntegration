@@ -10,9 +10,9 @@ See the [Unity FAQ on Universal Apps](http://docs.unity3d.com/Manual/WindowsUniv
 
 ## Prerequisites
 
-- Visual Studio 2013
+- Visual Studio 2015
 - Nuget Package Manager
-- Unity 5.0.0p2 (tested only on this version but should work on other 5.x builds)
+- Unity 5.2.2p4 (tested only on this version but should work on other 5.x builds)
 
 ## Getting Latest
 
@@ -24,7 +24,8 @@ Configure the solution to Release | Any CPU and Rebuild.
 
 You can then copy the folder contents as follows:
 
-- /MarkerMetro.Unity.WinIntegrationMetro/bin/Release > /Assets/Plugins/Metro/
+- /MarkerMetro.Unity.WinIntegrationMetro/bin/Release > /Assets/Plugins/Metro/WSA8.1
+- /MarkerMetro.Unity.WinIntegrationUWP/bin/Release > /Assets/Plugins/Metro/WSA10
 - /MarkerMetro.Unity.WinIntegrationWP81/bin/Release > /Assets/Plugins/Metro/WindowsPhone81
 - /MarkerMetro.Unity.WinIntegrationUnity/bin/Release > /Assets/Plugins/
 
@@ -34,7 +35,8 @@ Alternatively, you can download latest from [Nuget](https://www.nuget.org/api/v2
 
 Extract the files from the package and copy the folder contents as follows:
 
-- /lib/netcore45/ > /Assets/Plugins/Metro/
+- /lib/netcore45/ > /Assets/Plugins/Metro/WSA8.1
+- /lib/win10 > /Assets/Plugins/Metro/WSA10
 - /lib/wpa81 > /Assets/Plugins/Metro/WindowsPhone81
 - /lib/net35 > /Assets/Plugins/
 
@@ -42,7 +44,7 @@ Extract the files from the package and copy the folder contents as follows:
 
 Within your Windows application, just need to ensure you initialize the plugin appropriately with examples as follows:
 
-For Windows Universal and Windows 8.1 Apps add the following method to App.xaml.cs and call it after the call to appCallbacks.InitializeD3DXAML().
+For Windows 10, Windows Universal and Windows 8.1 Apps add the following method to App.xaml.cs and call it after the call to appCallbacks.InitializeD3DXAML().
 
 
 ```csharp
@@ -60,13 +62,14 @@ public void InvokeOnUIThread(Action callback)
 You can see existing implementations in [WinShared](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared) here:
 
 - [Windows Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/App.xaml.cs) 
+- [Windows 10](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/Windows10Solution/UnityProject/App.xaml.cs) 
 
 ## Debugging locally
 
 You can easily debug a particular Windows Store or Windows Phone plugin project as follows:
 
 1. Add the platform specific WinIntegration project to your solution (e.g. MarkerMetro.Unity.WinIntegrationMetro)
-2. Build platform specific WinIntegration project in Debug and copy output to Unity(e.g. /Assets/Plugins/Metro)
+2. Build platform specific WinIntegration project in Debug and copy output to Unity(e.g. /Assets/Plugins/Metro/WSA8.1)
 3. Build from Unity
 4. Set breakpoints in your platform specific WinIntegration plugin project and then F5 on your app
 
@@ -117,6 +120,10 @@ FB.SetPlatformInterface(web);
 You can see how this is done here:
 
 - [Windows 8.1 Universal](https://github.com/MarkerMetro/MarkerMetro.Unity.WinShared/blob/master/WindowsSolutionUniversal/UnityProject/UnityProject.Shared/MainPage.xaml.cs)
+
+#### Windows 10
+
+Windows 10 uses the Windows SDK for Facebook (https://github.com/Microsoft/winsdkfb/tree/master)
 
 #### Sample usage
 

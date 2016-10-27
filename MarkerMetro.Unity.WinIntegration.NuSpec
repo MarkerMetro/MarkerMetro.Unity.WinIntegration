@@ -26,5 +26,7 @@
 	<file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\Facebook.dll" target="lib\wpa81\"/>
 	<file src="MarkerMetro.Unity.WinIntegrationWP81\bin\Release\Facebook.Client.dll" target="lib\wpa81\"/>
 	 
+    <file src="MarkerMetro.Unity.WinIntegrationUWP\bin\Release\MarkerMetro.Unity.WinIntegration.dll" target="lib\win10\"/>
+
   </files>
 </package>

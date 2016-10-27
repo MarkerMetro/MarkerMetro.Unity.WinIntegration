@@ -48,6 +48,9 @@
     <Compile Include="..\SharedSource\Facebook\FB.cs">
       <Link>Facebook\FB.cs</Link>
     </Compile>
+    <Compile Include="..\SharedSource\Facebook\FBCommon.cs">
+      <Link>Facebook\FBCommon.cs</Link>
+    </Compile>
     <Compile Include="..\SharedSource\Facebook\FBLocation.cs">
       <Link>Facebook\FBLocation.cs</Link>
     </Compile>
@@ -56,6 +59,9 @@
     </Compile>
     <Compile Include="..\SharedSource\Facebook\FBUser.cs">
       <Link>Facebook\FBUser.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedSource\Facebook\FBUWP.cs">
+      <Link>Facebook\FBUWP.cs</Link>
     </Compile>
     <Compile Include="..\SharedSource\Facebook\IWebInterface.cs">
       <Link>Facebook\IWebInterface.cs</Link>
